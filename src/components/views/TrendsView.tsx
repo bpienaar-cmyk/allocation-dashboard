@@ -28,7 +28,7 @@ interface TrendsViewProps {
   onCountryChange: (country: Country) => void
 }
 
-type MetricType = 'jobs' | 'ttv' | 'allocSpend' | 'spendTtvPct' | 'marginPct' | 'otdDeallocations'
+type MetricType = 'jobs' | 'ttv' | 'allocSpend' | 'spendTtvPct' | 'marginPct' | 'otdDealloPct'
 
 interface YoYRow {
   monthLabel: string
@@ -42,13 +42,13 @@ const TrendsView: React.FC<TrendsViewProps> = ({ trendsByCountry, selectedCountr
   const data = trendsByCountry[selectedCountry]
   const countries: Country[] = ['uk', 'spain', 'france']
 
-  const metricConfig: Record<MetricType, { label: string; key: keyof TrendPoint; isPercentage: boolean; isCurrency: boolean }> = {
+  const metricConfig: Record<MetricType, { label: string; key: keyof TrendPoint; isPercentage: boolean; isCurrency: boolean; compute?: (p: TrendPoint) => number }> = {
     jobs: { label: 'Jobs', key: 'jobs', isPercentage: false, isCurrency: false },
     ttv: { label: 'Total TTV', key: 'ttv', isPercentage: false, isCurrency: true },
     allocSpend: { label: 'Allocation Spend', key: 'allocSpend', isPercentage: false, isCurrency: true },
     spendTtvPct: { label: 'Spend/TTV %', key: 'spendTtvPct', isPercentage: true, isCurrency: false },
     marginPct: { label: 'Margin %', key: 'marginPct', isPercentage: true, isCurrency: false },
-    otdDeallocations: { label: 'OTD Deallocations', key: 'otdDeallocations', isPercentage: false, isCurrency: false },
+    otdDealloPct: { label: 'OTD Deallocation %', key: 'otdDeallocations', isPercentage: true, isCurrency: false, compute: (p) => p.jobs > 0 ? (p.otdDeallocations / p.jobs) * 100 : 0 },
   }
 
   const config = metricConfig[metric]
@@ -63,7 +63,7 @@ const TrendsView: React.FC<TrendsViewProps> = ({ trendsByCountry, selectedCountr
       const d = new Date(point.month)
       const year = d.getFullYear()
       const month = d.getMonth() // 0-indexed
-      const val = point[config.key] as number
+      const val = config.compute ? config.compute(point) : point[config.key] as number
       byYearMonth[`${year}-${month}`] = val
     })
 
@@ -83,7 +83,7 @@ const TrendsView: React.FC<TrendsViewProps> = ({ trendsByCountry, selectedCountr
     const prefix = isCurrency ? '£' : ''
     if (v >= 1000000) return `${prefix}${(v / 1000000).toFixed(2)}M`
     if (v >= 1000) return `${prefix}${(v / 1000).toFixed(1)}K`
-    return `${prefix}${v.toLocaleString()}`
+    return `${prefix}${v.toLocaleString('en-GB', { maximumFractionDigits: 1 })}`
   }
 
   const formatLabel = (v: any) => {
@@ -93,7 +93,7 @@ const TrendsView: React.FC<TrendsViewProps> = ({ trendsByCountry, selectedCountr
     if (isPercentage) return `${n.toFixed(1)}%`
     const prefix = isCurrency ? '£' : ''
     if (n >= 1000000) return `${prefix}${(n / 1000000).toFixed(1)}M`
-    if (n >= 1000) return `${prefix}${(n / 1000).toFixed(0)}K`
+    if (n >= 1000) return `${prefix}${(n / 1000).toFixed(1)}K`
     return `${prefix}${n.toLocaleString()}`
   }
 
@@ -153,7 +153,7 @@ const TrendsView: React.FC<TrendsViewProps> = ({ trendsByCountry, selectedCountr
             <option value="allocSpend">Allocation Spend</option>
             <option value="spendTtvPct">Spend/TTV %</option>
             <option value="marginPct">Margin %</option>
-            <option value="otdDeallocations">OTD Deallocations</option>
+            <option value="otdDealloPct">OTD Deallocation %</option>
           </select>
         </div>
       </div>
@@ -167,7 +167,7 @@ const TrendsView: React.FC<TrendsViewProps> = ({ trendsByCountry, selectedCountr
       <div className="bg-slate-800 rounded-xl p-6 border border-slate-700" style={{ height: '420px' }}>
         <ResponsiveContainer width="100%" height="100%">
           {isPercentage ? (
-            <LineChart data={yoyData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+            <LineChart data={yoyData} margin={{ top: 25, right: 30, left: 20, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
               <XAxis
                 dataKey="monthLabel"
@@ -194,7 +194,7 @@ const TrendsView: React.FC<TrendsViewProps> = ({ trendsByCountry, selectedCountr
                 name="2025"
                 connectNulls={false}
               >
-                <LabelList dataKey="y2025" position="top" formatter={formatLabel} style={{ fill: '#f59e0b', fontSize: 10, fontWeight: 600 }} />
+                <LabelList dataKey="y2025" position="top" offset={15} formatter={formatLabel} style={{ fill: '#f59e0b', fontSize: 10, fontWeight: 600 }} />
               </Line>
               <Line
                 type="monotone"
@@ -206,7 +206,7 @@ const TrendsView: React.FC<TrendsViewProps> = ({ trendsByCountry, selectedCountr
                 name="2026"
                 connectNulls={false}
               >
-                <LabelList dataKey="y2026" position="bottom" formatter={formatLabel} style={{ fill: '#3b82f6', fontSize: 10, fontWeight: 600 }} />
+                <LabelList dataKey="y2026" position="top" offset={15} formatter={formatLabel} style={{ fill: '#3b82f6', fontSize: 10, fontWeight: 600 }} />
               </Line>
             </LineChart>
           ) : (
