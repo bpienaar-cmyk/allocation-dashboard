@@ -13,6 +13,7 @@ import {
 import {
   overviewByCountry,
   trendsData,
+  trendsByCountry,
   categoriesData,
   regionsData,
   otdMetricsData,
@@ -24,6 +25,7 @@ export interface UseAllocationDataResult {
   overviewPY: OverviewData | null;
   overviewByCountry: Record<Country, CountryOverview> | null;
   trends: TrendPoint[] | null;
+  trendsByCountry: Record<Country, TrendPoint[]> | null;
   categories: CategoryRow[] | null;
   regions: RegionRow[] | null;
   otdMetrics: OtdMetrics | null;
@@ -42,6 +44,7 @@ export function useAllocationData(dateRange: DateRange): UseAllocationDataResult
   const [overviewPY, setOverviewPY] = useState<OverviewData | null>(null);
   const [countryData, setCountryData] = useState<Record<Country, CountryOverview> | null>(null);
   const [trends, setTrends] = useState<TrendPoint[] | null>(null);
+  const [trendsByCountryData, setTrendsByCountryData] = useState<Record<Country, TrendPoint[]> | null>(null);
   const [categories, setCategories] = useState<CategoryRow[] | null>(null);
   const [regions, setRegions] = useState<RegionRow[] | null>(null);
   const [otdMetrics, setOtdMetrics] = useState<OtdMetrics | null>(null);
@@ -59,6 +62,7 @@ export function useAllocationData(dateRange: DateRange): UseAllocationDataResult
       setOverviewPY(overviewByCountry.uk.priorYear);
       setCountryData(overviewByCountry);
       setTrends(trendsData);
+      setTrendsByCountryData(trendsByCountry);
       setCategories(categoriesData);
       setRegions(regionsData);
       setOtdMetrics(otdMetricsData);
@@ -81,6 +85,7 @@ export function useAllocationData(dateRange: DateRange): UseAllocationDataResult
     overviewPY,
     overviewByCountry: countryData,
     trends,
+    trendsByCountry: trendsByCountryData,
     categories,
     regions,
     otdMetrics,

@@ -19,7 +19,7 @@ const App: React.FC = () => {
   const [selectedCountry, setSelectedCountry] = useState<Country>('uk')
   const defaultDateRange = getDefaultDateRange()
 
-  const { overview, overviewByCountry, trends, categories, regions, otdMetrics, deallocations, loading, error, refetch } = useAllocationData(defaultDateRange)
+  const { overview, overviewByCountry, trends, trendsByCountry, categories, regions, otdMetrics, deallocations, loading, error, refetch } = useAllocationData(defaultDateRange)
 
   return (
     <ErrorBoundary>
@@ -42,7 +42,13 @@ const App: React.FC = () => {
                     onCountryChange={setSelectedCountry}
                   />
                 )}
-                {activeTab === 'trends' && trends && <TrendsView data={trends} />}
+                {activeTab === 'trends' && trendsByCountry && (
+                  <TrendsView
+                    trendsByCountry={trendsByCountry}
+                    selectedCountry={selectedCountry}
+                    onCountryChange={setSelectedCountry}
+                  />
+                )}
                 {activeTab === 'category' && categories && <CategoryView data={categories} />}
                 {activeTab === 'regional' && regions && <RegionalView data={regions} />}
                 {activeTab === 'otd' && otdMetrics && <OTDMetricsView data={otdMetrics} />}
