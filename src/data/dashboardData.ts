@@ -7,7 +7,7 @@ import {
   DeallocationData,
 } from '../types/index';
 
-export const DATA_LAST_UPDATED = '2026-03-16T11:15:00Z';
+export const DATA_LAST_UPDATED = '2026-03-16T14:30:00Z';
 
 /**
  * Overview metrics — MTD March 2026 (Completed Paid)
@@ -23,11 +23,11 @@ export const overviewData: OverviewData = {
   otdCancels: 235,
   cantSourceCount: 46,
   cantSourceRate: (46 / 12697) * 100,
-  tpCancels: 1282,
-  deallocations: 2292,
+  tpCancels: 1007,
+  deallocations: 951,
   otdDeallocations: 1065,
-  otdDealloPct: 6.91,
-  otdAllocSpend: 44408.05,
+  otdDealloPct: 8.39,
+  otdAllocSpend: 9716.03,
   noSpendJobs: 538,
   noSpendPct: 50.37,
   otdAllocatedJobs: 1068,
@@ -47,18 +47,18 @@ export const overviewDataPY: OverviewData = {
   otdCancels: 181,
   cantSourceCount: 11,
   cantSourceRate: (11 / 13151) * 100,
-  tpCancels: 1828,
-  deallocations: 2033,
+  tpCancels: 1092,
+  deallocations: 809,
   otdDeallocations: 903,
-  otdDealloPct: 6.17,
-  otdAllocSpend: 21932.85,
+  otdDealloPct: 6.87,
+  otdAllocSpend: 6590.87,
   noSpendJobs: 585,
   noSpendPct: 62.77,
   otdAllocatedJobs: 932,
 };
 
 /**
- * Category breakdown (Completed Paid)
+ * Category breakdown (Completed Paid, last 90 days)
  */
 export const categoriesData: CategoryRow[] = [
   {
@@ -104,7 +104,7 @@ export const categoriesData: CategoryRow[] = [
 ];
 
 /**
- * Regional breakdown (Completed Paid)
+ * Regional breakdown (Completed Paid, last 90 days)
  */
 export const regionsData: RegionRow[] = [
   {
@@ -192,7 +192,7 @@ export const regionsData: RegionRow[] = [
     jobs: 1469,
     ttv: 493152.58,
     marginPct: 46.62,
-    allocSpend: 12898.44,
+    allocSpend: 12898.45,
     spendTtvPct: 2.62,
   },
   {
@@ -218,7 +218,7 @@ export const trendsData: TrendPoint[] = [
     allocSpend: 37150.08,
     spendTtvPct: 0.70,
     otdCancels: 347,
-    tpCancels: 1828,
+    tpCancels: 1827,
     cantSourceCount: 38,
     otdDeallocations: 1759,
     totalRecords: 24907,
@@ -274,7 +274,7 @@ export const trendsData: TrendPoint[] = [
     allocSpend: 65566.02,
     spendTtvPct: 1.05,
     otdCancels: 511,
-    tpCancels: 2390,
+    tpCancels: 2389,
     cantSourceCount: 62,
     otdDeallocations: 2245,
     totalRecords: 30963,
@@ -316,7 +316,7 @@ export const trendsData: TrendPoint[] = [
     allocSpend: 115880.34,
     spendTtvPct: 1.43,
     otdCancels: 713,
-    tpCancels: 3348,
+    tpCancels: 3345,
     cantSourceCount: 73,
     otdDeallocations: 3070,
     totalRecords: 37611,
@@ -344,7 +344,7 @@ export const trendsData: TrendPoint[] = [
     allocSpend: 86526.33,
     spendTtvPct: 1.24,
     otdCancels: 494,
-    tpCancels: 2452,
+    tpCancels: 2451,
     cantSourceCount: 72,
     otdDeallocations: 2494,
     totalRecords: 29607,
@@ -400,7 +400,7 @@ export const trendsData: TrendPoint[] = [
     allocSpend: 49749.08,
     spendTtvPct: 1.65,
     otdCancels: 235,
-    tpCancels: 1282,
+    tpCancels: 1281,
     cantSourceCount: 46,
     otdDeallocations: 1088,
     totalRecords: 20235,
@@ -408,24 +408,24 @@ export const trendsData: TrendPoint[] = [
 ];
 
 /**
- * OTD metrics
+ * OTD metrics (last 90 days)
  */
 export const otdMetricsData: OtdMetrics = {
-  otdJobsWithDeallos: 5479,
-  otdAllocSpend: 65533.33,
+  otdJobsWithDeallos: 5511,
+  otdAllocSpend: 65546.33,
   otdAllocatedJobs: 6153,
   noSpendJobs: 3139,
   noSpendPct: 51.02,
 };
 
 /**
- * Deallocation data
+ * Deallocation data (last 90 days)
  */
 export const deallocationsData: DeallocationData = {
-  deallocations: 12676,
-  otdDeallocations: 6053,
-  otdDealloPct: 7.80,
-  otdDealloCount: 5479,
-  otdJobsWithDeallos: 5479,
-  otdAllocSpend: 65533.33,
+  deallocations: 5511,
+  otdDeallocations: 6089,
+  otdDealloPct: 8.94,
+  otdDealloCount: 5511,
+  otdJobsWithDeallos: 5511,
+  otdAllocSpend: 65546.33,
 };
