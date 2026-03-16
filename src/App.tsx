@@ -4,7 +4,6 @@ import Navigation from './components/layout/Navigation'
 import ErrorBoundary from './components/layout/ErrorBoundary'
 import Loading from './components/common/Loading'
 import ErrorDisplay from './components/common/ErrorDisplay'
-import DateRangePicker from './components/common/DateRangePicker'
 import OverviewView from './components/views/OverviewView'
 import TrendsView from './components/views/TrendsView'
 import CategoryView from './components/views/CategoryView'
@@ -13,17 +12,13 @@ import OTDMetricsView from './components/views/OTDMetricsView'
 import DeallocationView from './components/views/DeallocationView'
 import { useAllocationData } from './hooks/useAllocationData'
 import { getDefaultDateRange } from './utils/dateHelpers'
-import { TabId, DateRange } from './types'
+import { TabId } from './types'
 
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabId>('overview')
-  const [dateRange, setDateRange] = useState<DateRange>(getDefaultDateRange())
+  const defaultDateRange = getDefaultDateRange()
 
-  const { overview, trends, categories, regions, otdMetrics, deallocations, loading, error, refetch } = useAllocationData(dateRange)
-
-  const handleDateRangeChange = (newRange: DateRange) => {
-    setDateRange(newRange)
-  }
+  const { overview, trends, categories, regions, otdMetrics, deallocations, loading, error, refetch } = useAllocationData(defaultDateRange)
 
   return (
     <ErrorBoundary>
@@ -31,13 +26,6 @@ const App: React.FC = () => {
         <Header />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="mb-8">
-            <DateRangePicker
-              dateRange={dateRange}
-              onChange={handleDateRangeChange}
-            />
-          </div>
-
           <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
 
           <div className="mt-8">

@@ -9,13 +9,13 @@ import {
   DateRange,
 } from '../types/index';
 import {
-  fetchOverview,
-  fetchTrends,
-  fetchCategoryBreakdown,
-  fetchRegionalBreakdown,
-  fetchOtdMetrics,
-  fetchDeallocations,
-} from '../services/api';
+  overviewData,
+  trendsData,
+  categoriesData,
+  regionsData,
+  otdMetricsData,
+  deallocationsData,
+} from '../data/dashboardData';
 
 export interface UseAllocationDataResult {
   overview: OverviewData | null;
@@ -48,28 +48,12 @@ export function useAllocationData(dateRange: DateRange): UseAllocationDataResult
       setLoading(true);
       setError(null);
 
-      // Fetch all data in parallel
-      const [
-        overviewData,
-        trendsData,
-        categoriesData,
-        regionsData,
-        otdData,
-        deallocationsData,
-      ] = await Promise.all([
-        fetchOverview(dateRange),
-        fetchTrends(dateRange.endDate),
-        fetchCategoryBreakdown(dateRange),
-        fetchRegionalBreakdown(dateRange),
-        fetchOtdMetrics(dateRange),
-        fetchDeallocations(dateRange),
-      ]);
-
+      // Use static data - no API calls needed
       setOverview(overviewData);
       setTrends(trendsData);
       setCategories(categoriesData);
       setRegions(regionsData);
-      setOtdMetrics(otdData);
+      setOtdMetrics(otdMetricsData);
       setDeallocations(deallocationsData);
     } catch (err) {
       const error = err instanceof Error ? err : new Error('Unknown error occurred');
@@ -78,7 +62,7 @@ export function useAllocationData(dateRange: DateRange): UseAllocationDataResult
     } finally {
       setLoading(false);
     }
-  }, [dateRange]);
+  }, []);
 
   useEffect(() => {
     loadData();

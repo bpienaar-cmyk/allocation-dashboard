@@ -1,18 +1,17 @@
 import React from 'react';
+import { DATA_LAST_UPDATED } from '../../data/dashboardData';
 
 interface HeaderProps {
   lastUpdated?: Date;
 }
 
 const Header: React.FC<HeaderProps> = ({ lastUpdated }) => {
-  const formatTimestamp = (date: Date): string => {
+  const formatTimestamp = (dateString: string): string => {
+    const date = new Date(dateString);
     return date.toLocaleString('en-US', {
       month: 'short',
       day: 'numeric',
       year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
     });
   };
 
@@ -25,11 +24,9 @@ const Header: React.FC<HeaderProps> = ({ lastUpdated }) => {
           </h1>
           <span className="text-lg text-slate-300">Allocation Dashboard</span>
         </div>
-        {lastUpdated && (
-          <div className="text-sm text-slate-400">
-            Last updated: {formatTimestamp(lastUpdated)}
-          </div>
-        )}
+        <div className="text-sm text-slate-400">
+          Last updated: {formatTimestamp(DATA_LAST_UPDATED)}
+        </div>
       </div>
     </header>
   );
