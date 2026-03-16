@@ -10,6 +10,7 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
+  LabelList,
 } from 'recharts'
 import { TrendPoint, Country } from '../../types'
 
@@ -41,17 +42,18 @@ const TrendsView: React.FC<TrendsViewProps> = ({ trendsByCountry, selectedCountr
   const data = trendsByCountry[selectedCountry]
   const countries: Country[] = ['uk', 'spain', 'france']
 
-  const metricConfig: Record<MetricType, { label: string; key: keyof TrendPoint; isPercentage: boolean }> = {
-    jobs: { label: 'Jobs', key: 'jobs', isPercentage: false },
-    ttv: { label: 'Total TTV', key: 'ttv', isPercentage: false },
-    allocSpend: { label: 'Allocation Spend', key: 'allocSpend', isPercentage: false },
-    spendTtvPct: { label: 'Spend/TTV %', key: 'spendTtvPct', isPercentage: true },
-    marginPct: { label: 'Margin %', key: 'marginPct', isPercentage: true },
-    otdDeallocations: { label: 'OTD Deallocations', key: 'otdDeallocations', isPercentage: false },
+  const metricConfig: Record<MetricType, { label: string; key: keyof TrendPoint; isPercentage: boolean; isCurrency: boolean }> = {
+    jobs: { label: 'Jobs', key: 'jobs', isPercentage: false, isCurrency: false },
+    ttv: { label: 'Total TTV', key: 'ttv', isPercentage: false, isCurrency: true },
+    allocSpend: { label: 'Allocation Spend', key: 'allocSpend', isPercentage: false, isCurrency: true },
+    spendTtvPct: { label: 'Spend/TTV %', key: 'spendTtvPct', isPercentage: true, isCurrency: false },
+    marginPct: { label: 'Margin %', key: 'marginPct', isPercentage: true, isCurrency: false },
+    otdDeallocations: { label: 'OTD Deallocations', key: 'otdDeallocations', isPercentage: false, isCurrency: false },
   }
 
   const config = metricConfig[metric]
   const isPercentage = config.isPercentage
+  const isCurrency = config.isCurrency
 
   // Build YoY comparison data: Jan-Dec with 2025 and 2026 values
   const yoyData = useMemo<YoYRow[]>(() => {
@@ -78,9 +80,21 @@ const TrendsView: React.FC<TrendsViewProps> = ({ trendsByCountry, selectedCountr
 
   const formatValue = (v: number) => {
     if (isPercentage) return `${v.toFixed(2)}%`
-    if (v >= 1000000) return `£${(v / 1000000).toFixed(2)}M`
-    if (v >= 1000) return `£${(v / 1000).toFixed(1)}K`
-    return `£${v.toLocaleString()}`
+    const prefix = isCurrency ? '£' : ''
+    if (v >= 1000000) return `${prefix}${(v / 1000000).toFixed(2)}M`
+    if (v >= 1000) return `${prefix}${(v / 1000).toFixed(1)}K`
+    return `${prefix}${v.toLocaleString()}`
+  }
+
+  const formatLabel = (v: any) => {
+    if (v === null || v === undefined) return ''
+    const n = Number(v)
+    if (isNaN(n)) return ''
+    if (isPercentage) return `${n.toFixed(1)}%`
+    const prefix = isCurrency ? '£' : ''
+    if (n >= 1000000) return `${prefix}${(n / 1000000).toFixed(1)}M`
+    if (n >= 1000) return `${prefix}${(n / 1000).toFixed(0)}K`
+    return `${prefix}${n.toLocaleString()}`
   }
 
   const CustomTooltip = ({ active, payload, label }: any) => {
@@ -153,7 +167,7 @@ const TrendsView: React.FC<TrendsViewProps> = ({ trendsByCountry, selectedCountr
       <div className="bg-slate-800 rounded-xl p-6 border border-slate-700" style={{ height: '420px' }}>
         <ResponsiveContainer width="100%" height="100%">
           {isPercentage ? (
-            <LineChart data={yoyData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+            <LineChart data={yoyData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
               <XAxis
                 dataKey="monthLabel"
@@ -179,7 +193,9 @@ const TrendsView: React.FC<TrendsViewProps> = ({ trendsByCountry, selectedCountr
                 activeDot={{ r: 6 }}
                 name="2025"
                 connectNulls={false}
-              />
+              >
+                <LabelList dataKey="y2025" position="top" formatter={formatLabel} style={{ fill: '#f59e0b', fontSize: 10, fontWeight: 600 }} />
+              </Line>
               <Line
                 type="monotone"
                 dataKey="y2026"
@@ -189,10 +205,12 @@ const TrendsView: React.FC<TrendsViewProps> = ({ trendsByCountry, selectedCountr
                 activeDot={{ r: 6 }}
                 name="2026"
                 connectNulls={false}
-              />
+              >
+                <LabelList dataKey="y2026" position="bottom" formatter={formatLabel} style={{ fill: '#3b82f6', fontSize: 10, fontWeight: 600 }} />
+              </Line>
             </LineChart>
           ) : (
-            <BarChart data={yoyData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+            <BarChart data={yoyData} margin={{ top: 25, right: 30, left: 20, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
               <XAxis
                 dataKey="monthLabel"
@@ -203,9 +221,10 @@ const TrendsView: React.FC<TrendsViewProps> = ({ trendsByCountry, selectedCountr
                 stroke="#64748b"
                 tick={{ fill: '#94a3b8', fontSize: 11 }}
                 tickFormatter={(v) => {
-                  if (v >= 1000000) return `${(v / 1000000).toFixed(1)}M`
-                  if (v >= 1000) return `${(v / 1000).toFixed(0)}K`
-                  return String(v)
+                  const prefix = isCurrency ? '£' : ''
+                  if (v >= 1000000) return `${prefix}${(v / 1000000).toFixed(1)}M`
+                  if (v >= 1000) return `${prefix}${(v / 1000).toFixed(0)}K`
+                  return `${prefix}${v}`
                 }}
               />
               <Tooltip content={<CustomTooltip />} />
@@ -218,13 +237,17 @@ const TrendsView: React.FC<TrendsViewProps> = ({ trendsByCountry, selectedCountr
                 name="2025"
                 radius={[4, 4, 0, 0]}
                 opacity={0.7}
-              />
+              >
+                <LabelList dataKey="y2025" position="top" formatter={formatLabel} style={{ fill: '#f59e0b', fontSize: 10, fontWeight: 600 }} />
+              </Bar>
               <Bar
                 dataKey="y2026"
                 fill="#3b82f6"
                 name="2026"
                 radius={[4, 4, 0, 0]}
-              />
+              >
+                <LabelList dataKey="y2026" position="top" formatter={formatLabel} style={{ fill: '#3b82f6', fontSize: 10, fontWeight: 600 }} />
+              </Bar>
             </BarChart>
           )}
         </ResponsiveContainer>
