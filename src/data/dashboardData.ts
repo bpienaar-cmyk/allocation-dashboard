@@ -7,30 +7,54 @@ import {
   DeallocationData,
 } from '../types/index';
 
-export const DATA_LAST_UPDATED = '2026-03-16T10:00:00Z';
+export const DATA_LAST_UPDATED = '2026-03-16T11:15:00Z';
 
 /**
- * Overview metrics (last 90 days, Completed Paid status)
+ * Overview metrics — MTD March 2026 (Completed Paid)
  */
 export const overviewData: OverviewData = {
-  jobs: 68095,
-  ttv: 16893067.98,
-  avgTtv: 248.08,
-  avFee: 8458876.01,
-  marginPct: 50.07,
-  allocSpend: 228120.55,
-  spendTtvPct: 1.35,
-  otdCancels: 1273,
-  cantSourceCount: 206,
-  cantSourceRate: (206 / 68095) * 100,
-  tpCancels: 6059,
-  deallocations: 12676,
-  otdDeallocations: 6053,
-  otdDealloPct: 7.80,
-  otdAllocSpend: 65533.33,
-  noSpendJobs: 3139,
-  noSpendPct: 51.02,
-  otdAllocatedJobs: 6153,
+  jobs: 12697,
+  ttv: 3013959.95,
+  avgTtv: 237.38,
+  avFee: 1497764.38,
+  marginPct: 49.69,
+  allocSpend: 44408.05,
+  spendTtvPct: 1.47,
+  otdCancels: 235,
+  cantSourceCount: 46,
+  cantSourceRate: (46 / 12697) * 100,
+  tpCancels: 1282,
+  deallocations: 2292,
+  otdDeallocations: 1065,
+  otdDealloPct: 6.91,
+  otdAllocSpend: 44408.05,
+  noSpendJobs: 538,
+  noSpendPct: 50.37,
+  otdAllocatedJobs: 1068,
+};
+
+/**
+ * Prior year comparison — MTD March 2025 (same day window)
+ */
+export const overviewDataPY: OverviewData = {
+  jobs: 13151,
+  ttv: 3013368.85,
+  avgTtv: 229.14,
+  avFee: 1323804.15,
+  marginPct: 43.93,
+  allocSpend: 21932.85,
+  spendTtvPct: 0.73,
+  otdCancels: 181,
+  cantSourceCount: 11,
+  cantSourceRate: (11 / 13151) * 100,
+  tpCancels: 1828,
+  deallocations: 2033,
+  otdDeallocations: 903,
+  otdDealloPct: 6.17,
+  otdAllocSpend: 21932.85,
+  noSpendJobs: 585,
+  noSpendPct: 62.77,
+  otdAllocatedJobs: 932,
 };
 
 /**

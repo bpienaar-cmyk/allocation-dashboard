@@ -10,6 +10,7 @@ import {
 } from '../types/index';
 import {
   overviewData,
+  overviewDataPY,
   trendsData,
   categoriesData,
   regionsData,
@@ -19,6 +20,7 @@ import {
 
 export interface UseAllocationDataResult {
   overview: OverviewData | null;
+  overviewPY: OverviewData | null;
   trends: TrendPoint[] | null;
   categories: CategoryRow[] | null;
   regions: RegionRow[] | null;
@@ -35,6 +37,7 @@ export interface UseAllocationDataResult {
  */
 export function useAllocationData(dateRange: DateRange): UseAllocationDataResult {
   const [overview, setOverview] = useState<OverviewData | null>(null);
+  const [overviewPY, setOverviewPY] = useState<OverviewData | null>(null);
   const [trends, setTrends] = useState<TrendPoint[] | null>(null);
   const [categories, setCategories] = useState<CategoryRow[] | null>(null);
   const [regions, setRegions] = useState<RegionRow[] | null>(null);
@@ -50,6 +53,7 @@ export function useAllocationData(dateRange: DateRange): UseAllocationDataResult
 
       // Use static data - no API calls needed
       setOverview(overviewData);
+      setOverviewPY(overviewDataPY);
       setTrends(trendsData);
       setCategories(categoriesData);
       setRegions(regionsData);
@@ -70,6 +74,7 @@ export function useAllocationData(dateRange: DateRange): UseAllocationDataResult
 
   return {
     overview,
+    overviewPY,
     trends,
     categories,
     regions,

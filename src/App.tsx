@@ -18,7 +18,7 @@ const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabId>('overview')
   const defaultDateRange = getDefaultDateRange()
 
-  const { overview, trends, categories, regions, otdMetrics, deallocations, loading, error, refetch } = useAllocationData(defaultDateRange)
+  const { overview, overviewPY, trends, categories, regions, otdMetrics, deallocations, loading, error, refetch } = useAllocationData(defaultDateRange)
 
   return (
     <ErrorBoundary>
@@ -34,7 +34,7 @@ const App: React.FC = () => {
 
             {!loading && !error && overview && (
               <div className="space-y-6">
-                {activeTab === 'overview' && <OverviewView data={overview} />}
+                {activeTab === 'overview' && overviewPY && <OverviewView data={overview} priorYear={overviewPY} />}
                 {activeTab === 'trends' && trends && <TrendsView data={trends} />}
                 {activeTab === 'category' && categories && <CategoryView data={categories} />}
                 {activeTab === 'regional' && regions && <RegionalView data={regions} />}
