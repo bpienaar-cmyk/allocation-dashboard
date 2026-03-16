@@ -85,80 +85,111 @@ const ComparisonCard: React.FC<ComparisonCardProps> = ({
   )
 }
 
-/** Build cumulative daily chart data for a metric */
+/** Build cumulative daily chart data for a metric, including forecast */
 function buildChartData(
   dailyCY: DailyRaw[],
   dailyPY: DailyRaw[],
   metric: MetricDef,
-): { day: number; dayLabel: string; cy: number; py: number }[] {
-  const maxDay = Math.max(dailyCY.length, dailyPY.length)
-  const result: { day: number; dayLabel: string; cy: number; py: number }[] = []
+): { day: number; dayLabel: string; cy: number | null; py: number; forecast: number | null }[] {
+  const totalDays = dailyPY.length // PY has full month (31 days)
+  const cyDays = dailyCY.length    // CY only has data through today
+  const result: { day: number; dayLabel: string; cy: number | null; py: number; forecast: number | null }[] = []
 
-  // For cumulative rates we need running totals
-  let cumCY = 0, cumPY = 0
-  // For derived rates we need cumulative numerator & denominator
-  let cumCYNum = 0, cumCYDen = 0, cumPYNum = 0, cumPYDen = 0
+  const getCumRate = (num: number, den: number) => den > 0 ? (num / den) * 100 : 0
 
-  for (let i = 0; i < maxDay; i++) {
-    const cy = dailyCY[i]
-    const py = dailyPY[i]
-    const day = i + 1
+  if (metric.isCumRate) {
+    const { numKey, denKey } = getRateKeys(metric.key)
+    let cumCYNum = 0, cumCYDen = 0, cumPYNum = 0, cumPYDen = 0
+    let fcNum = 0, fcDen = 0
+    let numRatio = 1, denRatio = 1
 
-    let cyVal = 0, pyVal = 0
+    for (let i = 0; i < totalDays; i++) {
+      const cy = i < cyDays ? dailyCY[i] : null
+      const py = dailyPY[i]
 
-    if (metric.key === 'marginPct') {
-      // Cumulative margin = cumAvFee / cumTtv * 100
-      if (cy) { cumCYNum += cy.avFee; cumCYDen += cy.ttv }
-      if (py) { cumPYNum += py.avFee; cumPYDen += py.ttv }
-      cyVal = cumCYDen > 0 ? (cumCYNum / cumCYDen) * 100 : 0
-      pyVal = cumPYDen > 0 ? (cumPYNum / cumPYDen) * 100 : 0
-    } else if (metric.key === 'spendTtvPct') {
-      // Cumulative spend/ttv = cumSpend / cumTtv * 100
-      if (cy) { cumCYNum += cy.allocSpend; cumCYDen += cy.ttv }
-      if (py) { cumPYNum += py.allocSpend; cumPYDen += py.ttv }
-      cyVal = cumCYDen > 0 ? (cumCYNum / cumCYDen) * 100 : 0
-      pyVal = cumPYDen > 0 ? (cumPYNum / cumPYDen) * 100 : 0
-    } else if (metric.key === 'cantSourceRate') {
-      // Cumulative cant source / cumulative jobs * 100
-      if (cy) { cumCYNum += cy.cantSource; cumCYDen += cy.jobs }
-      if (py) { cumPYNum += py.cantSource; cumPYDen += py.jobs }
-      cyVal = cumCYDen > 0 ? (cumCYNum / cumCYDen) * 100 : 0
-      pyVal = cumPYDen > 0 ? (cumPYNum / cumPYDen) * 100 : 0
-    } else if (metric.key === 'otdDealloPct') {
-      // Cumulative OTD deallo count (all statuses) / cumulative completed paid jobs * 100
-      if (cy) { cumCYNum += cy.otdDealloCount; cumCYDen += cy.jobs }
-      if (py) { cumPYNum += py.otdDealloCount; cumPYDen += py.jobs }
-      cyVal = cumCYDen > 0 ? (cumCYNum / cumCYDen) * 100 : 0
-      pyVal = cumPYDen > 0 ? (cumPYNum / cumPYDen) * 100 : 0
-    } else if (metric.key === 'tpCancelRate') {
-      // Cumulative TP cancels / cumulative jobs * 100
-      if (cy) { cumCYNum += cy.tpCancels; cumCYDen += cy.jobs }
-      if (py) { cumPYNum += py.tpCancels; cumPYDen += py.jobs }
-      cyVal = cumCYDen > 0 ? (cumCYNum / cumCYDen) * 100 : 0
-      pyVal = cumPYDen > 0 ? (cumPYNum / cumPYDen) * 100 : 0
-    } else if (metric.key === 'furnRoutedPct') {
-      // Cumulative furn routed / furn total * 100
-      if (cy) { cumCYNum += cy.furnRouted; cumCYDen += cy.furnTotal }
-      if (py) { cumPYNum += py.furnRouted; cumPYDen += py.furnTotal }
-      cyVal = cumCYDen > 0 ? (cumCYNum / cumCYDen) * 100 : 0
-      pyVal = cumPYDen > 0 ? (cumPYNum / cumPYDen) * 100 : 0
-    } else {
-      // Simple cumulative sum (jobs, ttv, avFee, allocSpend)
+      if (cy) { cumCYNum += getField(cy, numKey); cumCYDen += getField(cy, denKey) }
+      if (py) { cumPYNum += getField(py, numKey); cumPYDen += getField(py, denKey) }
+
+      const pyVal = getCumRate(cumPYNum, cumPYDen)
+      const cyVal = cy ? getCumRate(cumCYNum, cumCYDen) : null
+
+      let fcVal: number | null = null
+      if (i === cyDays - 1) {
+        // Capture ratios and start forecast from here
+        fcNum = cumCYNum
+        fcDen = cumCYDen
+        numRatio = cumPYNum > 0 ? cumCYNum / cumPYNum : 1
+        denRatio = cumPYDen > 0 ? cumCYDen / cumPYDen : 1
+        fcVal = cyVal
+      } else if (i > cyDays - 1 && py) {
+        // Project: add PY daily values scaled by ratios captured at cutoff
+        fcNum += getField(py, numKey) * numRatio
+        fcDen += getField(py, denKey) * denRatio
+        fcVal = getCumRate(fcNum, fcDen)
+      }
+
+      result.push({
+        day: i + 1,
+        dayLabel: `Mar ${i + 1}`,
+        cy: cyVal !== null ? Math.round(cyVal * 100) / 100 : null,
+        py: Math.round(pyVal * 100) / 100,
+        forecast: fcVal !== null ? Math.round(fcVal * 100) / 100 : null,
+      })
+    }
+  } else {
+    // Simple cumulative metrics (jobs, ttv, avFee, allocSpend)
+    let cumCY = 0, cumPY = 0
+    let fcCum = 0, ratio = 1
+
+    for (let i = 0; i < totalDays; i++) {
+      const cy = i < cyDays ? dailyCY[i] : null
+      const py = dailyPY[i]
+
       if (cy) cumCY += metric.dailyValue(cy)
       if (py) cumPY += metric.dailyValue(py)
-      cyVal = cumCY
-      pyVal = cumPY
-    }
 
-    result.push({
-      day,
-      dayLabel: `Mar ${day}`,
-      cy: Math.round(cyVal * 100) / 100,
-      py: Math.round(pyVal * 100) / 100,
-    })
+      const cyVal = cy ? cumCY : null
+
+      let fcVal: number | null = null
+      if (i === cyDays - 1) {
+        fcCum = cumCY
+        ratio = cumPY > 0 ? cumCY / cumPY : 1
+        fcVal = cumCY
+      } else if (i > cyDays - 1) {
+        const pyDayVal = py ? metric.dailyValue(py) : 0
+        fcCum += pyDayVal * ratio
+        fcVal = fcCum
+      }
+
+      result.push({
+        day: i + 1,
+        dayLabel: `Mar ${i + 1}`,
+        cy: cyVal !== null ? Math.round(cyVal * 100) / 100 : null,
+        py: Math.round(cumPY * 100) / 100,
+        forecast: fcVal !== null ? Math.round(fcVal * 100) / 100 : null,
+      })
+    }
   }
 
   return result
+}
+
+/** Get numerator/denominator field keys for rate metrics */
+function getRateKeys(key: MetricKey): { numKey: string; denKey: string } {
+  switch (key) {
+    case 'marginPct': return { numKey: 'avFee', denKey: 'ttv' }
+    case 'spendTtvPct': return { numKey: 'allocSpend', denKey: 'ttv' }
+    case 'cantSourceRate': return { numKey: 'cantSource', denKey: 'jobs' }
+    case 'otdDealloPct': return { numKey: 'otdDealloCount', denKey: 'jobs' }
+    case 'tpCancelRate': return { numKey: 'tpCancels', denKey: 'jobs' }
+    case 'furnRoutedPct': return { numKey: 'furnRouted', denKey: 'furnTotal' }
+    default: return { numKey: 'jobs', denKey: 'jobs' }
+  }
+}
+
+/** Get a field from DailyRaw by string key */
+function getField(d: DailyRaw, key: string): number {
+  return (d as unknown as Record<string, number>)[key] ?? 0
 }
 
 /** Build daily (non-cumulative) bar chart data — actual value per day */
@@ -313,7 +344,7 @@ const OverviewView: React.FC<OverviewViewProps> = ({ overviewByCountry, selected
         <div className="rounded-xl bg-slate-800 p-6 border border-slate-700">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-base font-semibold text-white">
-              {selectedMetricDef.title} — Daily Cumulative MTD
+              {selectedMetricDef.title} — Daily Cumulative MTD + Forecast
             </h3>
             <button
               onClick={() => setSelectedMetric(null)}
@@ -328,8 +359,8 @@ const OverviewView: React.FC<OverviewViewProps> = ({ overviewByCountry, selected
               <XAxis
                 dataKey="dayLabel"
                 stroke="#64748b"
-                tick={{ fill: '#94a3b8', fontSize: 11 }}
-                interval={1}
+                tick={{ fill: '#94a3b8', fontSize: 10 }}
+                interval={2}
               />
               <YAxis
                 stroke="#64748b"
@@ -351,12 +382,12 @@ const OverviewView: React.FC<OverviewViewProps> = ({ overviewByCountry, selected
                 }}
                 formatter={(value, name) => [
                   formatTooltipValue(Number(value)),
-                  name === 'cy' ? 'Mar 2026' : 'Mar 2025',
+                  name === 'cy' ? 'Mar 2026' : name === 'py' ? 'Mar 2025' : 'Forecast',
                 ]}
                 labelFormatter={(label) => label}
               />
               <Legend
-                formatter={(value) => (value === 'cy' ? 'Mar 2026' : 'Mar 2025')}
+                formatter={(value) => value === 'cy' ? 'Mar 2026' : value === 'py' ? 'Mar 2025' : 'Forecast'}
                 wrapperStyle={{ color: '#94a3b8', fontSize: '12px' }}
               />
               <Line
@@ -366,6 +397,7 @@ const OverviewView: React.FC<OverviewViewProps> = ({ overviewByCountry, selected
                 strokeWidth={2.5}
                 dot={{ r: 3, fill: '#3b82f6' }}
                 activeDot={{ r: 5 }}
+                connectNulls={false}
               />
               <Line
                 type="monotone"
@@ -375,6 +407,16 @@ const OverviewView: React.FC<OverviewViewProps> = ({ overviewByCountry, selected
                 strokeDasharray="6 3"
                 dot={{ r: 3, fill: '#f59e0b' }}
                 activeDot={{ r: 5 }}
+              />
+              <Line
+                type="monotone"
+                dataKey="forecast"
+                stroke="#22d3ee"
+                strokeWidth={2}
+                strokeDasharray="4 4"
+                dot={{ r: 2, fill: '#22d3ee' }}
+                activeDot={{ r: 4 }}
+                connectNulls={false}
               />
             </LineChart>
           </ResponsiveContainer>
