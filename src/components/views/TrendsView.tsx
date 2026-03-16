@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import {
-  ComposedChart,
+  LineChart,
   Line,
+  BarChart,
   Bar,
   XAxis,
   YAxis,
@@ -11,13 +12,14 @@ import {
   ResponsiveContainer,
 } from 'recharts'
 import { TrendPoint, Country } from '../../types'
-import { fmtMonth } from '../../utils/formatting'
 
 const COUNTRY_LABELS: Record<Country, string> = {
   uk: 'UK (V4 + AVB)',
   spain: 'Spain (V4)',
   france: 'France (V4)',
 }
+
+const MONTH_LABELS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
 interface TrendsViewProps {
   trendsByCountry: Record<Country, TrendPoint[]>
@@ -27,44 +29,79 @@ interface TrendsViewProps {
 
 type MetricType = 'jobs' | 'ttv' | 'allocSpend' | 'spendTtvPct' | 'marginPct' | 'otdDeallocations'
 
+interface YoYRow {
+  monthLabel: string
+  y2025: number | null
+  y2026: number | null
+}
+
 const TrendsView: React.FC<TrendsViewProps> = ({ trendsByCountry, selectedCountry, onCountryChange }) => {
   const [metric, setMetric] = useState<MetricType>('jobs')
 
   const data = trendsByCountry[selectedCountry]
   const countries: Country[] = ['uk', 'spain', 'france']
 
-  const metricConfig: Record<MetricType, { label: string; key: keyof TrendPoint; isPercentage: boolean; color: string }> = {
-    jobs: { label: 'Jobs', key: 'jobs', isPercentage: false, color: '#3b82f6' },
-    ttv: { label: 'Total TTV', key: 'ttv', isPercentage: false, color: '#10b981' },
-    allocSpend: { label: 'Allocation Spend', key: 'allocSpend', isPercentage: false, color: '#f59e0b' },
-    spendTtvPct: { label: 'Spend/TTV %', key: 'spendTtvPct', isPercentage: true, color: '#8b5cf6' },
-    marginPct: { label: 'Margin %', key: 'marginPct', isPercentage: true, color: '#06b6d4' },
-    otdDeallocations: { label: 'OTD Deallocations', key: 'otdDeallocations', isPercentage: false, color: '#ef4444' },
+  const metricConfig: Record<MetricType, { label: string; key: keyof TrendPoint; isPercentage: boolean }> = {
+    jobs: { label: 'Jobs', key: 'jobs', isPercentage: false },
+    ttv: { label: 'Total TTV', key: 'ttv', isPercentage: false },
+    allocSpend: { label: 'Allocation Spend', key: 'allocSpend', isPercentage: false },
+    spendTtvPct: { label: 'Spend/TTV %', key: 'spendTtvPct', isPercentage: true },
+    marginPct: { label: 'Margin %', key: 'marginPct', isPercentage: true },
+    otdDeallocations: { label: 'OTD Deallocations', key: 'otdDeallocations', isPercentage: false },
   }
 
   const config = metricConfig[metric]
   const isPercentage = config.isPercentage
 
-  const formattedData = data.map(point => ({
-    ...point,
-    monthLabel: fmtMonth(point.month),
-  }))
+  // Build YoY comparison data: Jan-Dec with 2025 and 2026 values
+  const yoyData = useMemo<YoYRow[]>(() => {
+    // Index data by year+month
+    const byYearMonth: Record<string, number> = {}
+    data.forEach((point) => {
+      const d = new Date(point.month)
+      const year = d.getFullYear()
+      const month = d.getMonth() // 0-indexed
+      const val = point[config.key] as number
+      byYearMonth[`${year}-${month}`] = val
+    })
 
-  const CustomTooltip = ({ active, payload }: any) => {
+    return MONTH_LABELS.map((label, idx) => {
+      const v2025 = byYearMonth[`2025-${idx}`]
+      const v2026 = byYearMonth[`2026-${idx}`]
+      return {
+        monthLabel: label,
+        y2025: v2025 !== undefined ? v2025 : null,
+        y2026: v2026 !== undefined ? v2026 : null,
+      }
+    })
+  }, [data, config.key])
+
+  const formatValue = (v: number) => {
+    if (isPercentage) return `${v.toFixed(2)}%`
+    if (v >= 1000000) return `£${(v / 1000000).toFixed(2)}M`
+    if (v >= 1000) return `£${(v / 1000).toFixed(1)}K`
+    return `£${v.toLocaleString()}`
+  }
+
+  const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
-      const value = payload[0].value
-      const formatted = isPercentage ? `${value.toFixed(2)}%` : `£${value.toLocaleString()}`
       return (
         <div className="bg-slate-800 border border-slate-700 rounded-lg p-3 text-white text-sm">
-          <p className="font-semibold">{payload[0].payload.monthLabel}</p>
-          <p className="text-blue-400">{config.label}: {formatted}</p>
+          <p className="font-semibold mb-1">{label}</p>
+          {payload.map((entry: any) => {
+            if (entry.value === null || entry.value === undefined) return null
+            return (
+              <p key={entry.dataKey} style={{ color: entry.color }}>
+                {entry.name}: {formatValue(Number(entry.value))}
+              </p>
+            )
+          })}
         </div>
       )
     }
     return null
   }
 
-  // Check if country has meaningful data
   const hasData = data.some(d => d.jobs > 0)
 
   return (
@@ -88,7 +125,7 @@ const TrendsView: React.FC<TrendsViewProps> = ({ trendsByCountry, selectedCountr
 
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold text-white">
-          14-Month Trends — {COUNTRY_LABELS[selectedCountry]}
+          2025 vs 2026 — {COUNTRY_LABELS[selectedCountry]}
         </h2>
         <div className="flex items-center gap-3">
           <label className="text-slate-400 text-sm font-medium">Metric:</label>
@@ -109,53 +146,87 @@ const TrendsView: React.FC<TrendsViewProps> = ({ trendsByCountry, selectedCountr
 
       {!hasData && (
         <div className="rounded-lg bg-amber-900/30 border border-amber-700/50 px-4 py-2 text-sm text-amber-300">
-          No historical data available for {COUNTRY_LABELS[selectedCountry]} in most of the 14-month window.
+          No historical data available for {COUNTRY_LABELS[selectedCountry]}.
         </div>
       )}
 
       <div className="bg-slate-800 rounded-xl p-6 border border-slate-700" style={{ height: '420px' }}>
         <ResponsiveContainer width="100%" height="100%">
-          <ComposedChart data={formattedData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-            <XAxis
-              dataKey="monthLabel"
-              stroke="#64748b"
-              tick={{ fill: '#94a3b8', fontSize: 11 }}
-            />
-            <YAxis
-              stroke="#64748b"
-              tick={{ fill: '#94a3b8', fontSize: 11 }}
-              tickFormatter={(v) => {
-                if (isPercentage) return `${v.toFixed(1)}%`
-                if (v >= 1000000) return `${(v / 1000000).toFixed(1)}M`
-                if (v >= 1000) return `${(v / 1000).toFixed(0)}K`
-                return String(v)
-              }}
-            />
-            <Tooltip content={<CustomTooltip />} />
-            <Legend
-              wrapperStyle={{ paddingTop: '20px', color: '#94a3b8', fontSize: '12px' }}
-              iconType={isPercentage ? 'line' : 'square'}
-            />
-            {isPercentage ? (
+          {isPercentage ? (
+            <LineChart data={yoyData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+              <XAxis
+                dataKey="monthLabel"
+                stroke="#64748b"
+                tick={{ fill: '#94a3b8', fontSize: 12 }}
+              />
+              <YAxis
+                stroke="#64748b"
+                tick={{ fill: '#94a3b8', fontSize: 11 }}
+                tickFormatter={(v) => `${v.toFixed(1)}%`}
+              />
+              <Tooltip content={<CustomTooltip />} />
+              <Legend
+                wrapperStyle={{ paddingTop: '16px', color: '#94a3b8', fontSize: '12px' }}
+              />
               <Line
                 type="monotone"
-                dataKey={config.key}
-                stroke={config.color}
-                dot={{ fill: config.color, r: 4 }}
+                dataKey="y2025"
+                stroke="#f59e0b"
+                strokeWidth={2}
+                strokeDasharray="6 3"
+                dot={{ r: 4, fill: '#f59e0b' }}
                 activeDot={{ r: 6 }}
+                name="2025"
+                connectNulls={false}
+              />
+              <Line
+                type="monotone"
+                dataKey="y2026"
+                stroke="#3b82f6"
                 strokeWidth={2.5}
-                name={config.label}
+                dot={{ r: 4, fill: '#3b82f6' }}
+                activeDot={{ r: 6 }}
+                name="2026"
+                connectNulls={false}
               />
-            ) : (
+            </LineChart>
+          ) : (
+            <BarChart data={yoyData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+              <XAxis
+                dataKey="monthLabel"
+                stroke="#64748b"
+                tick={{ fill: '#94a3b8', fontSize: 12 }}
+              />
+              <YAxis
+                stroke="#64748b"
+                tick={{ fill: '#94a3b8', fontSize: 11 }}
+                tickFormatter={(v) => {
+                  if (v >= 1000000) return `${(v / 1000000).toFixed(1)}M`
+                  if (v >= 1000) return `${(v / 1000).toFixed(0)}K`
+                  return String(v)
+                }}
+              />
+              <Tooltip content={<CustomTooltip />} />
+              <Legend
+                wrapperStyle={{ paddingTop: '16px', color: '#94a3b8', fontSize: '12px' }}
+              />
               <Bar
-                dataKey={config.key}
-                fill={config.color}
-                name={config.label}
-                radius={[6, 6, 0, 0]}
+                dataKey="y2025"
+                fill="#f59e0b"
+                name="2025"
+                radius={[4, 4, 0, 0]}
+                opacity={0.7}
               />
-            )}
-          </ComposedChart>
+              <Bar
+                dataKey="y2026"
+                fill="#3b82f6"
+                name="2026"
+                radius={[4, 4, 0, 0]}
+              />
+            </BarChart>
+          )}
         </ResponsiveContainer>
       </div>
     </div>
