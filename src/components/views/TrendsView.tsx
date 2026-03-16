@@ -31,6 +31,7 @@ const CATEGORY_LABELS: Record<CategoryFilter, string> = {
   car: 'Cars',
   motorbike: 'Bikes',
   piano: 'Pianos',
+  journey: 'Journeys',
 }
 
 interface TrendsViewProps {
@@ -56,7 +57,7 @@ const TrendsView: React.FC<TrendsViewProps> = ({ trendsByCountry, trendsByCatego
     ? trendsByCountry[selectedCountry]
     : (trendsByCategoryAndCountry[selectedCountry]?.[selectedCategory] ?? [])
   const countries: Country[] = ['uk', 'spain', 'france']
-  const categoryFilters: CategoryFilter[] = ['all', 'furniture', 'homeRemoval', 'car', 'motorbike', 'piano']
+  const categoryFilters: CategoryFilter[] = ['all', 'furniture', 'homeRemoval', 'car', 'motorbike', 'piano', 'journey']
 
   const metricConfig: Record<MetricType, { label: string; key: keyof TrendPoint; isPercentage: boolean; isCurrency: boolean; compute?: (p: TrendPoint) => number }> = {
     jobs: { label: 'Jobs', key: 'jobs', isPercentage: false, isCurrency: false },

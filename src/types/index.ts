@@ -86,7 +86,7 @@ export interface DailyRaw {
 }
 
 export type Country = 'uk' | 'spain' | 'france';
-export type CategoryType = 'furniture' | 'homeRemoval' | 'car' | 'motorbike' | 'piano';
+export type CategoryType = 'furniture' | 'homeRemoval' | 'car' | 'motorbike' | 'piano' | 'journey';
 
 export interface CountryOverview {
   current: OverviewData;
