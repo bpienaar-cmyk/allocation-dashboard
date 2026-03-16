@@ -71,11 +71,26 @@ export interface DeallocationData {
   otdAllocSpend: number;
 }
 
+export interface DailyRaw {
+  day: number;
+  jobs: number;
+  ttv: number;
+  avFee: number;
+  allocSpend: number;
+  cantSource: number;
+  tpCancels: number;
+  otdDealloJobs: number;
+  furnRouted: number;
+  furnTotal: number;
+}
+
 export type Country = 'uk' | 'spain' | 'france';
 
 export interface CountryOverview {
   current: OverviewData;
   priorYear: OverviewData;
+  dailyCY: DailyRaw[];
+  dailyPY: DailyRaw[];
 }
 
 export type TabId = 'overview' | 'trends' | 'category' | 'regional' | 'otd' | 'deallocations';
