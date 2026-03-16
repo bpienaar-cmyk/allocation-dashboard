@@ -12,7 +12,7 @@ import {
   ResponsiveContainer,
   LabelList,
 } from 'recharts'
-import { TrendPoint, Country } from '../../types'
+import { TrendPoint, Country, CategoryType } from '../../types'
 
 const COUNTRY_LABELS: Record<Country, string> = {
   uk: 'UK (V4 + AVB)',
@@ -22,8 +22,20 @@ const COUNTRY_LABELS: Record<Country, string> = {
 
 const MONTH_LABELS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
+type CategoryFilter = 'all' | CategoryType
+
+const CATEGORY_LABELS: Record<CategoryFilter, string> = {
+  all: 'All',
+  furniture: 'Furniture',
+  homeRemoval: 'Removals',
+  car: 'Cars',
+  motorbike: 'Bikes',
+  piano: 'Pianos',
+}
+
 interface TrendsViewProps {
   trendsByCountry: Record<Country, TrendPoint[]>
+  trendsByCategoryAndCountry: Record<Country, Record<CategoryType, TrendPoint[]>>
   selectedCountry: Country
   onCountryChange: (country: Country) => void
 }
@@ -36,11 +48,15 @@ interface YoYRow {
   y2026: number | null
 }
 
-const TrendsView: React.FC<TrendsViewProps> = ({ trendsByCountry, selectedCountry, onCountryChange }) => {
+const TrendsView: React.FC<TrendsViewProps> = ({ trendsByCountry, trendsByCategoryAndCountry, selectedCountry, onCountryChange }) => {
   const [metric, setMetric] = useState<MetricType>('jobs')
+  const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>('all')
 
-  const data = trendsByCountry[selectedCountry]
+  const data = selectedCategory === 'all'
+    ? trendsByCountry[selectedCountry]
+    : (trendsByCategoryAndCountry[selectedCountry]?.[selectedCategory] ?? [])
   const countries: Country[] = ['uk', 'spain', 'france']
+  const categoryFilters: CategoryFilter[] = ['all', 'furniture', 'homeRemoval', 'car', 'motorbike', 'piano']
 
   const metricConfig: Record<MetricType, { label: string; key: keyof TrendPoint; isPercentage: boolean; isCurrency: boolean; compute?: (p: TrendPoint) => number }> = {
     jobs: { label: 'Jobs', key: 'jobs', isPercentage: false, isCurrency: false },
@@ -133,6 +149,24 @@ const TrendsView: React.FC<TrendsViewProps> = ({ trendsByCountry, selectedCountr
             }`}
           >
             {COUNTRY_LABELS[c]}
+          </button>
+        ))}
+      </div>
+
+      {/* Category toggle */}
+      <div className="flex items-center gap-2 flex-wrap">
+        <span className="text-slate-400 text-sm font-medium mr-1">Category:</span>
+        {categoryFilters.map((cat) => (
+          <button
+            key={cat}
+            onClick={() => setSelectedCategory(cat)}
+            className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
+              selectedCategory === cat
+                ? 'bg-emerald-600 text-white'
+                : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+            }`}
+          >
+            {CATEGORY_LABELS[cat]}
           </button>
         ))}
       </div>
