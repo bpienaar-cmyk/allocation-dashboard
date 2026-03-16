@@ -79,7 +79,7 @@ export interface DailyRaw {
   allocSpend: number;
   cantSource: number;
   tpCancels: number;
-  otdDealloJobs: number;
+  otdDealloCount: number;
   furnRouted: number;
   furnTotal: number;
 }

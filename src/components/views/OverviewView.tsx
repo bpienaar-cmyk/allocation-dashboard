@@ -125,9 +125,9 @@ function buildChartData(
       cyVal = cumCYDen > 0 ? (cumCYNum / cumCYDen) * 100 : 0
       pyVal = cumPYDen > 0 ? (cumPYNum / cumPYDen) * 100 : 0
     } else if (metric.key === 'otdDealloPct') {
-      // Cumulative OTD deallo jobs / cumulative jobs * 100
-      if (cy) { cumCYNum += cy.otdDealloJobs; cumCYDen += cy.jobs }
-      if (py) { cumPYNum += py.otdDealloJobs; cumPYDen += py.jobs }
+      // Cumulative OTD deallo count (all statuses) / cumulative completed paid jobs * 100
+      if (cy) { cumCYNum += cy.otdDealloCount; cumCYDen += cy.jobs }
+      if (py) { cumPYNum += py.otdDealloCount; cumPYDen += py.jobs }
       cyVal = cumCYDen > 0 ? (cumCYNum / cumCYDen) * 100 : 0
       pyVal = cumPYDen > 0 ? (cumPYNum / cumPYDen) * 100 : 0
     } else if (metric.key === 'tpCancelRate') {
