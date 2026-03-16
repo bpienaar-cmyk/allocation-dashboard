@@ -178,6 +178,7 @@ const TrendsView: React.FC<TrendsViewProps> = ({ trendsByCountry, selectedCountr
                 stroke="#64748b"
                 tick={{ fill: '#94a3b8', fontSize: 11 }}
                 tickFormatter={(v) => `${v.toFixed(1)}%`}
+                domain={metric === 'marginPct' ? [40, 'auto'] : ['auto', 'auto']}
               />
               <Tooltip content={<CustomTooltip />} />
               <Legend
