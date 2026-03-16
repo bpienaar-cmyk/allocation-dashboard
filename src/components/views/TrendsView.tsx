@@ -65,7 +65,7 @@ const TrendsView: React.FC<TrendsViewProps> = ({ trendsByCountry, trendsByCatego
     spendTtvPct: { label: 'Spend/TTV %', key: 'spendTtvPct', isPercentage: true, isCurrency: false },
     marginPct: { label: 'Margin %', key: 'marginPct', isPercentage: true, isCurrency: false },
     otdDealloPct: { label: 'OTD Deallocation %', key: 'otdDeallocations', isPercentage: true, isCurrency: false, compute: (p) => p.jobs > 0 ? (p.otdDeallocations / p.jobs) * 100 : 0 },
-    adminAllocD1OtdPct: { label: 'Admin Allocation D-1 & OTD %', key: 'adminAllocD1Otd', isPercentage: true, isCurrency: false, compute: (p) => p.jobs > 0 ? (p.adminAllocD1Otd / p.jobs) * 100 : 0 },
+    adminAllocD1OtdPct: { label: 'Admin Allocation D-1 & OTD', key: 'adminAllocD1Otd', isPercentage: false, isCurrency: false },
   }
 
   const config = metricConfig[metric]
@@ -189,7 +189,7 @@ const TrendsView: React.FC<TrendsViewProps> = ({ trendsByCountry, trendsByCatego
             <option value="spendTtvPct">Spend/TTV %</option>
             <option value="marginPct">Margin %</option>
             <option value="otdDealloPct">OTD Deallocation %</option>
-            <option value="adminAllocD1OtdPct">Admin Allocation D-1 & OTD %</option>
+            <option value="adminAllocD1OtdPct">Admin Allocation D-1 & OTD</option>
           </select>
         </div>
       </div>
