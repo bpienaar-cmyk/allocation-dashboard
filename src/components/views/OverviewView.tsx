@@ -91,7 +91,7 @@ function buildChartData(
   dailyPY: DailyRaw[],
   metric: MetricDef,
 ): { day: number; dayLabel: string; cy: number; py: number }[] {
-  const maxDay = Math.max(dailyCY.length, dailyPY.length)
+  const maxDay = dailyCY.length
   const result: { day: number; dayLabel: string; cy: number; py: number }[] = []
 
   // For cumulative rates we need running totals
@@ -161,7 +161,7 @@ function buildDailyBarData(
   dailyPY: DailyRaw[],
   metric: MetricDef,
 ): { day: number; dayLabel: string; cy: number; py: number }[] {
-  const maxDay = Math.max(dailyCY.length, dailyPY.length)
+  const maxDay = dailyCY.length
   const result: { day: number; dayLabel: string; cy: number; py: number }[] = []
 
   for (let i = 0; i < maxDay; i++) {
