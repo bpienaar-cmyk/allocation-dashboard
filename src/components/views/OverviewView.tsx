@@ -76,7 +76,7 @@ const OverviewView: React.FC<OverviewViewProps> = ({ overviewByCountry, selected
     { title: 'Spend / TTV %', current: data.spendTtvPct, prior: priorYear.spendTtvPct, fmt: fmtP, type: 'pp' as const, invert: true },
     { title: 'Cant Source Rate', current: data.cantSourceRate, prior: priorYear.cantSourceRate, fmt: fmtP, type: 'pp' as const, invert: true },
     { title: 'OTD Deallo %', current: data.otdDealloPct, prior: priorYear.otdDealloPct, fmt: fmtP, type: 'pp' as const, invert: true },
-    { title: 'No-Spend Rate', current: data.noSpendPct, prior: priorYear.noSpendPct, fmt: fmtP, type: 'pp' as const },
+    { title: 'TP Cancel Rate', current: data.tpCancelRate, prior: priorYear.tpCancelRate, fmt: fmtP, type: 'pp' as const, invert: true },
   ]
 
   const countries: Country[] = ['uk', 'spain', 'france']
