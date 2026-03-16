@@ -85,6 +85,18 @@ export interface DailyRaw {
   furnTotal: number;
 }
 
+export interface CategoryBreakdownRow {
+  month: string;
+  category: string;
+  nuts1: string;
+  jobs: number;
+  ttv: number;
+  avFee: number;
+  marginPct: number;
+  allocSpend: number;
+  spendTtvPct: number;
+}
+
 export type Country = 'uk' | 'spain' | 'france';
 export type CategoryType = 'furniture' | 'homeRemoval' | 'car' | 'motorbike' | 'piano' | 'journey';
 

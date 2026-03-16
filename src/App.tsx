@@ -12,7 +12,7 @@ import OTDMetricsView from './components/views/OTDMetricsView'
 import DeallocationView from './components/views/DeallocationView'
 import { useAllocationData } from './hooks/useAllocationData'
 import { getDefaultDateRange } from './utils/dateHelpers'
-import { trendsByCategoryAndCountry } from './data/dashboardData'
+import { trendsByCategoryAndCountry, categoryBreakdownByCountry } from './data/dashboardData'
 import { TabId, Country } from './types'
 
 const App: React.FC = () => {
@@ -51,7 +51,13 @@ const App: React.FC = () => {
                     onCountryChange={setSelectedCountry}
                   />
                 )}
-                {activeTab === 'category' && categories && <CategoryView data={categories} />}
+                {activeTab === 'category' && (
+                  <CategoryView
+                    breakdownByCountry={categoryBreakdownByCountry}
+                    selectedCountry={selectedCountry}
+                    onCountryChange={setSelectedCountry}
+                  />
+                )}
                 {activeTab === 'regional' && regions && <RegionalView data={regions} />}
                 {activeTab === 'otd' && otdMetrics && <OTDMetricsView data={otdMetrics} />}
                 {activeTab === 'deallocations' && deallocations && <DeallocationView data={deallocations} />}
