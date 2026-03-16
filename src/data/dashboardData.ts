@@ -466,6 +466,7 @@ export const regionsData: RegionRow[] = [
  */
 export const trendsByCountry: Record<Country, TrendPoint[]> = {
   uk: [
+    { month: '2025-01-01', jobs: 20526, ttv: 4836257.29, avFee: 2172410.51, marginPct: 44.93, allocSpend: 31650.99, spendTtvPct: 0.65, otdCancels: 1579, tpCancels: 0, cantSourceCount: 0, otdDeallocations: 1696, totalRecords: 22692 },
     { month: '2025-02-01', jobs: 22406, ttv: 5270743.95, avFee: 2338847.87, marginPct: 44.37, allocSpend: 34998.08, spendTtvPct: 0.66, otdCancels: 1865, tpCancels: 1, cantSourceCount: 0, otdDeallocations: 1759, totalRecords: 24907 },
     { month: '2025-03-01', jobs: 27120, ttv: 7588922.80, avFee: 3504784.82, marginPct: 46.18, allocSpend: 99816.91, spendTtvPct: 1.32, otdCancels: 2572, tpCancels: 1, cantSourceCount: 0, otdDeallocations: 1853, totalRecords: 30448 },
     { month: '2025-04-01', jobs: 24830, ttv: 5504136.86, avFee: 2400781.37, marginPct: 43.62, allocSpend: 42021.45, spendTtvPct: 0.76, otdCancels: 1916, tpCancels: 1, cantSourceCount: 0, otdDeallocations: 1945, totalRecords: 27400 },
@@ -482,6 +483,7 @@ export const trendsByCountry: Record<Country, TrendPoint[]> = {
     { month: '2026-03-01', jobs: 12894, ttv: 3042491.95, avFee: 1510625.95, marginPct: 49.65, allocSpend: 44901.44, spendTtvPct: 1.48, otdCancels: 1353, tpCancels: 0, cantSourceCount: 0, otdDeallocations: 1124, totalRecords: 20566 },
   ],
   spain: [
+    { month: '2025-01-01', jobs: 113, ttv: 57936.35, avFee: 17181.88, marginPct: 29.66, allocSpend: 475.65, spendTtvPct: 0.82, otdCancels: 34, tpCancels: 0, cantSourceCount: 0, otdDeallocations: 4, totalRecords: 156 },
     { month: '2025-02-01', jobs: 351, ttv: 200920.37, avFee: 54451.90, marginPct: 27.10, allocSpend: 4949.32, spendTtvPct: 2.46, otdCancels: 56, tpCancels: 0, cantSourceCount: 0, otdDeallocations: 13, totalRecords: 460 },
     { month: '2025-03-01', jobs: 543, ttv: 304190.75, avFee: 72720.14, marginPct: 23.91, allocSpend: 14512.31, spendTtvPct: 4.77, otdCancels: 133, tpCancels: 0, cantSourceCount: 0, otdDeallocations: 11, totalRecords: 749 },
     { month: '2025-04-01', jobs: 807, ttv: 362669.26, avFee: 59523.37, marginPct: 16.41, allocSpend: 40648.13, spendTtvPct: 11.21, otdCancels: 202, tpCancels: 0, cantSourceCount: 0, otdDeallocations: 16, totalRecords: 1090 },
@@ -498,6 +500,7 @@ export const trendsByCountry: Record<Country, TrendPoint[]> = {
     { month: '2026-03-01', jobs: 501, ttv: 238862.17, avFee: 100373.14, marginPct: 42.02, allocSpend: 5952.31, spendTtvPct: 2.49, otdCancels: 90, tpCancels: 0, cantSourceCount: 0, otdDeallocations: 18, totalRecords: 1054 },
   ],
   france: [
+    { month: '2025-01-01', jobs: 0, ttv: 0, avFee: 0, marginPct: 0, allocSpend: 0, spendTtvPct: 0, otdCancels: 0, tpCancels: 0, cantSourceCount: 0, otdDeallocations: 0, totalRecords: 0 },
     { month: '2025-02-01', jobs: 0, ttv: 0, avFee: 0, marginPct: 0, allocSpend: 0, spendTtvPct: 0, otdCancels: 0, tpCancels: 0, cantSourceCount: 0, otdDeallocations: 0, totalRecords: 0 },
     { month: '2025-03-01', jobs: 0, ttv: 0, avFee: 0, marginPct: 0, allocSpend: 0, spendTtvPct: 0, otdCancels: 0, tpCancels: 0, cantSourceCount: 0, otdDeallocations: 0, totalRecords: 0 },
     { month: '2025-04-01', jobs: 0, ttv: 0, avFee: 0, marginPct: 0, allocSpend: 0, spendTtvPct: 0, otdCancels: 0, tpCancels: 0, cantSourceCount: 0, otdDeallocations: 0, totalRecords: 0 },
