@@ -69,7 +69,7 @@ const OverviewView: React.FC<OverviewViewProps> = ({ overviewByCountry, selected
   const metrics = [
     { title: 'Completed Jobs', current: data.jobs, prior: priorYear.jobs, fmt: fmtN, type: 'yoy' as const },
     { title: 'Total TTV', current: data.ttv, prior: priorYear.ttv, fmt: fmtGBP, type: 'yoy' as const },
-    { title: 'Avg TTV / Job', current: data.avgTtv, prior: priorYear.avgTtv, fmt: fmtGBP, type: 'yoy' as const },
+    { title: 'Furn Routed %', current: data.furnRoutedPct, prior: priorYear.furnRoutedPct, fmt: fmtP, type: 'pp' as const },
     { title: 'AV Fee', current: data.avFee, prior: priorYear.avFee, fmt: fmtGBP, type: 'yoy' as const },
     { title: 'Margin %', current: data.marginPct, prior: priorYear.marginPct, fmt: fmtP, type: 'pp' as const },
     { title: 'Allocation Spend', current: data.allocSpend, prior: priorYear.allocSpend, fmt: fmtGBP, type: 'yoy' as const, invert: true },

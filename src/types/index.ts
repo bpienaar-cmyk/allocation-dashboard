@@ -17,6 +17,7 @@ export interface OverviewData {
   noSpendJobs: number;
   noSpendPct: number;
   otdAllocatedJobs: number;
+  furnRoutedPct: number;
 }
 
 export interface TrendPoint {

@@ -35,6 +35,7 @@ export const overviewByCountry: Record<Country, CountryOverview> = {
       noSpendJobs: 538,
       noSpendPct: 50.37,
       otdAllocatedJobs: 1068,
+      furnRoutedPct: 78.50,
     },
     priorYear: {
       jobs: 13151,
@@ -55,6 +56,7 @@ export const overviewByCountry: Record<Country, CountryOverview> = {
       noSpendJobs: 585,
       noSpendPct: 62.77,
       otdAllocatedJobs: 932,
+      furnRoutedPct: 83.31,
     },
   },
   spain: {
@@ -77,6 +79,7 @@ export const overviewByCountry: Record<Country, CountryOverview> = {
       noSpendJobs: 11,
       noSpendPct: 45.83,
       otdAllocatedJobs: 24,
+      furnRoutedPct: 31.94,
     },
     priorYear: {
       jobs: 219,
@@ -97,6 +100,7 @@ export const overviewByCountry: Record<Country, CountryOverview> = {
       noSpendJobs: 3,
       noSpendPct: 50.00,
       otdAllocatedJobs: 6,
+      furnRoutedPct: 0,
     },
   },
   france: {
@@ -119,6 +123,7 @@ export const overviewByCountry: Record<Country, CountryOverview> = {
       noSpendJobs: 2,
       noSpendPct: 100.00,
       otdAllocatedJobs: 2,
+      furnRoutedPct: 45.57,
     },
     priorYear: {
       jobs: 0,
@@ -139,6 +144,7 @@ export const overviewByCountry: Record<Country, CountryOverview> = {
       noSpendJobs: 0,
       noSpendPct: 0,
       otdAllocatedJobs: 0,
+      furnRoutedPct: 0,
     },
   },
 };
