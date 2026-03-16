@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react'
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import { Country, CountryOverview, DailyRaw } from '../../types'
 import { fmtGBP, fmtN, fmtP } from '../../utils/formatting'
 
@@ -161,6 +161,56 @@ function buildChartData(
   return result
 }
 
+/** Build daily (non-cumulative) bar chart data — actual value per day */
+function buildDailyBarData(
+  dailyCY: DailyRaw[],
+  dailyPY: DailyRaw[],
+  metric: MetricDef,
+): { day: number; dayLabel: string; cy: number; py: number }[] {
+  const maxDay = Math.max(dailyCY.length, dailyPY.length)
+  const result: { day: number; dayLabel: string; cy: number; py: number }[] = []
+
+  for (let i = 0; i < maxDay; i++) {
+    const cy = dailyCY[i]
+    const py = dailyPY[i]
+    const day = i + 1
+    let cyVal = 0, pyVal = 0
+
+    if (metric.key === 'marginPct') {
+      cyVal = cy && cy.ttv > 0 ? (cy.avFee / cy.ttv) * 100 : 0
+      pyVal = py && py.ttv > 0 ? (py.avFee / py.ttv) * 100 : 0
+    } else if (metric.key === 'spendTtvPct') {
+      cyVal = cy && cy.ttv > 0 ? (cy.allocSpend / cy.ttv) * 100 : 0
+      pyVal = py && py.ttv > 0 ? (py.allocSpend / py.ttv) * 100 : 0
+    } else if (metric.key === 'cantSourceRate') {
+      cyVal = cy && cy.jobs > 0 ? (cy.cantSource / cy.jobs) * 100 : 0
+      pyVal = py && py.jobs > 0 ? (py.cantSource / py.jobs) * 100 : 0
+    } else if (metric.key === 'otdDealloPct') {
+      cyVal = cy && cy.jobs > 0 ? (cy.otdDealloCount / cy.jobs) * 100 : 0
+      pyVal = py && py.jobs > 0 ? (py.otdDealloCount / py.jobs) * 100 : 0
+    } else if (metric.key === 'tpCancelRate') {
+      cyVal = cy && cy.jobs > 0 ? (cy.tpCancels / cy.jobs) * 100 : 0
+      pyVal = py && py.jobs > 0 ? (py.tpCancels / py.jobs) * 100 : 0
+    } else if (metric.key === 'furnRoutedPct') {
+      cyVal = cy && cy.furnTotal > 0 ? (cy.furnRouted / cy.furnTotal) * 100 : 0
+      pyVal = py && py.furnTotal > 0 ? (py.furnRouted / py.furnTotal) * 100 : 0
+    } else {
+      // Simple daily value (jobs, ttv, avFee, allocSpend)
+      cyVal = cy ? metric.dailyValue(cy) : 0
+      pyVal = py ? metric.dailyValue(py) : 0
+    }
+
+    result.push({
+      day,
+      dayLabel: `${day}`,
+      cy: Math.round(cyVal * 100) / 100,
+      py: Math.round(pyVal * 100) / 100,
+    })
+  }
+
+  return result
+}
+
 const METRICS: MetricDef[] = [
   { title: 'Completed Jobs', key: 'jobs', fmt: fmtN, type: 'yoy', dailyValue: d => d.jobs },
   { title: 'Total TTV', key: 'ttv', fmt: fmtGBP, type: 'yoy', dailyValue: d => d.ttv },
@@ -184,6 +234,13 @@ const OverviewView: React.FC<OverviewViewProps> = ({ overviewByCountry, selected
     const metric = METRICS.find(m => m.key === selectedMetric)
     if (!metric) return []
     return buildChartData(countryData.dailyCY, countryData.dailyPY, metric)
+  }, [selectedMetric, countryData])
+
+  const dailyBarData = useMemo(() => {
+    if (!selectedMetric) return []
+    const metric = METRICS.find(m => m.key === selectedMetric)
+    if (!metric) return []
+    return buildDailyBarData(countryData.dailyCY, countryData.dailyPY, metric)
   }, [selectedMetric, countryData])
 
   const selectedMetricDef = METRICS.find(m => m.key === selectedMetric)
@@ -252,7 +309,7 @@ const OverviewView: React.FC<OverviewViewProps> = ({ overviewByCountry, selected
       </div>
 
       {/* Daily MTD Trend Chart */}
-      {selectedMetric && selectedMetricDef && chartData.length > 0 && (
+      {selectedMetric && selectedMetricDef && chartData.length > 0 && (<>
         <div className="rounded-xl bg-slate-800 p-6 border border-slate-700">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-base font-semibold text-white">
@@ -321,11 +378,58 @@ const OverviewView: React.FC<OverviewViewProps> = ({ overviewByCountry, selected
               />
             </LineChart>
           </ResponsiveContainer>
+        </div>
+
+        {/* Daily Bar Chart */}
+        <div className="rounded-xl bg-slate-800 p-6 border border-slate-700 mt-4">
+          <h3 className="text-base font-semibold text-white mb-4">
+            {selectedMetricDef.title} — Daily Breakdown
+          </h3>
+          <ResponsiveContainer width="100%" height={240}>
+            <BarChart data={dailyBarData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+              <XAxis
+                dataKey="dayLabel"
+                stroke="#64748b"
+                tick={{ fill: '#94a3b8', fontSize: 11 }}
+              />
+              <YAxis
+                stroke="#64748b"
+                tick={{ fill: '#94a3b8', fontSize: 11 }}
+                tickFormatter={(v) => {
+                  if (selectedMetricDef.type === 'pp') return `${v.toFixed(1)}%`
+                  if (v >= 1000000) return `${(v / 1000000).toFixed(1)}M`
+                  if (v >= 1000) return `${(v / 1000).toFixed(0)}K`
+                  return String(v)
+                }}
+              />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: '#1e293b',
+                  border: '1px solid #475569',
+                  borderRadius: '8px',
+                  color: '#f1f5f9',
+                  fontSize: '13px',
+                }}
+                formatter={(value, name) => [
+                  formatTooltipValue(Number(value)),
+                  name === 'cy' ? 'Mar 2026' : 'Mar 2025',
+                ]}
+                labelFormatter={(label) => `Mar ${label}`}
+              />
+              <Legend
+                formatter={(value) => (value === 'cy' ? 'Mar 2026' : 'Mar 2025')}
+                wrapperStyle={{ color: '#94a3b8', fontSize: '12px' }}
+              />
+              <Bar dataKey="cy" fill="#3b82f6" radius={[3, 3, 0, 0]} />
+              <Bar dataKey="py" fill="#f59e0b" radius={[3, 3, 0, 0]} opacity={0.6} />
+            </BarChart>
+          </ResponsiveContainer>
           <p className="text-xs text-slate-500 mt-2 text-center">
-            Click any metric card above to compare its daily cumulative MTD trend
+            Each bar shows the actual value for that specific day — spot jumps or drops at a glance
           </p>
         </div>
-      )}
+      </>)}
 
       {!selectedMetric && (
         <p className="text-xs text-slate-500 text-center mt-2">
