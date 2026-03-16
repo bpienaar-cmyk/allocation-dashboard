@@ -7,10 +7,11 @@ import {
   OtdMetrics,
   DeallocationData,
   DateRange,
+  Country,
+  CountryOverview,
 } from '../types/index';
 import {
-  overviewData,
-  overviewDataPY,
+  overviewByCountry,
   trendsData,
   categoriesData,
   regionsData,
@@ -21,6 +22,7 @@ import {
 export interface UseAllocationDataResult {
   overview: OverviewData | null;
   overviewPY: OverviewData | null;
+  overviewByCountry: Record<Country, CountryOverview> | null;
   trends: TrendPoint[] | null;
   categories: CategoryRow[] | null;
   regions: RegionRow[] | null;
@@ -38,6 +40,7 @@ export interface UseAllocationDataResult {
 export function useAllocationData(dateRange: DateRange): UseAllocationDataResult {
   const [overview, setOverview] = useState<OverviewData | null>(null);
   const [overviewPY, setOverviewPY] = useState<OverviewData | null>(null);
+  const [countryData, setCountryData] = useState<Record<Country, CountryOverview> | null>(null);
   const [trends, setTrends] = useState<TrendPoint[] | null>(null);
   const [categories, setCategories] = useState<CategoryRow[] | null>(null);
   const [regions, setRegions] = useState<RegionRow[] | null>(null);
@@ -52,8 +55,9 @@ export function useAllocationData(dateRange: DateRange): UseAllocationDataResult
       setError(null);
 
       // Use static data - no API calls needed
-      setOverview(overviewData);
-      setOverviewPY(overviewDataPY);
+      setOverview(overviewByCountry.uk.current);
+      setOverviewPY(overviewByCountry.uk.priorYear);
+      setCountryData(overviewByCountry);
       setTrends(trendsData);
       setCategories(categoriesData);
       setRegions(regionsData);
@@ -75,6 +79,7 @@ export function useAllocationData(dateRange: DateRange): UseAllocationDataResult
   return {
     overview,
     overviewPY,
+    overviewByCountry: countryData,
     trends,
     categories,
     regions,

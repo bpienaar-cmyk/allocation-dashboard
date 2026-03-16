@@ -1,10 +1,17 @@
 import React from 'react'
-import { OverviewData } from '../../types'
+import { Country, CountryOverview } from '../../types'
 import { fmtGBP, fmtN, fmtP } from '../../utils/formatting'
 
+const COUNTRY_LABELS: Record<Country, string> = {
+  uk: 'UK (V4 + AVB)',
+  spain: 'Spain (V4)',
+  france: 'France (V4)',
+}
+
 interface OverviewViewProps {
-  data: OverviewData
-  priorYear: OverviewData
+  overviewByCountry: Record<Country, CountryOverview>
+  selectedCountry: Country
+  onCountryChange: (country: Country) => void
 }
 
 function yoyChange(current: number, prior: number): { trend: 'up' | 'down' | 'flat'; label: string } {
@@ -32,7 +39,7 @@ interface ComparisonCardProps {
   priorValue: string
   trend: 'up' | 'down' | 'flat'
   changeLabel: string
-  invertColor?: boolean // true = "down is good" (e.g. spend)
+  invertColor?: boolean
 }
 
 const ComparisonCard: React.FC<ComparisonCardProps> = ({
@@ -56,7 +63,9 @@ const ComparisonCard: React.FC<ComparisonCardProps> = ({
   )
 }
 
-const OverviewView: React.FC<OverviewViewProps> = ({ data, priorYear }) => {
+const OverviewView: React.FC<OverviewViewProps> = ({ overviewByCountry, selectedCountry, onCountryChange }) => {
+  const { current: data, priorYear } = overviewByCountry[selectedCountry]
+
   const metrics = [
     { title: 'Completed Jobs', current: data.jobs, prior: priorYear.jobs, fmt: fmtN, type: 'yoy' as const },
     { title: 'Total TTV', current: data.ttv, prior: priorYear.ttv, fmt: fmtGBP, type: 'yoy' as const },
@@ -70,12 +79,42 @@ const OverviewView: React.FC<OverviewViewProps> = ({ data, priorYear }) => {
     { title: 'No-Spend Rate', current: data.noSpendPct, prior: priorYear.noSpendPct, fmt: fmtP, type: 'pp' as const },
   ]
 
+  const countries: Country[] = ['uk', 'spain', 'france']
+
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between mb-2">
-        <h2 className="text-lg font-semibold text-white">MTD March 2026 — Completed Paid</h2>
-        <span className="text-xs text-slate-500 bg-slate-800 px-3 py-1 rounded-full border border-slate-700">vs MTD March 2025</span>
+      {/* Country toggle */}
+      <div className="flex items-center gap-2">
+        {countries.map((c) => (
+          <button
+            key={c}
+            onClick={() => onCountryChange(c)}
+            className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+              selectedCountry === c
+                ? 'bg-blue-600 text-white'
+                : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+            }`}
+          >
+            {COUNTRY_LABELS[c]}
+          </button>
+        ))}
       </div>
+
+      <div className="flex items-center justify-between mb-2">
+        <h2 className="text-lg font-semibold text-white">
+          MTD March 2026 — {COUNTRY_LABELS[selectedCountry]}
+        </h2>
+        <span className="text-xs text-slate-500 bg-slate-800 px-3 py-1 rounded-full border border-slate-700">
+          vs MTD March 2025
+        </span>
+      </div>
+
+      {priorYear.jobs === 0 && (
+        <div className="rounded-lg bg-amber-900/30 border border-amber-700/50 px-4 py-2 text-sm text-amber-300">
+          No prior year data available for {COUNTRY_LABELS[selectedCountry]} in March 2025 — YoY comparisons show N/A.
+        </div>
+      )}
+
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
         {metrics.map((m) => {
           const change = m.type === 'pp' ? ppChange(m.current, m.prior) : yoyChange(m.current, m.prior)

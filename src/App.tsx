@@ -12,13 +12,14 @@ import OTDMetricsView from './components/views/OTDMetricsView'
 import DeallocationView from './components/views/DeallocationView'
 import { useAllocationData } from './hooks/useAllocationData'
 import { getDefaultDateRange } from './utils/dateHelpers'
-import { TabId } from './types'
+import { TabId, Country } from './types'
 
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabId>('overview')
+  const [selectedCountry, setSelectedCountry] = useState<Country>('uk')
   const defaultDateRange = getDefaultDateRange()
 
-  const { overview, overviewPY, trends, categories, regions, otdMetrics, deallocations, loading, error, refetch } = useAllocationData(defaultDateRange)
+  const { overview, overviewByCountry, trends, categories, regions, otdMetrics, deallocations, loading, error, refetch } = useAllocationData(defaultDateRange)
 
   return (
     <ErrorBoundary>
@@ -34,7 +35,13 @@ const App: React.FC = () => {
 
             {!loading && !error && overview && (
               <div className="space-y-6">
-                {activeTab === 'overview' && overviewPY && <OverviewView data={overview} priorYear={overviewPY} />}
+                {activeTab === 'overview' && overviewByCountry && (
+                  <OverviewView
+                    overviewByCountry={overviewByCountry}
+                    selectedCountry={selectedCountry}
+                    onCountryChange={setSelectedCountry}
+                  />
+                )}
                 {activeTab === 'trends' && trends && <TrendsView data={trends} />}
                 {activeTab === 'category' && categories && <CategoryView data={categories} />}
                 {activeTab === 'regional' && regions && <RegionalView data={regions} />}

@@ -69,6 +69,13 @@ export interface DeallocationData {
   otdAllocSpend: number;
 }
 
+export type Country = 'uk' | 'spain' | 'france';
+
+export interface CountryOverview {
+  current: OverviewData;
+  priorYear: OverviewData;
+}
+
 export type TabId = 'overview' | 'trends' | 'category' | 'regional' | 'otd' | 'deallocations';
 
 export interface DateRange {
