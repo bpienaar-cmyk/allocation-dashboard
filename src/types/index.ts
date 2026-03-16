@@ -33,6 +33,7 @@ export interface TrendPoint {
   tpCancels: number;
   cantSourceCount: number;
   otdDeallocations: number;
+  adminAllocD1Otd: number;
   totalRecords: number;
 }
 
