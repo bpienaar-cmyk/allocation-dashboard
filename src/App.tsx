@@ -20,7 +20,7 @@ const App: React.FC = () => {
   const [selectedCountry, setSelectedCountry] = useState<Country>('uk')
   const defaultDateRange = getDefaultDateRange()
 
-  const { overview, overviewByCountry, trends, trendsByCountry, categories, regions, iresReservations, otdMetrics, deallocations, dailyOverviewByCountry, furnRoutingByCountry, tpCancelsByCountry, loading, error, refetch } = useAllocationData(defaultDateRange)
+  const { overview, overviewByCountry, trends, trendsByCountry, categories, regions, iresReservations, iresTrendData, otdMetrics, deallocations, dailyOverviewByCountry, furnRoutingByCountry, tpCancelsByCountry, loading, error, refetch } = useAllocationData(defaultDateRange)
 
   return (
     <ErrorBoundary>
@@ -63,7 +63,7 @@ const App: React.FC = () => {
                     onCountryChange={setSelectedCountry}
                   />
                 )}
-                {activeTab === 'reservations' && iresReservations && <ReservationsView data={iresReservations} />}
+                {activeTab === 'reservations' && iresReservations && <ReservationsView data={iresReservations} trendData={iresTrendData || undefined} />}
                 {activeTab === 'otd' && otdMetrics && <OTDMetricsView data={otdMetrics} />}
                 {activeTab === 'deallocations' && deallocations && <DeallocationView data={deallocations} />}
               </div>

@@ -11,6 +11,7 @@ import {
   CountryOverview,
   DailyOverviewRow,
   IResReservationRow,
+  IResTrendRow,
 } from '../types/index';
 import {
   overviewByCountry,
@@ -24,6 +25,7 @@ import {
   furnRoutingByCountry,
   tpCancelsByCountry,
   iresReservationData,
+  iresTrendData,
 } from '../data/dashboardData';
 
 export interface UseAllocationDataResult {
@@ -35,6 +37,7 @@ export interface UseAllocationDataResult {
   categories: CategoryRow[] | null;
   regions: RegionRow[] | null;
   iresReservations: IResReservationRow[] | null;
+  iresTrendData: IResTrendRow[] | null;
   otdMetrics: OtdMetrics | null;
   deallocations: DeallocationData | null;
   dailyOverviewByCountry: Record<string, { cy: DailyOverviewRow[], py: DailyOverviewRow[] }> | null;
@@ -58,6 +61,7 @@ export function useAllocationData(dateRange: DateRange): UseAllocationDataResult
   const [categories, setCategories] = useState<CategoryRow[] | null>(null);
   const [regions, setRegions] = useState<RegionRow[] | null>(null);
   const [iresReservations, setIresReservations] = useState<IResReservationRow[] | null>(null);
+  const [iresTrend, setIresTrend] = useState<IResTrendRow[] | null>(null);
   const [otdMetrics, setOtdMetrics] = useState<OtdMetrics | null>(null);
   const [deallocations, setDeallocations] = useState<DeallocationData | null>(null);
   const [dailyOvrvwByCountry, setDailyOvrvwByCountry] = useState<Record<string, { cy: DailyOverviewRow[], py: DailyOverviewRow[] }> | null>(null);
@@ -78,6 +82,7 @@ export function useAllocationData(dateRange: DateRange): UseAllocationDataResult
       setCategories(categoriesData);
       setRegions(regionsData);
       setIresReservations(iresReservationData);
+      setIresTrend(iresTrendData);
       setOtdMetrics(otdMetricsData);
       setDeallocations(deallocationsData);
       setDailyOvrvwByCountry(dailyOverviewByCountry);
@@ -103,6 +108,7 @@ export function useAllocationData(dateRange: DateRange): UseAllocationDataResult
     categories,
     regions,
     iresReservations,
+    iresTrendData: iresTrend,
     otdMetrics,
     deallocations,
     dailyOverviewByCountry: dailyOvrvwByCountry,

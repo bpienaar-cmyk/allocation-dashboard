@@ -1,9 +1,19 @@
 import React, { useState, useMemo, useCallback } from 'react'
-import { IResReservationRow } from '../../types'
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts'
+import { IResReservationRow, IResTrendRow } from '../../types'
 import { fmtN } from '../../utils/formatting'
 
 interface ReservationsViewProps {
   data: IResReservationRow[]
+  trendData?: IResTrendRow[]
 }
 
 const REGION_ORDER = [
@@ -91,10 +101,50 @@ function useMultiFilter<T extends string>(allOptions: readonly T[]) {
   return { selected, isAll, isActive, toggle, toggleAll }
 }
 
-const ReservationsView: React.FC<ReservationsViewProps> = ({ data }) => {
+const ReservationsView: React.FC<ReservationsViewProps> = ({ data, trendData }) => {
   const people = useMultiFilter(PEOPLE_OPTIONS)
   const types = useMultiFilter(TYPE_OPTIONS)
   const statuses = useMultiFilter(STATUS_OPTIONS)
+
+  // Trend chart filters (separate from heatmap filters)
+  const trendPeople = useMultiFilter(PEOPLE_OPTIONS)
+  const trendTypes = useMultiFilter(TYPE_OPTIONS)
+
+  // Get unique NUTS regions from trend data
+  const allNutsRegions = useMemo(() => {
+    if (!trendData) return []
+    return Array.from(new Set(trendData.map(r => r.nutsRegion))).sort()
+  }, [trendData])
+
+  // Create a dynamic multi-filter for NUTS regions
+  const [trendNutsSelected, setTrendNutsSelected] = useState<Set<string>>(new Set())
+
+  const trendNutsToggle = useCallback((val: string) => {
+    setTrendNutsSelected((prev) => {
+      const next = new Set(prev)
+      if (next.has(val)) {
+        if (next.size > 1) next.delete(val)
+      } else {
+        next.add(val)
+      }
+      return next
+    })
+  }, [])
+
+  const trendNutsToggleAll = useCallback(() => {
+    setTrendNutsSelected((prev) => {
+      if (prev.size === allNutsRegions.length) return prev
+      return new Set(allNutsRegions)
+    })
+  }, [allNutsRegions])
+
+  // Initialize trendNutsSelected when allNutsRegions changes
+  const trendNutsIsAll = trendNutsSelected.size === allNutsRegions.length && allNutsRegions.length > 0
+  useMemo(() => {
+    if (trendNutsSelected.size === 0 && allNutsRegions.length > 0) {
+      setTrendNutsSelected(new Set(allNutsRegions))
+    }
+  }, [allNutsRegions, trendNutsSelected])
 
   // Get all unique dates sorted
   const allDays = useMemo(() => {
@@ -183,6 +233,49 @@ const ReservationsView: React.FC<ReservationsViewProps> = ({ data }) => {
       if (s === 'pending') return `rgba(245, 158, 11, ${alpha})`
     }
     return `rgba(59, 130, 246, ${alpha})`
+  }
+
+  // Build trend chart data
+  const chartData = useMemo(() => {
+    if (!trendData) return []
+
+    const filteredTrend = trendData.filter((row) => {
+      if (!trendPeople.selected.has(String(row.people) as typeof PEOPLE_OPTIONS[number])) return false
+      if (!trendTypes.selected.has(row.resType as typeof TYPE_OPTIONS[number])) return false
+      if (!trendNutsSelected.has(row.nutsRegion)) return false
+      return true
+    })
+
+    const monthMap: Record<string, { journeyAssoc: number; unsuccessful: number }> = {}
+    filteredTrend.forEach((row) => {
+      if (!monthMap[row.month]) {
+        monthMap[row.month] = { journeyAssoc: 0, unsuccessful: 0 }
+      }
+      monthMap[row.month].journeyAssoc += row.journeyAssoc
+      monthMap[row.month].unsuccessful += row.unsuccessful
+    })
+
+    // Sort months and format dates
+    const sortedMonths = Object.keys(monthMap).sort()
+    return sortedMonths.map((month) => {
+      const { journeyAssoc, unsuccessful } = monthMap[month]
+      const total = journeyAssoc + unsuccessful
+      const rate = total > 0 ? (journeyAssoc / total) * 100 : 0
+      return {
+        month,
+        rate: parseFloat(rate.toFixed(1)),
+        journeyAssoc,
+        unsuccessful,
+        total,
+      }
+    })
+  }, [trendData, trendPeople.selected, trendTypes.selected, trendNutsSelected])
+
+  const formatMonthLabel = (month: string) => {
+    const [year, monthNum] = month.split('-')
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    const shortYear = year.slice(2)
+    return `${monthNames[parseInt(monthNum) - 1]} ${shortYear}`
   }
 
   return (
@@ -305,6 +398,95 @@ const ReservationsView: React.FC<ReservationsViewProps> = ({ data }) => {
           )
         })}
       </div>
+
+      {/* Acceptance Rate Trend Section */}
+      {trendData && (
+        <div className="space-y-4 mt-8 pt-8 border-t border-slate-700">
+          <h3 className="text-sm font-semibold text-slate-300">Acceptance Rate Trend (YoY)</h3>
+
+          {/* Trend chart filters */}
+          <div className="bg-slate-800 rounded-lg p-4 space-y-3">
+            {/* NUTS filter */}
+            <div className="flex items-center gap-3">
+              <span className="text-xs text-slate-400 w-16 shrink-0">NUTS</span>
+              <div className="flex gap-2 flex-wrap">
+                <button className={pillClass(trendNutsIsAll)} onClick={trendNutsToggleAll}>All</button>
+                {allNutsRegions.map((nuts) => (
+                  <button key={nuts} className={pillClass(trendNutsSelected.has(nuts))} onClick={() => trendNutsToggle(nuts)}>
+                    {SHORT_REGION[nuts] || nuts}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* People filter */}
+            <div className="flex items-center gap-3">
+              <span className="text-xs text-slate-400 w-16 shrink-0">People</span>
+              <div className="flex gap-2 flex-wrap">
+                <button className={pillClass(trendPeople.isAll)} onClick={trendPeople.toggleAll}>All</button>
+                {PEOPLE_OPTIONS.map((p) => (
+                  <button key={p} className={pillClass(trendPeople.isActive(p))} onClick={() => trendPeople.toggle(p)}>
+                    {p} Man
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Type filter */}
+            <div className="flex items-center gap-3">
+              <span className="text-xs text-slate-400 w-16 shrink-0">Type</span>
+              <div className="flex gap-2 flex-wrap">
+                <button className={pillClass(trendTypes.isAll)} onClick={trendTypes.toggleAll}>All</button>
+                {TYPE_OPTIONS.map((t) => (
+                  <button key={t} className={pillClass(trendTypes.isActive(t))} onClick={() => trendTypes.toggle(t)}>
+                    {t}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Trend chart */}
+          <div className="rounded-lg border border-slate-700 bg-slate-800 p-4" style={{ height: '350px' }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={chartData} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
+                <XAxis
+                  dataKey="month"
+                  tickFormatter={formatMonthLabel}
+                  stroke="#94a3b8"
+                  tick={{ fill: '#e2e8f0', fontSize: 12 }}
+                />
+                <YAxis
+                  domain={[0, 100]}
+                  stroke="#94a3b8"
+                  tick={{ fill: '#e2e8f0', fontSize: 12 }}
+                  label={{ value: 'Acceptance Rate (%)', angle: -90, position: 'insideLeft' }}
+                />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: '#1e293b',
+                    border: '1px solid #475569',
+                    borderRadius: '6px',
+                  }}
+                  labelStyle={{ color: '#e2e8f0' }}
+                  labelFormatter={(label: any) => `${formatMonthLabel(label)}`}
+                />
+                <Legend wrapperStyle={{ color: '#cbd5e1' }} />
+                <Line
+                  type="monotone"
+                  dataKey="rate"
+                  stroke="#3b82f6"
+                  dot={{ fill: '#3b82f6', r: 4 }}
+                  activeDot={{ r: 6 }}
+                  strokeWidth={2}
+                  name="Acceptance Rate (%)"
+                  isAnimationActive={true}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

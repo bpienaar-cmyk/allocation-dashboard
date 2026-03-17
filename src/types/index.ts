@@ -146,3 +146,12 @@ export interface IResReservationRow {
   people: number;
   count: number;
 }
+
+export interface IResTrendRow {
+  month: string;
+  nutsRegion: string;
+  resType: string;
+  people: number;
+  journeyAssoc: number;
+  unsuccessful: number;
+}
