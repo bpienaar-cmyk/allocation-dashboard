@@ -454,7 +454,7 @@ const ReservationsView: React.FC<ReservationsViewProps> = ({ data, trendData }) 
             </div>
           </div>
 
-          {/* Trend chart */}
+          {/* Acceptance Rate chart */}
           <div className="rounded-lg border border-slate-700 bg-slate-800 p-4" style={{ height: '350px' }}>
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={chartData} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
@@ -494,6 +494,69 @@ const ReservationsView: React.FC<ReservationsViewProps> = ({ data, trendData }) 
                     fill: '#e2e8f0',
                     fontSize: 11,
                     formatter: (val: any) => `${val}%`,
+                  }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Reservation Count Trend */}
+          <h3 className="text-sm font-semibold text-slate-300 mt-6">Reservation Count Trend (YoY)</h3>
+          <div className="rounded-lg border border-slate-700 bg-slate-800 p-4" style={{ height: '350px' }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={chartData} margin={{ top: 5, right: 30, left: 10, bottom: 5 }}>
+                <XAxis
+                  dataKey="month"
+                  tickFormatter={formatMonthLabel}
+                  stroke="#94a3b8"
+                  tick={{ fill: '#e2e8f0', fontSize: 12 }}
+                />
+                <YAxis
+                  stroke="#94a3b8"
+                  tick={{ fill: '#e2e8f0', fontSize: 12 }}
+                  label={{ value: 'Reservations', angle: -90, position: 'insideLeft' }}
+                />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: '#1e293b',
+                    border: '1px solid #475569',
+                    borderRadius: '6px',
+                  }}
+                  labelStyle={{ color: '#e2e8f0' }}
+                  labelFormatter={(label: any) => `${formatMonthLabel(label)}`}
+                  formatter={(value: any, name: any) => [fmtN(value), name]}
+                />
+                <Legend wrapperStyle={{ color: '#cbd5e1' }} />
+                <Line
+                  type="monotone"
+                  dataKey="journeyAssoc"
+                  stroke="#22c55e"
+                  dot={{ fill: '#22c55e', r: 4 }}
+                  activeDot={{ r: 6 }}
+                  strokeWidth={2}
+                  name="Journey Associated"
+                  isAnimationActive={true}
+                  label={{
+                    position: 'top',
+                    fill: '#86efac',
+                    fontSize: 10,
+                    formatter: (val: any) => fmtN(val),
+                  }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="unsuccessful"
+                  stroke="#ef4444"
+                  dot={{ fill: '#ef4444', r: 4 }}
+                  activeDot={{ r: 6 }}
+                  strokeWidth={2}
+                  name="Unsuccessful"
+                  isAnimationActive={true}
+                  label={{
+                    position: 'bottom',
+                    fill: '#fca5a5',
+                    fontSize: 10,
+                    formatter: (val: any) => fmtN(val),
                   }}
                 />
               </LineChart>
