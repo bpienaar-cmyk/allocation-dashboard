@@ -80,6 +80,10 @@ function useMultiFilter<T extends string>(allOptions: readonly T[]) {
 
   const toggle = useCallback((val: T) => {
     setSelected((prev) => {
+      // If all are selected, switch to ONLY this one
+      if (prev.size === allOptions.length) {
+        return new Set([val])
+      }
       const next = new Set(prev)
       if (next.has(val)) {
         // Don't allow deselecting the last one
@@ -89,7 +93,7 @@ function useMultiFilter<T extends string>(allOptions: readonly T[]) {
       }
       return next
     })
-  }, [])
+  }, [allOptions])
 
   const toggleAll = useCallback(() => {
     setSelected((prev) => {
@@ -121,6 +125,10 @@ const ReservationsView: React.FC<ReservationsViewProps> = ({ data, trendData }) 
 
   const trendNutsToggle = useCallback((val: string) => {
     setTrendNutsSelected((prev) => {
+      // If all are selected, switch to ONLY this one
+      if (prev.size === allNutsRegions.length) {
+        return new Set([val])
+      }
       const next = new Set(prev)
       if (next.has(val)) {
         if (next.size > 1) next.delete(val)
@@ -129,7 +137,7 @@ const ReservationsView: React.FC<ReservationsViewProps> = ({ data, trendData }) 
       }
       return next
     })
-  }, [])
+  }, [allNutsRegions])
 
   const trendNutsToggleAll = useCallback(() => {
     setTrendNutsSelected((prev) => {
@@ -481,6 +489,12 @@ const ReservationsView: React.FC<ReservationsViewProps> = ({ data, trendData }) 
                   strokeWidth={2}
                   name="Acceptance Rate (%)"
                   isAnimationActive={true}
+                  label={{
+                    position: 'top',
+                    fill: '#e2e8f0',
+                    fontSize: 11,
+                    formatter: (val: any) => `${val}%`,
+                  }}
                 />
               </LineChart>
             </ResponsiveContainer>
