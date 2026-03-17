@@ -1,16 +1,6 @@
 import React, { useState, useMemo } from 'react'
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from 'recharts'
-import { CategoryBreakdownRow, Country } from '../../types'
-import { fmtGBP, fmtN, fmtP } from '../../utils/formatting'
+import { CategoryBreakdownRow, ActiveBookingRow, Country } from '../../types'
+import { fmtN, fmtGBP, fmtP } from '../../utils/formatting'
 
 const COUNTRY_LABELS: Record<Country, string> = {
   uk: 'UK (V4 + AVB)',
@@ -19,128 +9,170 @@ const COUNTRY_LABELS: Record<Country, string> = {
 }
 
 const MONTH_LABELS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-
-const CATEGORY_OPTIONS = ['All', 'Furniture', 'Home Removal', 'Car', 'Motorbike', 'Piano']
-
-const UK_NUTS1 = [
-  'All',
-  'London',
-  'South East (England)',
-  'East of England',
-  'North West (England)',
-  'South West (England)',
-  'West Midlands (England)',
-  'Yorkshire and The Humber',
-  'East Midlands (England)',
-  'Scotland',
-  'North East (England)',
-  'Wales',
-  'Northern Ireland',
-]
+const CATEGORIES = ['Home Removal', 'Furniture', 'Car', 'Motorbike', 'Piano']
+const CAT_SHORT: Record<string, string> = {
+  'Home Removal': 'Removals',
+  'Furniture': 'Furn',
+  'Car': 'Cars',
+  'Motorbike': 'Bikes',
+  'Piano': 'Pianos',
+}
 
 interface CategoryViewProps {
   breakdownByCountry: Record<Country, CategoryBreakdownRow[]>
+  activeBookingsByCountry: Record<Country, ActiveBookingRow[]>
   selectedCountry: Country
   onCountryChange: (country: Country) => void
 }
 
-interface AggRow {
-  label: string
-  jobs: number
-  ttv: number
-  avFee: number
-  marginPct: number
-  allocSpend: number
-  spendTtvPct: number
+/* ─── helper: format delta cell ─── */
+function DeltaCell({ current, previous, label }: { current: number; previous: number | null; label: string }) {
+  if (previous === null || previous === undefined) return <span className="text-slate-500 text-xs">—</span>
+  const diff = current - previous
+  const pct = previous > 0 ? ((diff / previous) * 100) : 0
+  const color = diff > 0 ? 'text-emerald-400' : diff < 0 ? 'text-red-400' : 'text-slate-400'
+  const sign = diff > 0 ? '+' : ''
+  return (
+    <span className={`text-xs ${color}`}>
+      {label}: {sign}{diff} ({sign}{pct.toFixed(1)}%)
+    </span>
+  )
 }
 
-const CategoryView: React.FC<CategoryViewProps> = ({ breakdownByCountry, selectedCountry, onCountryChange }) => {
+const CategoryView: React.FC<CategoryViewProps> = ({
+  breakdownByCountry,
+  activeBookingsByCountry,
+  selectedCountry,
+  onCountryChange,
+}) => {
   const now = new Date()
-  const [selectedMonth, setSelectedMonth] = useState(now.getMonth()) // 0-indexed
+  const [selectedMonth, setSelectedMonth] = useState(now.getMonth())
   const [selectedYear, setSelectedYear] = useState(2026)
-  const [selectedCategory, setSelectedCategory] = useState('All')
-  const [selectedNuts1, setSelectedNuts1] = useState('All')
 
   const countries: Country[] = ['uk', 'spain', 'france']
   const years = [2025, 2026]
 
   const allData = breakdownByCountry[selectedCountry] || []
+  const allActive = activeBookingsByCountry[selectedCountry] || []
 
-  // Filter data for selected month+year
-  const monthStr = `${selectedYear}-${String(selectedMonth + 1).padStart(2, '0')}-01`
-
-  const filtered = useMemo(() => {
-    let rows = allData.filter(r => r.month === monthStr)
-    if (selectedCategory !== 'All') {
-      rows = rows.filter(r => r.category === selectedCategory)
-    }
-    if (selectedNuts1 !== 'All' && selectedCountry === 'uk') {
-      rows = rows.filter(r => r.nuts1 === selectedNuts1)
-    }
-    return rows
-  }, [allData, monthStr, selectedCategory, selectedNuts1, selectedCountry])
-
-  // Aggregate rows for display
-  const tableData = useMemo<AggRow[]>(() => {
-    // Determine grouping: by category or by NUTS1
-    const groupByNuts = selectedCategory !== 'All' && selectedNuts1 === 'All' && selectedCountry === 'uk'
-    const groupKey = groupByNuts ? 'nuts1' : 'category'
-
-    const groups: Record<string, { jobs: number; ttv: number; avFee: number; allocSpend: number }> = {}
-    filtered.forEach(r => {
-      const key = groupByNuts ? r.nuts1 : r.category
-      if (!groups[key]) groups[key] = { jobs: 0, ttv: 0, avFee: 0, allocSpend: 0 }
-      groups[key].jobs += r.jobs
-      groups[key].ttv += r.ttv
-      groups[key].avFee += r.avFee
-      groups[key].allocSpend += r.allocSpend
+  // Derive NUTS1 regions dynamically from data
+  const nuts1Regions = useMemo(() => {
+    const set = new Set<string>()
+    allData.forEach(r => {
+      if (r.nuts1 && r.nuts1 !== 'Unknown') set.add(r.nuts1)
     })
+    return Array.from(set).sort()
+  }, [allData])
 
-    return Object.entries(groups)
-      .map(([label, g]) => ({
-        label,
-        jobs: g.jobs,
-        ttv: g.ttv,
-        avFee: g.avFee,
-        marginPct: g.ttv > 0 ? (g.avFee / g.ttv) * 100 : 0,
-        allocSpend: g.allocSpend,
-        spendTtvPct: g.ttv > 0 ? (g.allocSpend / g.ttv) * 100 : 0,
-      }))
-      .sort((a, b) => b.jobs - a.jobs)
-  }, [filtered, selectedCategory, selectedNuts1, selectedCountry])
+  // Build month strings
+  const monthStr = `${selectedYear}-${String(selectedMonth + 1).padStart(2, '0')}-01`
+  const prevMonthDate = new Date(selectedYear, selectedMonth - 1, 1)
+  const prevMonthStr = `${prevMonthDate.getFullYear()}-${String(prevMonthDate.getMonth() + 1).padStart(2, '0')}-01`
+  const yoyStr = `${selectedYear - 1}-${String(selectedMonth + 1).padStart(2, '0')}-01`
 
-  // Totals row
-  const totals = useMemo(() => {
-    const t = tableData.reduce((acc, r) => ({
-      jobs: acc.jobs + r.jobs,
-      ttv: acc.ttv + r.ttv,
-      avFee: acc.avFee + r.avFee,
-      allocSpend: acc.allocSpend + r.allocSpend,
-    }), { jobs: 0, ttv: 0, avFee: 0, allocSpend: 0 })
-    return {
-      ...t,
-      marginPct: t.ttv > 0 ? (t.avFee / t.ttv) * 100 : 0,
-      spendTtvPct: t.ttv > 0 ? (t.allocSpend / t.ttv) * 100 : 0,
-    }
-  }, [tableData])
-
-  const CustomTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
-      const item = payload[0].payload
-      return (
-        <div className="bg-slate-800 border border-slate-700 rounded p-3 text-white text-sm space-y-1">
-          <p className="font-semibold">{item.label}</p>
-          <p>Jobs: {fmtN(item.jobs)}</p>
-          <p className="text-blue-400">Spend: {fmtGBP(item.allocSpend)}</p>
-          <p className="text-emerald-400">Spend/TTV: {fmtP(item.spendTtvPct)}</p>
-        </div>
-      )
-    }
-    return null
+  // ─── Completed & Paid comparison table ───
+  // Build lookup: monthStr -> nuts1 -> category -> jobs
+  const buildLookup = (data: CategoryBreakdownRow[]) => {
+    const map: Record<string, Record<string, Record<string, number>>> = {}
+    data.forEach(r => {
+      const n = r.nuts1 || 'Unknown'
+      if (!map[r.month]) map[r.month] = {}
+      if (!map[r.month][n]) map[r.month][n] = {}
+      map[r.month][n][r.category] = (map[r.month][n][r.category] || 0) + r.jobs
+    })
+    return map
   }
 
-  const groupByNuts = selectedCategory !== 'All' && selectedNuts1 === 'All' && selectedCountry === 'uk'
+  const lookup = useMemo(() => buildLookup(allData), [allData])
 
+  const getJobs = (month: string, nuts1: string, cat: string): number | null => {
+    return lookup[month]?.[nuts1]?.[cat] ?? null
+  }
+
+  // Table rows: one per NUTS1 region
+  const completedTableData = useMemo(() => {
+    return nuts1Regions.map(nuts1 => {
+      const row: Record<string, { current: number; mom: number | null; yoy: number | null }> = {}
+      let total = 0
+      let totalMom = 0
+      let totalYoy = 0
+      let hasMom = false
+      let hasYoy = false
+
+      CATEGORIES.forEach(cat => {
+        const cur = getJobs(monthStr, nuts1, cat) ?? 0
+        const prev = getJobs(prevMonthStr, nuts1, cat)
+        const lastYear = getJobs(yoyStr, nuts1, cat)
+        row[cat] = { current: cur, mom: prev, yoy: lastYear }
+        total += cur
+        if (prev !== null) { totalMom += prev; hasMom = true }
+        if (lastYear !== null) { totalYoy += lastYear; hasYoy = true }
+      })
+
+      return {
+        nuts1,
+        categories: row,
+        total,
+        totalMom: hasMom ? totalMom : null,
+        totalYoy: hasYoy ? totalYoy : null,
+      }
+    }).filter(r => r.total > 0 || Object.values(r.categories).some(c => c.current > 0))
+      .sort((a, b) => b.total - a.total)
+  }, [nuts1Regions, monthStr, prevMonthStr, yoyStr, lookup])
+
+  // Grand totals
+  const grandTotals = useMemo(() => {
+    const totals: Record<string, { current: number; mom: number | null; yoy: number | null }> = {}
+    let grandTotal = 0
+    let grandMom: number | null = 0
+    let grandYoy: number | null = 0
+
+    CATEGORIES.forEach(cat => {
+      let cur = 0, mom = 0, yoy = 0, hasMom = false, hasYoy = false
+      completedTableData.forEach(r => {
+        cur += r.categories[cat]?.current || 0
+        if (r.categories[cat]?.mom !== null) { mom += r.categories[cat]?.mom || 0; hasMom = true }
+        if (r.categories[cat]?.yoy !== null) { yoy += r.categories[cat]?.yoy || 0; hasYoy = true }
+      })
+      totals[cat] = { current: cur, mom: hasMom ? mom : null, yoy: hasYoy ? yoy : null }
+      grandTotal += cur
+      if (hasMom) grandMom = (grandMom || 0) + mom; else if (grandMom === 0) grandMom = null
+      if (hasYoy) grandYoy = (grandYoy || 0) + yoy; else if (grandYoy === 0) grandYoy = null
+    })
+
+    return { categories: totals, total: grandTotal, totalMom: grandMom, totalYoy: grandYoy }
+  }, [completedTableData])
+
+  // ─── Active Bookings table ───
+  const activeTableData = useMemo(() => {
+    const monthPrefix = `${selectedYear}-${String(selectedMonth + 1).padStart(2, '0')}`
+    const filtered = allActive.filter(r => r.day.startsWith(monthPrefix))
+
+    // Get all days in the month
+    const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate()
+    const days: string[] = []
+    for (let d = 1; d <= daysInMonth; d++) {
+      days.push(`${monthPrefix}-${String(d).padStart(2, '0')}`)
+    }
+
+    // Build lookup: nuts1 -> day -> count
+    const activeLookup: Record<string, Record<string, number>> = {}
+    filtered.forEach(r => {
+      const n = r.nuts1 || 'Unknown'
+      if (!activeLookup[n]) activeLookup[n] = {}
+      activeLookup[n][r.day] = (activeLookup[n][r.day] || 0) + r.activeCount
+    })
+
+    // Build rows sorted by total descending
+    const rows = Object.entries(activeLookup).map(([nuts1, dayMap]) => {
+      const total = Object.values(dayMap).reduce((s, v) => s + v, 0)
+      return { nuts1, dayMap, total }
+    }).sort((a, b) => b.total - a.total)
+
+    return { days, rows }
+  }, [allActive, selectedYear, selectedMonth])
+
+  // ─── Render ───
   return (
     <div className="space-y-4">
       {/* Country toggle */}
@@ -148,7 +180,7 @@ const CategoryView: React.FC<CategoryViewProps> = ({ breakdownByCountry, selecte
         {countries.map((c) => (
           <button
             key={c}
-            onClick={() => { onCountryChange(c); setSelectedNuts1('All'); }}
+            onClick={() => onCountryChange(c)}
             className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
               selectedCountry === c
                 ? 'bg-blue-600 text-white'
@@ -162,7 +194,6 @@ const CategoryView: React.FC<CategoryViewProps> = ({ breakdownByCountry, selecte
 
       {/* Filter row */}
       <div className="flex items-center gap-4 flex-wrap">
-        {/* Month */}
         <div className="flex items-center gap-2">
           <label className="text-slate-400 text-sm font-medium">Month:</label>
           <select
@@ -175,8 +206,6 @@ const CategoryView: React.FC<CategoryViewProps> = ({ breakdownByCountry, selecte
             ))}
           </select>
         </div>
-
-        {/* Year */}
         <div className="flex items-center gap-1">
           {years.map((y) => (
             <button
@@ -192,121 +221,137 @@ const CategoryView: React.FC<CategoryViewProps> = ({ breakdownByCountry, selecte
             </button>
           ))}
         </div>
-
-        {/* Category */}
-        <div className="flex items-center gap-2">
-          <label className="text-slate-400 text-sm font-medium">Category:</label>
-          <select
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            className="bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-white text-sm focus:outline-none focus:border-blue-500"
-          >
-            {CATEGORY_OPTIONS.map((c) => (
-              <option key={c} value={c}>{c}</option>
-            ))}
-          </select>
-        </div>
-
-        {/* NUTS1 - only for UK */}
-        {selectedCountry === 'uk' && (
-          <div className="flex items-center gap-2">
-            <label className="text-slate-400 text-sm font-medium">Region:</label>
-            <select
-              value={selectedNuts1}
-              onChange={(e) => setSelectedNuts1(e.target.value)}
-              className="bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-white text-sm focus:outline-none focus:border-blue-500"
-            >
-              {UK_NUTS1.map((n) => (
-                <option key={n} value={n}>{n}</option>
-              ))}
-            </select>
-          </div>
-        )}
       </div>
 
-      {/* Title */}
+      {/* ═══ COMPLETED & PAID TABLE ═══ */}
       <h2 className="text-lg font-semibold text-white">
-        {MONTH_LABELS[selectedMonth]} {selectedYear} — {COUNTRY_LABELS[selectedCountry]}
-        {selectedCategory !== 'All' && ` — ${selectedCategory}`}
-        {selectedNuts1 !== 'All' && ` — ${selectedNuts1}`}
+        Completed & Paid — {MONTH_LABELS[selectedMonth]} {selectedYear} — {COUNTRY_LABELS[selectedCountry]}
       </h2>
 
-      {tableData.length === 0 ? (
+      {completedTableData.length === 0 ? (
         <div className="rounded-lg bg-amber-900/30 border border-amber-700/50 px-4 py-2 text-sm text-amber-300">
-          No data available for this selection.
+          No completed data for this selection.
         </div>
       ) : (
-        <>
-          {/* Bar chart */}
-          <div className="bg-slate-800 rounded-lg p-6" style={{ height: Math.max(250, tableData.length * 45 + 80) + 'px' }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={tableData}
-                layout="vertical"
-                margin={{ top: 5, right: 30, left: 180, bottom: 5 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" stroke="#475569" />
-                <XAxis type="number" stroke="#94a3b8" tick={{ fontSize: 12 }} tickFormatter={(v) => {
-                  if (v >= 1000000) return `£${(v / 1000000).toFixed(1)}M`
-                  if (v >= 1000) return `£${(v / 1000).toFixed(0)}K`
-                  return `£${v}`
-                }} />
-                <YAxis
-                  dataKey="label"
-                  type="category"
-                  stroke="#94a3b8"
-                  tick={{ fontSize: 11 }}
-                  width={170}
-                />
-                <Tooltip content={<CustomTooltip />} />
-                <Legend wrapperStyle={{ paddingTop: '20px', color: '#e2e8f0' }} />
-                <Bar
-                  dataKey="allocSpend"
-                  fill="#3b82f6"
-                  radius={[0, 8, 8, 0]}
-                  name="Allocation Spend"
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-
-          {/* Table */}
-          <div className="rounded-lg overflow-hidden border border-slate-700">
-            <table className="w-full text-sm text-white">
-              <thead className="bg-slate-700 text-white">
-                <tr>
-                  <th className="px-6 py-3 text-left font-semibold">{groupByNuts ? 'Region' : 'Category'}</th>
-                  <th className="px-6 py-3 text-right font-semibold">Jobs</th>
-                  <th className="px-6 py-3 text-right font-semibold">TTV</th>
-                  <th className="px-6 py-3 text-right font-semibold">Margin %</th>
-                  <th className="px-6 py-3 text-right font-semibold">Alloc Spend</th>
-                  <th className="px-6 py-3 text-right font-semibold">Spend/TTV %</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-700">
-                {tableData.map((row) => (
-                  <tr key={row.label} className="bg-slate-800 hover:bg-slate-750 transition-colors">
-                    <td className="px-6 py-4 font-medium">{row.label}</td>
-                    <td className="px-6 py-4 text-right">{fmtN(row.jobs)}</td>
-                    <td className="px-6 py-4 text-right">{fmtGBP(row.ttv)}</td>
-                    <td className="px-6 py-4 text-right text-blue-400">{fmtP(row.marginPct)}</td>
-                    <td className="px-6 py-4 text-right font-medium">{fmtGBP(row.allocSpend)}</td>
-                    <td className="px-6 py-4 text-right text-emerald-400">{fmtP(row.spendTtvPct)}</td>
-                  </tr>
+        <div className="rounded-lg overflow-x-auto border border-slate-700">
+          <table className="w-full text-sm text-white whitespace-nowrap">
+            <thead className="bg-slate-700 text-white">
+              <tr>
+                <th className="px-4 py-3 text-left font-semibold sticky left-0 bg-slate-700 z-10">Region</th>
+                {CATEGORIES.map(cat => (
+                  <th key={cat} className="px-4 py-3 text-center font-semibold">{CAT_SHORT[cat]}</th>
                 ))}
-                {/* Totals row */}
-                <tr className="bg-slate-700 font-semibold">
-                  <td className="px-6 py-4">Total</td>
-                  <td className="px-6 py-4 text-right">{fmtN(totals.jobs)}</td>
-                  <td className="px-6 py-4 text-right">{fmtGBP(totals.ttv)}</td>
-                  <td className="px-6 py-4 text-right text-blue-400">{fmtP(totals.marginPct)}</td>
-                  <td className="px-6 py-4 text-right">{fmtGBP(totals.allocSpend)}</td>
-                  <td className="px-6 py-4 text-right text-emerald-400">{fmtP(totals.spendTtvPct)}</td>
+                <th className="px-4 py-3 text-center font-semibold">Total</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-700">
+              {completedTableData.map(row => (
+                <tr key={row.nuts1} className="bg-slate-800 hover:bg-slate-750 transition-colors">
+                  <td className="px-4 py-3 font-medium sticky left-0 bg-slate-800 z-10">{row.nuts1}</td>
+                  {CATEGORIES.map(cat => {
+                    const c = row.categories[cat]
+                    return (
+                      <td key={cat} className="px-4 py-3 text-center">
+                        <div className="font-semibold">{fmtN(c?.current || 0)}</div>
+                        <div className="flex flex-col gap-0.5 mt-1">
+                          <DeltaCell current={c?.current || 0} previous={c?.mom ?? null} label="MoM" />
+                          <DeltaCell current={c?.current || 0} previous={c?.yoy ?? null} label="YoY" />
+                        </div>
+                      </td>
+                    )
+                  })}
+                  <td className="px-4 py-3 text-center">
+                    <div className="font-semibold">{fmtN(row.total)}</div>
+                    <div className="flex flex-col gap-0.5 mt-1">
+                      <DeltaCell current={row.total} previous={row.totalMom} label="MoM" />
+                      <DeltaCell current={row.total} previous={row.totalYoy} label="YoY" />
+                    </div>
+                  </td>
                 </tr>
-              </tbody>
-            </table>
-          </div>
-        </>
+              ))}
+              {/* Totals row */}
+              <tr className="bg-slate-700 font-semibold">
+                <td className="px-4 py-3 sticky left-0 bg-slate-700 z-10">Total</td>
+                {CATEGORIES.map(cat => {
+                  const c = grandTotals.categories[cat]
+                  return (
+                    <td key={cat} className="px-4 py-3 text-center">
+                      <div>{fmtN(c?.current || 0)}</div>
+                      <div className="flex flex-col gap-0.5 mt-1">
+                        <DeltaCell current={c?.current || 0} previous={c?.mom ?? null} label="MoM" />
+                        <DeltaCell current={c?.current || 0} previous={c?.yoy ?? null} label="YoY" />
+                      </div>
+                    </td>
+                  )
+                })}
+                <td className="px-4 py-3 text-center">
+                  <div>{fmtN(grandTotals.total)}</div>
+                  <div className="flex flex-col gap-0.5 mt-1">
+                    <DeltaCell current={grandTotals.total} previous={grandTotals.totalMom} label="MoM" />
+                    <DeltaCell current={grandTotals.total} previous={grandTotals.totalYoy} label="YoY" />
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* ═══ ACTIVE BOOKINGS TABLE ═══ */}
+      <h2 className="text-lg font-semibold text-white mt-8">
+        Active Bookings — {MONTH_LABELS[selectedMonth]} {selectedYear} — {COUNTRY_LABELS[selectedCountry]}
+      </h2>
+
+      {activeTableData.rows.length === 0 ? (
+        <div className="rounded-lg bg-amber-900/30 border border-amber-700/50 px-4 py-2 text-sm text-amber-300">
+          No active bookings for this selection.
+        </div>
+      ) : (
+        <div className="rounded-lg overflow-x-auto border border-slate-700">
+          <table className="text-sm text-white whitespace-nowrap">
+            <thead className="bg-slate-700 text-white">
+              <tr>
+                <th className="px-3 py-2 text-left font-semibold sticky left-0 bg-slate-700 z-10 min-w-[180px]">Region</th>
+                {activeTableData.days.map(day => {
+                  const d = parseInt(day.split('-')[2])
+                  return <th key={day} className="px-2 py-2 text-center font-semibold min-w-[40px]">{d}</th>
+                })}
+                <th className="px-3 py-2 text-center font-semibold">Total</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-700">
+              {activeTableData.rows.map(row => (
+                <tr key={row.nuts1} className="bg-slate-800 hover:bg-slate-750 transition-colors">
+                  <td className="px-3 py-2 font-medium sticky left-0 bg-slate-800 z-10">{row.nuts1}</td>
+                  {activeTableData.days.map(day => {
+                    const val = row.dayMap[day] || 0
+                    return (
+                      <td key={day} className={`px-2 py-2 text-center ${val > 0 ? 'text-white' : 'text-slate-600'}`}>
+                        {val > 0 ? val : ''}
+                      </td>
+                    )
+                  })}
+                  <td className="px-3 py-2 text-center font-semibold text-blue-400">{row.total}</td>
+                </tr>
+              ))}
+              {/* Day totals row */}
+              <tr className="bg-slate-700 font-semibold">
+                <td className="px-3 py-2 sticky left-0 bg-slate-700 z-10">Total</td>
+                {activeTableData.days.map(day => {
+                  const dayTotal = activeTableData.rows.reduce((s, r) => s + (r.dayMap[day] || 0), 0)
+                  return (
+                    <td key={day} className={`px-2 py-2 text-center ${dayTotal > 0 ? 'text-white' : 'text-slate-600'}`}>
+                      {dayTotal > 0 ? dayTotal : ''}
+                    </td>
+                  )
+                })}
+                <td className="px-3 py-2 text-center text-blue-400">
+                  {activeTableData.rows.reduce((s, r) => s + r.total, 0)}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   )

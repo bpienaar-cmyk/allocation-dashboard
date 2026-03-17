@@ -97,6 +97,12 @@ export interface CategoryBreakdownRow {
   spendTtvPct: number;
 }
 
+export interface ActiveBookingRow {
+  day: string;
+  nuts1: string;
+  activeCount: number;
+}
+
 export type Country = 'uk' | 'spain' | 'france';
 export type CategoryType = 'furniture' | 'homeRemoval' | 'car' | 'motorbike' | 'piano' | 'journey';
 
