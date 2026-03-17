@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useCallback } from 'react'
 import { IResReservationRow } from '../../types'
 import { fmtN } from '../../utils/formatting'
 
@@ -36,9 +36,9 @@ const SHORT_REGION: Record<string, string> = {
   'Yorkshire and The Humber': 'Yorkshire',
 }
 
-type PeopleFilter = 'All' | '1' | '2' | '12'
-type TypeFilter = 'All' | 'Returns' | 'Customs' | 'Local' | 'Nationwide'
-type StatusFilter = 'All' | 'pending' | 'accepted' | 'journey_associated' | 'unsuccessful'
+const PEOPLE_OPTIONS = ['1', '2', '12'] as const
+const TYPE_OPTIONS = ['Returns', 'Customs', 'Local', 'Nationwide'] as const
+const STATUS_OPTIONS = ['pending', 'accepted', 'journey_associated', 'unsuccessful'] as const
 
 const STATUS_COLORS: Record<string, string> = {
   pending: 'text-amber-400',
@@ -61,10 +61,40 @@ const STATUS_LABELS: Record<string, string> = {
   unsuccessful: 'Unsuccessful',
 }
 
+// Generic multi-select toggle hook
+function useMultiFilter<T extends string>(allOptions: readonly T[]) {
+  const [selected, setSelected] = useState<Set<T>>(new Set(allOptions))
+
+  const isAll = selected.size === allOptions.length
+  const isActive = (val: T) => selected.has(val)
+
+  const toggle = useCallback((val: T) => {
+    setSelected((prev) => {
+      const next = new Set(prev)
+      if (next.has(val)) {
+        // Don't allow deselecting the last one
+        if (next.size > 1) next.delete(val)
+      } else {
+        next.add(val)
+      }
+      return next
+    })
+  }, [])
+
+  const toggleAll = useCallback(() => {
+    setSelected((prev) => {
+      if (prev.size === allOptions.length) return prev // already all selected, stay
+      return new Set(allOptions)
+    })
+  }, [allOptions])
+
+  return { selected, isAll, isActive, toggle, toggleAll }
+}
+
 const ReservationsView: React.FC<ReservationsViewProps> = ({ data }) => {
-  const [peopleFilter, setPeopleFilter] = useState<PeopleFilter>('All')
-  const [typeFilter, setTypeFilter] = useState<TypeFilter>('All')
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>('All')
+  const people = useMultiFilter(PEOPLE_OPTIONS)
+  const types = useMultiFilter(TYPE_OPTIONS)
+  const statuses = useMultiFilter(STATUS_OPTIONS)
 
   // Get all unique dates sorted
   const allDays = useMemo(() => {
@@ -73,17 +103,17 @@ const ReservationsView: React.FC<ReservationsViewProps> = ({ data }) => {
     return Array.from(daySet).sort()
   }, [data])
 
-  // Filter data based on toggles
+  // Filter data based on multi-select toggles
   const filteredData = useMemo(() => {
     return data.filter((row) => {
-      if (peopleFilter !== 'All' && row.people !== Number(peopleFilter)) return false
-      if (typeFilter !== 'All' && row.resType !== typeFilter) return false
-      if (statusFilter !== 'All' && row.status !== statusFilter) return false
+      if (!people.selected.has(String(row.people) as typeof PEOPLE_OPTIONS[number])) return false
+      if (!types.selected.has(row.resType as typeof TYPE_OPTIONS[number])) return false
+      if (!statuses.selected.has(row.status as typeof STATUS_OPTIONS[number])) return false
       return true
     })
-  }, [data, peopleFilter, typeFilter, statusFilter])
+  }, [data, people.selected, types.selected, statuses.selected])
 
-  // Build date × region grid: { [region]: { [day]: count } }
+  // Build date x region grid
   const gridData = useMemo(() => {
     const grid: Record<string, Record<string, number>> = {}
     REGION_ORDER.forEach((r) => {
@@ -98,7 +128,6 @@ const ReservationsView: React.FC<ReservationsViewProps> = ({ data }) => {
     return grid
   }, [filteredData, allDays])
 
-  // Column totals
   const dayTotals = useMemo(() => {
     const totals: Record<string, number> = {}
     allDays.forEach((d) => {
@@ -107,7 +136,6 @@ const ReservationsView: React.FC<ReservationsViewProps> = ({ data }) => {
     return totals
   }, [gridData, allDays])
 
-  // Row totals
   const regionTotals = useMemo(() => {
     const totals: Record<string, number> = {}
     REGION_ORDER.forEach((r) => {
@@ -118,23 +146,20 @@ const ReservationsView: React.FC<ReservationsViewProps> = ({ data }) => {
 
   const grandTotal = Object.values(dayTotals).reduce((s, v) => s + v, 0)
 
-  // Format day header: "1 Mar", "2 Mar" etc
   const formatDayHeader = (day: string) => {
     const d = new Date(day + 'T00:00:00')
     return `${d.getDate()} ${d.toLocaleString('en-GB', { month: 'short' })}`
   }
 
-  // Determine if a day is today or in the future (for highlighting)
   const today = new Date().toISOString().slice(0, 10)
 
   const pillClass = (active: boolean) =>
-    `px-3 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer ${
+    `px-3 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer select-none ${
       active
         ? 'bg-blue-600 text-white'
         : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
     }`
 
-  // Find max value for heatmap colouring
   const maxVal = useMemo(() => {
     let mx = 0
     REGION_ORDER.forEach((r) => {
@@ -149,10 +174,14 @@ const ReservationsView: React.FC<ReservationsViewProps> = ({ data }) => {
     if (val === 0) return ''
     const intensity = Math.min(val / maxVal, 1)
     const alpha = 0.1 + intensity * 0.4
-    if (statusFilter === 'journey_associated') return `rgba(34, 197, 94, ${alpha})`
-    if (statusFilter === 'accepted') return `rgba(59, 130, 246, ${alpha})`
-    if (statusFilter === 'unsuccessful') return `rgba(239, 68, 68, ${alpha})`
-    if (statusFilter === 'pending') return `rgba(245, 158, 11, ${alpha})`
+    // Use a single status colour if only one status selected, otherwise blue
+    if (statuses.selected.size === 1) {
+      const s = Array.from(statuses.selected)[0]
+      if (s === 'journey_associated') return `rgba(34, 197, 94, ${alpha})`
+      if (s === 'accepted') return `rgba(59, 130, 246, ${alpha})`
+      if (s === 'unsuccessful') return `rgba(239, 68, 68, ${alpha})`
+      if (s === 'pending') return `rgba(245, 158, 11, ${alpha})`
+    }
     return `rgba(59, 130, 246, ${alpha})`
   }
 
@@ -164,9 +193,10 @@ const ReservationsView: React.FC<ReservationsViewProps> = ({ data }) => {
         <div className="flex items-center gap-3">
           <span className="text-xs text-slate-400 w-16 shrink-0">People</span>
           <div className="flex gap-2 flex-wrap">
-            {(['All', '1', '2', '12'] as PeopleFilter[]).map((p) => (
-              <button key={p} className={pillClass(peopleFilter === p)} onClick={() => setPeopleFilter(p)}>
-                {p === 'All' ? 'All' : `${p} Man`}
+            <button className={pillClass(people.isAll)} onClick={people.toggleAll}>All</button>
+            {PEOPLE_OPTIONS.map((p) => (
+              <button key={p} className={pillClass(people.isActive(p))} onClick={() => people.toggle(p)}>
+                {p} Man
               </button>
             ))}
           </div>
@@ -176,8 +206,9 @@ const ReservationsView: React.FC<ReservationsViewProps> = ({ data }) => {
         <div className="flex items-center gap-3">
           <span className="text-xs text-slate-400 w-16 shrink-0">Type</span>
           <div className="flex gap-2 flex-wrap">
-            {(['All', 'Returns', 'Customs', 'Local', 'Nationwide'] as TypeFilter[]).map((t) => (
-              <button key={t} className={pillClass(typeFilter === t)} onClick={() => setTypeFilter(t)}>
+            <button className={pillClass(types.isAll)} onClick={types.toggleAll}>All</button>
+            {TYPE_OPTIONS.map((t) => (
+              <button key={t} className={pillClass(types.isActive(t))} onClick={() => types.toggle(t)}>
                 {t}
               </button>
             ))}
@@ -188,9 +219,9 @@ const ReservationsView: React.FC<ReservationsViewProps> = ({ data }) => {
         <div className="flex items-center gap-3">
           <span className="text-xs text-slate-400 w-16 shrink-0">Status</span>
           <div className="flex gap-2 flex-wrap">
-            <button className={pillClass(statusFilter === 'All')} onClick={() => setStatusFilter('All')}>All</button>
-            {(['pending', 'accepted', 'journey_associated', 'unsuccessful'] as const).map((s) => (
-              <button key={s} className={pillClass(statusFilter === s)} onClick={() => setStatusFilter(s)}>
+            <button className={pillClass(statuses.isAll)} onClick={statuses.toggleAll}>All</button>
+            {STATUS_OPTIONS.map((s) => (
+              <button key={s} className={pillClass(statuses.isActive(s))} onClick={() => statuses.toggle(s)}>
                 {STATUS_LABELS[s]}
               </button>
             ))}
@@ -198,7 +229,7 @@ const ReservationsView: React.FC<ReservationsViewProps> = ({ data }) => {
         </div>
       </div>
 
-      {/* Date × NUTS table */}
+      {/* Date x NUTS table */}
       <div className="rounded-lg border border-slate-700 overflow-auto" style={{ maxHeight: '600px' }}>
         <table className="text-xs text-white border-collapse" style={{ minWidth: `${allDays.length * 52 + 140}px` }}>
           <thead className="bg-slate-700 sticky top-0 z-10">
@@ -247,7 +278,6 @@ const ReservationsView: React.FC<ReservationsViewProps> = ({ data }) => {
                 </td>
               </tr>
             ))}
-            {/* Totals row */}
             <tr className="bg-slate-700 font-semibold border-t-2 border-slate-500">
               <td className="px-3 py-2 sticky left-0 bg-slate-700 z-10 border-r border-slate-600">TOTAL</td>
               {allDays.map((day) => (
@@ -263,7 +293,7 @@ const ReservationsView: React.FC<ReservationsViewProps> = ({ data }) => {
 
       {/* Summary cards */}
       <div className="grid grid-cols-4 gap-3">
-        {(['pending', 'accepted', 'journey_associated', 'unsuccessful'] as const).map((status) => {
+        {STATUS_OPTIONS.map((status) => {
           const count = filteredData
             .filter((r) => r.status === status)
             .reduce((s, r) => s + r.count, 0)
