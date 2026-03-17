@@ -21,6 +21,7 @@ import {
   deallocationsData,
   dailyOverviewByCountry,
   furnRoutingByCountry,
+  tpCancelsByCountry,
 } from '../data/dashboardData';
 
 export interface UseAllocationDataResult {
@@ -35,6 +36,7 @@ export interface UseAllocationDataResult {
   deallocations: DeallocationData | null;
   dailyOverviewByCountry: Record<string, { cy: DailyOverviewRow[], py: DailyOverviewRow[] }> | null;
   furnRoutingByCountry: Record<string, Record<string, { routed: number; total: number }>> | null;
+  tpCancelsByCountry: Record<string, Record<string, number>> | null;
   loading: boolean;
   error: Error | null;
   refetch: () => Promise<void>;
@@ -99,6 +101,7 @@ export function useAllocationData(dateRange: DateRange): UseAllocationDataResult
     deallocations,
     dailyOverviewByCountry: dailyOvrvwByCountry,
     furnRoutingByCountry,
+    tpCancelsByCountry,
     loading,
     error,
     refetch: loadData,

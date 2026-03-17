@@ -31,6 +31,7 @@ interface OverviewViewProps {
   onCountryChange: (country: Country) => void
   dailyOverviewByCountry?: Record<string, { cy: DailyOverviewRow[], py: DailyOverviewRow[] }> | null
   furnRoutingByCountry?: Record<string, Record<string, { routed: number; total: number }>> | null
+  tpCancelsByCountry?: Record<string, Record<string, number>> | null
 }
 
 function yoyChange(current: number, prior: number): { trend: 'up' | 'down' | 'flat'; label: string } {
@@ -228,6 +229,7 @@ function aggregateDaily(
   endDate: string,
   category?: string,
   furnRouting?: Record<string, { routed: number; total: number }>,
+  tpCancelsLookup?: Record<string, number>,
 ): OverviewData {
   const filtered = dailyData.filter(row => {
     const matches = row.day >= startDate && row.day <= endDate
@@ -257,7 +259,9 @@ function aggregateDaily(
     agg.avFee += row.avFee
     agg.allocSpend += row.allocSpend
     agg.otdCancels += row.otdCancels
-    agg.tpCancels += row.tpCancels
+    // Use corrected TP cancels from lookup if available
+    const tpKey = `${row.day}|${row.category}`
+    agg.tpCancels += (tpCancelsLookup && tpKey in tpCancelsLookup) ? tpCancelsLookup[tpKey] : row.tpCancels
     agg.cantSourceCount += row.cantSourceCount
     agg.deallocations += row.deallocations
     agg.otdDeallocations += row.otdDeallocations
@@ -310,6 +314,7 @@ function convertToDailyRaw(
   endDate: string,
   category?: string,
   furnRouting?: Record<string, { routed: number; total: number }>,
+  tpCancelsLookup?: Record<string, number>,
 ): DailyRaw[] {
   const filtered = dailyData.filter(row => {
     const matches = row.day >= startDate && row.day <= endDate
@@ -343,7 +348,8 @@ function convertToDailyRaw(
     byDay[dayNum].avFee += row.avFee
     byDay[dayNum].allocSpend += row.allocSpend
     byDay[dayNum].cantSource += row.cantSourceCount
-    byDay[dayNum].tpCancels += row.tpCancels
+    const tpKey = `${row.day}|${row.category}`
+    byDay[dayNum].tpCancels += (tpCancelsLookup && tpKey in tpCancelsLookup) ? tpCancelsLookup[tpKey] : row.tpCancels
     byDay[dayNum].otdDealloCount += row.otdDeallocations
 
     // Populate furn routing from lookup (only once per day)
@@ -378,6 +384,7 @@ const OverviewView: React.FC<OverviewViewProps> = ({
   onCountryChange,
   dailyOverviewByCountry,
   furnRoutingByCountry,
+  tpCancelsByCountry,
 }) => {
   const [selectedMetric, setSelectedMetric] = useState<MetricKey | null>(null)
   const [dateRange, setDateRange] = useState({ start: '2026-03-01', end: '2026-03-17' })
@@ -390,18 +397,20 @@ const OverviewView: React.FC<OverviewViewProps> = ({
   const countryDailyData = dailyOverviewByCountry?.[selectedCountry]
   const cyRouting = furnRoutingByCountry?.[`${selectedCountry}_cy`]
   const pyRouting = furnRoutingByCountry?.[`${selectedCountry}_py`]
+  const cyTpCancels = tpCancelsByCountry?.[`${selectedCountry}_cy`]
+  const pyTpCancels = tpCancelsByCountry?.[`${selectedCountry}_py`]
   const { current: baseData, priorYear: basePriorYear } = countryData
 
   const { data, priorYear } = useMemo(() => {
     // Use daily data for all countries if available
     if (countryDailyData && countryDailyData.cy && countryDailyData.cy.length > 0) {
-      const cyData = aggregateDaily(countryDailyData.cy, dateRange.start, dateRange.end, selectedCategory === 'All' ? undefined : selectedCategory, cyRouting)
-      const pyData = aggregateDaily(countryDailyData.py, dateRange.start.replace('2026', '2025'), dateRange.end.replace('2026', '2025'), selectedCategory === 'All' ? undefined : selectedCategory, pyRouting)
+      const cyData = aggregateDaily(countryDailyData.cy, dateRange.start, dateRange.end, selectedCategory === 'All' ? undefined : selectedCategory, cyRouting, cyTpCancels)
+      const pyData = aggregateDaily(countryDailyData.py, dateRange.start.replace('2026', '2025'), dateRange.end.replace('2026', '2025'), selectedCategory === 'All' ? undefined : selectedCategory, pyRouting, pyTpCancels)
       return { data: cyData, priorYear: pyData }
     }
     // Fallback to existing aggregated data
     return { data: baseData, priorYear: basePriorYear }
-  }, [selectedCountry, countryDailyData, dateRange, selectedCategory, baseData, basePriorYear, cyRouting, pyRouting])
+  }, [selectedCountry, countryDailyData, dateRange, selectedCategory, baseData, basePriorYear, cyRouting, pyRouting, cyTpCancels, pyTpCancels])
 
   const chartData = useMemo(() => {
     if (!selectedMetric) return []
@@ -410,12 +419,12 @@ const OverviewView: React.FC<OverviewViewProps> = ({
 
     // Use daily data for all countries if available
     if (countryDailyData && countryDailyData.cy && countryDailyData.cy.length > 0) {
-      const cyCY = convertToDailyRaw(countryDailyData.cy, dateRange.start, dateRange.end, selectedCategory === 'All' ? undefined : selectedCategory, cyRouting)
-      const cyPY = convertToDailyRaw(countryDailyData.py, dateRange.start.replace('2026', '2025'), dateRange.end.replace('2026', '2025'), selectedCategory === 'All' ? undefined : selectedCategory, pyRouting)
+      const cyCY = convertToDailyRaw(countryDailyData.cy, dateRange.start, dateRange.end, selectedCategory === 'All' ? undefined : selectedCategory, cyRouting, cyTpCancels)
+      const cyPY = convertToDailyRaw(countryDailyData.py, dateRange.start.replace('2026', '2025'), dateRange.end.replace('2026', '2025'), selectedCategory === 'All' ? undefined : selectedCategory, pyRouting, pyTpCancels)
       return buildChartData(cyCY, cyPY, metric)
     }
     return buildChartData(countryData.dailyCY, countryData.dailyPY, metric)
-  }, [selectedMetric, selectedCountry, countryData, countryDailyData, dateRange, selectedCategory, cyRouting, pyRouting])
+  }, [selectedMetric, selectedCountry, countryData, countryDailyData, dateRange, selectedCategory, cyRouting, pyRouting, cyTpCancels, pyTpCancels])
 
   const dailyBarData = useMemo(() => {
     if (!selectedMetric) return []
@@ -424,12 +433,12 @@ const OverviewView: React.FC<OverviewViewProps> = ({
 
     // Use daily data for all countries if available
     if (countryDailyData && countryDailyData.cy && countryDailyData.cy.length > 0) {
-      const cyCY = convertToDailyRaw(countryDailyData.cy, dateRange.start, dateRange.end, selectedCategory === 'All' ? undefined : selectedCategory, cyRouting)
-      const cyPY = convertToDailyRaw(countryDailyData.py, dateRange.start.replace('2026', '2025'), dateRange.end.replace('2026', '2025'), selectedCategory === 'All' ? undefined : selectedCategory, pyRouting)
+      const cyCY = convertToDailyRaw(countryDailyData.cy, dateRange.start, dateRange.end, selectedCategory === 'All' ? undefined : selectedCategory, cyRouting, cyTpCancels)
+      const cyPY = convertToDailyRaw(countryDailyData.py, dateRange.start.replace('2026', '2025'), dateRange.end.replace('2026', '2025'), selectedCategory === 'All' ? undefined : selectedCategory, pyRouting, pyTpCancels)
       return buildDailyBarData(cyCY, cyPY, metric)
     }
     return buildDailyBarData(countryData.dailyCY, countryData.dailyPY, metric)
-  }, [selectedMetric, selectedCountry, countryData, countryDailyData, dateRange, selectedCategory, cyRouting, pyRouting])
+  }, [selectedMetric, selectedCountry, countryData, countryDailyData, dateRange, selectedCategory, cyRouting, pyRouting, cyTpCancels, pyTpCancels])
 
   const selectedMetricDef = METRICS.find(m => m.key === selectedMetric)
 

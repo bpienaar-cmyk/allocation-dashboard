@@ -20,7 +20,7 @@ const App: React.FC = () => {
   const [selectedCountry, setSelectedCountry] = useState<Country>('uk')
   const defaultDateRange = getDefaultDateRange()
 
-  const { overview, overviewByCountry, trends, trendsByCountry, categories, regions, otdMetrics, deallocations, dailyOverviewByCountry, furnRoutingByCountry, loading, error, refetch } = useAllocationData(defaultDateRange)
+  const { overview, overviewByCountry, trends, trendsByCountry, categories, regions, otdMetrics, deallocations, dailyOverviewByCountry, furnRoutingByCountry, tpCancelsByCountry, loading, error, refetch } = useAllocationData(defaultDateRange)
 
   return (
     <ErrorBoundary>
@@ -43,6 +43,7 @@ const App: React.FC = () => {
                     onCountryChange={setSelectedCountry}
                     dailyOverviewByCountry={dailyOverviewByCountry}
                     furnRoutingByCountry={furnRoutingByCountry}
+                    tpCancelsByCountry={tpCancelsByCountry}
                   />
                 )}
                 {activeTab === 'trends' && trendsByCountry && (
