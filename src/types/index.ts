@@ -100,6 +100,8 @@ export interface CategoryBreakdownRow {
 export interface ActiveBookingRow {
   day: string;
   nuts1: string;
+  category: string;
+  status: string;
   activeCount: number;
 }
 

@@ -58,6 +58,9 @@ const CategoryView: React.FC<CategoryViewProps> = ({
   const [selectedMonth, setSelectedMonth] = useState(now.getMonth())
   const [selectedYear, setSelectedYear] = useState(2026)
   const [selectedCategory, setSelectedCategory] = useState('All')
+  const [selectedStatus, setSelectedStatus] = useState('All')
+
+  const STATUSES = ['Active', 'Allocated', 'Pending']
 
   const countries: Country[] = ['uk', 'spain', 'france']
   const years = [2025, 2026]
@@ -180,7 +183,12 @@ const CategoryView: React.FC<CategoryViewProps> = ({
   // ─── Active Bookings table ───
   const activeTableData = useMemo(() => {
     const monthPrefix = `${selectedYear}-${String(selectedMonth + 1).padStart(2, '0')}`
-    const filtered = allActive.filter(r => r.day.startsWith(monthPrefix))
+    const filtered = allActive.filter(r => {
+      if (!r.day.startsWith(monthPrefix)) return false
+      if (selectedCategory !== 'All' && r.category !== selectedCategory) return false
+      if (selectedStatus !== 'All' && r.status !== selectedStatus) return false
+      return true
+    })
 
     // Get all days in the month
     const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate()
@@ -204,7 +212,7 @@ const CategoryView: React.FC<CategoryViewProps> = ({
     }).sort((a, b) => b.total - a.total)
 
     return { days, rows }
-  }, [allActive, selectedYear, selectedMonth])
+  }, [allActive, selectedYear, selectedMonth, selectedCategory, selectedStatus])
 
   // ─── Render ───
   return (
@@ -357,8 +365,38 @@ const CategoryView: React.FC<CategoryViewProps> = ({
 
       {/* ═══ ACTIVE BOOKINGS TABLE ═══ */}
       <h2 className="text-lg font-semibold text-white mt-8">
-        Active Bookings — {MONTH_LABELS[selectedMonth]} {selectedYear} — {COUNTRY_LABELS[selectedCountry]}
+        Bookings — {MONTH_LABELS[selectedMonth]} {selectedYear} — {COUNTRY_LABELS[selectedCountry]}
+        {selectedStatus !== 'All' && <span className="text-blue-400 ml-1">({selectedStatus})</span>}
+        {selectedCategory !== 'All' && <span className="text-blue-400 ml-1">— {selectedCategory}</span>}
       </h2>
+
+      {/* Status toggle */}
+      <div className="flex items-center gap-2">
+        <label className="text-slate-400 text-sm font-medium">Status:</label>
+        <button
+          onClick={() => setSelectedStatus('All')}
+          className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
+            selectedStatus === 'All'
+              ? 'bg-blue-600 text-white'
+              : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+          }`}
+        >
+          All
+        </button>
+        {STATUSES.map(s => (
+          <button
+            key={s}
+            onClick={() => setSelectedStatus(s)}
+            className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
+              selectedStatus === s
+                ? 'bg-blue-600 text-white'
+                : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+            }`}
+          >
+            {s}
+          </button>
+        ))}
+      </div>
 
       {activeTableData.rows.length === 0 ? (
         <div className="rounded-lg bg-amber-900/30 border border-amber-700/50 px-4 py-2 text-sm text-amber-300">
