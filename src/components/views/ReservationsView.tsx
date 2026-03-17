@@ -529,35 +529,39 @@ const ReservationsView: React.FC<ReservationsViewProps> = ({ data, trendData }) 
                 <Legend wrapperStyle={{ color: '#cbd5e1' }} />
                 <Line
                   type="monotone"
-                  dataKey="journeyAssoc"
-                  stroke="#22c55e"
-                  dot={{ fill: '#22c55e', r: 4 }}
+                  dataKey="total"
+                  stroke="#a78bfa"
+                  dot={{ fill: '#a78bfa', r: 4 }}
                   activeDot={{ r: 6 }}
                   strokeWidth={2}
-                  name="Journey Associated"
+                  name="Requests"
                   isAnimationActive={true}
                   label={{
                     position: 'top',
-                    fill: '#86efac',
+                    fill: '#c4b5fd',
                     fontSize: 10,
                     formatter: (val: any) => fmtN(val),
                   }}
                 />
                 <Line
                   type="monotone"
+                  dataKey="journeyAssoc"
+                  stroke="#22c55e"
+                  dot={{ fill: '#22c55e', r: 3 }}
+                  activeDot={{ r: 6 }}
+                  strokeWidth={2}
+                  name="Journey Associated"
+                  isAnimationActive={true}
+                />
+                <Line
+                  type="monotone"
                   dataKey="unsuccessful"
                   stroke="#ef4444"
-                  dot={{ fill: '#ef4444', r: 4 }}
+                  dot={{ fill: '#ef4444', r: 3 }}
                   activeDot={{ r: 6 }}
                   strokeWidth={2}
                   name="Unsuccessful"
                   isAnimationActive={true}
-                  label={{
-                    position: 'bottom',
-                    fill: '#fca5a5',
-                    fontSize: 10,
-                    formatter: (val: any) => fmtN(val),
-                  }}
                 />
               </LineChart>
             </ResponsiveContainer>
