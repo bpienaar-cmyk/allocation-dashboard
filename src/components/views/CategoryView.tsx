@@ -57,6 +57,7 @@ const CategoryView: React.FC<CategoryViewProps> = ({
   const now = new Date()
   const [selectedMonth, setSelectedMonth] = useState(now.getMonth())
   const [selectedYear, setSelectedYear] = useState(2026)
+  const [selectedCategory, setSelectedCategory] = useState('All')
 
   const countries: Country[] = ['uk', 'spain', 'france']
   const years = [2025, 2026]
@@ -82,6 +83,9 @@ const CategoryView: React.FC<CategoryViewProps> = ({
   // Check if this is the current (partial) month
   const partial = partialMonthByCountry[selectedCountry]
   const isPartialMonth = partial && monthStr === partial.currentMonth
+
+  // Filtered categories based on toggle
+  const displayCategories = selectedCategory === 'All' ? CATEGORIES : [selectedCategory]
 
   // ─── Completed & Paid comparison table ───
   // Build lookup: monthStr -> nuts1 -> category -> jobs
@@ -128,7 +132,7 @@ const CategoryView: React.FC<CategoryViewProps> = ({
       let hasMom = false
       let hasYoy = false
 
-      CATEGORIES.forEach(cat => {
+      displayCategories.forEach(cat => {
         const cur = getJobs(monthStr, nuts1, cat) ?? 0
         const prev = getMomJobs(nuts1, cat)
         const lastYear = getYoyJobs(nuts1, cat)
@@ -148,7 +152,7 @@ const CategoryView: React.FC<CategoryViewProps> = ({
     }).filter(r => r.total > 0 || Object.values(r.categories).some(c => c.current > 0))
       .sort((a, b) => b.total - a.total)
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [nuts1Regions, monthStr, prevMonthStr, yoyStr, lookup, isPartialMonth, partial])
+  }, [nuts1Regions, monthStr, prevMonthStr, yoyStr, lookup, isPartialMonth, partial, displayCategories])
 
   // Grand totals
   const grandTotals = useMemo(() => {
@@ -157,7 +161,7 @@ const CategoryView: React.FC<CategoryViewProps> = ({
     let grandMom: number | null = 0
     let grandYoy: number | null = 0
 
-    CATEGORIES.forEach(cat => {
+    displayCategories.forEach(cat => {
       let cur = 0, mom = 0, yoy = 0, hasMom = false, hasYoy = false
       completedTableData.forEach(r => {
         cur += r.categories[cat]?.current || 0
@@ -251,6 +255,19 @@ const CategoryView: React.FC<CategoryViewProps> = ({
             </button>
           ))}
         </div>
+        <div className="flex items-center gap-2">
+          <label className="text-slate-400 text-sm font-medium">Category:</label>
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-white text-sm focus:outline-none focus:border-blue-500"
+          >
+            <option value="All">All Categories</option>
+            {CATEGORIES.map(cat => (
+              <option key={cat} value={cat}>{cat}</option>
+            ))}
+          </select>
+        </div>
       </div>
 
       {/* ═══ COMPLETED & PAID TABLE ═══ */}
@@ -273,17 +290,19 @@ const CategoryView: React.FC<CategoryViewProps> = ({
             <thead className="bg-slate-700 text-white">
               <tr>
                 <th className="px-4 py-3 text-left font-semibold sticky left-0 bg-slate-700 z-10">Region</th>
-                {CATEGORIES.map(cat => (
-                  <th key={cat} className="px-4 py-3 text-center font-semibold">{CAT_SHORT[cat]}</th>
+                {displayCategories.map(cat => (
+                  <th key={cat} className="px-4 py-3 text-center font-semibold">{CAT_SHORT[cat] || cat}</th>
                 ))}
-                <th className="px-4 py-3 text-center font-semibold">Total</th>
+                {displayCategories.length > 1 && (
+                  <th className="px-4 py-3 text-center font-semibold">Total</th>
+                )}
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-700">
               {completedTableData.map(row => (
                 <tr key={row.nuts1} className="bg-slate-800 hover:bg-slate-750 transition-colors">
                   <td className="px-4 py-3 font-medium sticky left-0 bg-slate-800 z-10">{row.nuts1}</td>
-                  {CATEGORIES.map(cat => {
+                  {displayCategories.map(cat => {
                     const c = row.categories[cat]
                     return (
                       <td key={cat} className="px-4 py-3 text-center">
@@ -295,19 +314,21 @@ const CategoryView: React.FC<CategoryViewProps> = ({
                       </td>
                     )
                   })}
-                  <td className="px-4 py-3 text-center">
-                    <div className="font-semibold">{fmtN(row.total)}</div>
-                    <div className="flex flex-col gap-0.5 mt-1">
-                      <DeltaCell current={row.total} previous={row.totalMom} label="MoM" />
-                      <DeltaCell current={row.total} previous={row.totalYoy} label="YoY" />
-                    </div>
-                  </td>
+                  {displayCategories.length > 1 && (
+                    <td className="px-4 py-3 text-center">
+                      <div className="font-semibold">{fmtN(row.total)}</div>
+                      <div className="flex flex-col gap-0.5 mt-1">
+                        <DeltaCell current={row.total} previous={row.totalMom} label="MoM" />
+                        <DeltaCell current={row.total} previous={row.totalYoy} label="YoY" />
+                      </div>
+                    </td>
+                  )}
                 </tr>
               ))}
               {/* Totals row */}
               <tr className="bg-slate-700 font-semibold">
                 <td className="px-4 py-3 sticky left-0 bg-slate-700 z-10">Total</td>
-                {CATEGORIES.map(cat => {
+                {displayCategories.map(cat => {
                   const c = grandTotals.categories[cat]
                   return (
                     <td key={cat} className="px-4 py-3 text-center">
@@ -319,13 +340,15 @@ const CategoryView: React.FC<CategoryViewProps> = ({
                     </td>
                   )
                 })}
-                <td className="px-4 py-3 text-center">
-                  <div>{fmtN(grandTotals.total)}</div>
-                  <div className="flex flex-col gap-0.5 mt-1">
-                    <DeltaCell current={grandTotals.total} previous={grandTotals.totalMom} label="MoM" />
-                    <DeltaCell current={grandTotals.total} previous={grandTotals.totalYoy} label="YoY" />
-                  </div>
-                </td>
+                {displayCategories.length > 1 && (
+                  <td className="px-4 py-3 text-center">
+                    <div>{fmtN(grandTotals.total)}</div>
+                    <div className="flex flex-col gap-0.5 mt-1">
+                      <DeltaCell current={grandTotals.total} previous={grandTotals.totalMom} label="MoM" />
+                      <DeltaCell current={grandTotals.total} previous={grandTotals.totalYoy} label="YoY" />
+                    </div>
+                  </td>
+                )}
               </tr>
             </tbody>
           </table>
