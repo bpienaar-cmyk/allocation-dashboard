@@ -9931,3 +9931,44 @@ export const dailyOverviewByCountry: Record<string, { cy: DailyOverviewRow[], py
   spain: { cy: dailyOverviewSpain, py: dailyOverviewSpainPY },
   france: { cy: dailyOverviewFrance, py: dailyOverviewFrancePY },
 };
+
+/**
+ * Furniture routing lookup: day → { routed, total }
+ * Only Furniture category has routing data.
+ */
+export const furnRoutingByCountry: Record<string, Record<string, { routed: number; total: number }>> = {
+  uk_cy: {
+    '2026-03-01':{routed:68,total:761},'2026-03-02':{routed:54,total:871},'2026-03-03':{routed:61,total:665},
+    '2026-03-04':{routed:57,total:629},'2026-03-05':{routed:65,total:710},'2026-03-06':{routed:75,total:706},
+    '2026-03-07':{routed:81,total:777},'2026-03-08':{routed:24,total:475},'2026-03-09':{routed:45,total:725},
+    '2026-03-10':{routed:24,total:606},'2026-03-11':{routed:39,total:596},'2026-03-12':{routed:84,total:694},
+    '2026-03-13':{routed:88,total:631},'2026-03-14':{routed:74,total:672},'2026-03-15':{routed:27,total:453},
+    '2026-03-16':{routed:62,total:741},'2026-03-17':{routed:0,total:2},
+  },
+  uk_py: {
+    '2025-03-01':{routed:838,total:919},'2025-03-02':{routed:581,total:677},'2025-03-03':{routed:605,total:711},
+    '2025-03-04':{routed:468,total:556},'2025-03-05':{routed:485,total:575},'2025-03-06':{routed:523,total:618},
+    '2025-03-07':{routed:596,total:723},'2025-03-08':{routed:579,total:676},'2025-03-09':{routed:477,total:578},
+    '2025-03-10':{routed:510,total:593},'2025-03-11':{routed:442,total:520},'2025-03-12':{routed:511,total:590},
+    '2025-03-13':{routed:553,total:624},'2025-03-14':{routed:614,total:726},'2025-03-15':{routed:602,total:715},
+    '2025-03-16':{routed:412,total:503},'2025-03-17':{routed:560,total:641},
+  },
+  spain_cy: {
+    '2026-03-01':{routed:0,total:23},'2026-03-02':{routed:0,total:19},'2026-03-03':{routed:0,total:22},
+    '2026-03-04':{routed:0,total:9},'2026-03-05':{routed:0,total:32},'2026-03-06':{routed:0,total:15},
+    '2026-03-07':{routed:0,total:18},'2026-03-08':{routed:0,total:6},'2026-03-09':{routed:0,total:13},
+    '2026-03-10':{routed:1,total:23},'2026-03-11':{routed:1,total:17},'2026-03-12':{routed:0,total:19},
+    '2026-03-13':{routed:0,total:18},'2026-03-14':{routed:0,total:14},'2026-03-15':{routed:0,total:16},
+    '2026-03-16':{routed:0,total:11},
+  },
+  spain_py: {},
+  france_cy: {
+    '2026-03-01':{routed:0,total:11},'2026-03-02':{routed:0,total:3},'2026-03-03':{routed:1,total:3},
+    '2026-03-04':{routed:0,total:6},'2026-03-05':{routed:0,total:8},'2026-03-06':{routed:0,total:4},
+    '2026-03-07':{routed:0,total:9},'2026-03-08':{routed:0,total:6},'2026-03-09':{routed:0,total:3},
+    '2026-03-10':{routed:0,total:1},'2026-03-11':{routed:1,total:8},'2026-03-12':{routed:0,total:2},
+    '2026-03-13':{routed:0,total:5},'2026-03-14':{routed:0,total:9},'2026-03-15':{routed:0,total:4},
+    '2026-03-16':{routed:1,total:3},
+  },
+  france_py: {},
+};
