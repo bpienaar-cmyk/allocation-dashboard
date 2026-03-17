@@ -30,6 +30,8 @@ import {
   iresTrendData,
   spendByNutsData,
   spendByCategoryData,
+  spendByNutsByCountry,
+  spendByCategoryByCountry,
 } from '../data/dashboardData';
 
 export interface UseAllocationDataResult {
@@ -49,6 +51,8 @@ export interface UseAllocationDataResult {
   tpCancelsByCountry: Record<string, Record<string, number>> | null;
   spendByNuts: SpendNutsRow[];
   spendByCategory: SpendCategoryRow[];
+  spendByNutsByCountry: Record<string, SpendNutsRow[]>;
+  spendByCategoryByCountry: Record<string, SpendCategoryRow[]>;
   loading: boolean;
   error: Error | null;
   refetch: () => Promise<void>;
@@ -122,6 +126,8 @@ export function useAllocationData(dateRange: DateRange): UseAllocationDataResult
     tpCancelsByCountry,
     spendByNuts: spendByNutsData,
     spendByCategory: spendByCategoryData,
+    spendByNutsByCountry,
+    spendByCategoryByCountry,
     loading,
     error,
     refetch: loadData,

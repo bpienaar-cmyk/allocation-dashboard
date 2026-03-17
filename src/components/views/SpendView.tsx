@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react'
+import React, { useState, useMemo, useCallback, useEffect } from 'react'
 import {
   LineChart,
   Line,
@@ -8,13 +8,22 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts'
-import { SpendNutsRow, SpendCategoryRow } from '../../types'
+import { SpendNutsRow, SpendCategoryRow, Country } from '../../types'
 import { fmtN } from '../../utils/formatting'
 
 interface SpendViewProps {
-  nutsData: SpendNutsRow[]
-  categoryData: SpendCategoryRow[]
+  nutsDataByCountry: Record<string, SpendNutsRow[]>
+  categoryDataByCountry: Record<string, SpendCategoryRow[]>
+  selectedCountry: Country
+  onCountryChange: (c: Country) => void
 }
+
+const COUNTRY_LABELS: Record<Country, string> = {
+  uk: 'UK (V4 + AVB)',
+  spain: 'Spain (V4)',
+  france: 'France (V4)',
+}
+const countries: Country[] = ['uk', 'spain', 'france']
 
 const SHORT_REGION: Record<string, string> = {
   'East Midlands (England)': 'E. Midlands',
@@ -31,33 +40,13 @@ const SHORT_REGION: Record<string, string> = {
   'Yorkshire and The Humber': 'Yorkshire',
 }
 
-function useMultiFilter<T extends string>(allOptions: readonly T[]) {
-  const [selected, setSelected] = useState<Set<T>>(new Set(allOptions))
-  const isAll = selected.size === allOptions.length
-  const isActive = (val: T) => selected.has(val)
-  const toggle = useCallback((val: T) => {
-    setSelected((prev) => {
-      if (prev.size === allOptions.length) return new Set([val])
-      const next = new Set(prev)
-      if (next.has(val)) {
-        if (next.size > 1) next.delete(val)
-      } else {
-        next.add(val)
-      }
-      return next
-    })
-  }, [allOptions])
-  const toggleAll = useCallback(() => {
-    setSelected((prev) => {
-      if (prev.size === allOptions.length) return prev
-      return new Set(allOptions)
-    })
-  }, [allOptions])
-  return { selected, isAll, isActive, toggle, toggleAll }
-}
-
 const pillClass = (active: boolean) =>
   `px-3 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer select-none ${
+    active ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+  }`
+
+const countryBtnClass = (active: boolean) =>
+  `px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
     active ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
   }`
 
@@ -208,22 +197,61 @@ const ComparisonTable: React.FC<{ data: ChartRow[] }> = ({ data }) => (
   </div>
 )
 
-const SpendView: React.FC<SpendViewProps> = ({ nutsData, categoryData }) => {
+const SpendView: React.FC<SpendViewProps> = ({ nutsDataByCountry, categoryDataByCountry, selectedCountry, onCountryChange }) => {
+  const nutsData = nutsDataByCountry[selectedCountry] || []
+  const categoryData = categoryDataByCountry[selectedCountry] || []
+
   const allNutsRegions = useMemo(() => {
     return Array.from(new Set(nutsData.map(r => r.nutsRegion))).sort()
   }, [nutsData]) as string[]
-
-  const nutsFilter = useMultiFilter(allNutsRegions as unknown as readonly string[])
 
   const allCategories = useMemo(() => {
     return Array.from(new Set(categoryData.map(r => r.category))).sort()
   }, [categoryData]) as string[]
 
-  const catFilter = useMultiFilter(allCategories as unknown as readonly string[])
+  // NUTS filter with reset on country change
+  const [selectedNuts, setSelectedNuts] = useState<Set<string>>(new Set(allNutsRegions))
+  const nutsIsAll = selectedNuts.size === allNutsRegions.length
+  const nutsIsActive = (val: string) => selectedNuts.has(val)
+  const nutsToggle = useCallback((val: string) => {
+    setSelectedNuts((prev) => {
+      if (prev.size === allNutsRegions.length) return new Set([val])
+      const next = new Set(prev)
+      if (next.has(val)) { if (next.size > 1) next.delete(val) } else { next.add(val) }
+      return next
+    })
+  }, [allNutsRegions])
+  const nutsToggleAll = useCallback(() => {
+    setSelectedNuts(new Set(allNutsRegions))
+  }, [allNutsRegions])
+
+  // Category filter with reset on country change
+  const [selectedCats, setSelectedCats] = useState<Set<string>>(new Set(allCategories))
+  const catIsAll = selectedCats.size === allCategories.length
+  const catIsActive = (val: string) => selectedCats.has(val)
+  const catToggle = useCallback((val: string) => {
+    setSelectedCats((prev) => {
+      if (prev.size === allCategories.length) return new Set([val])
+      const next = new Set(prev)
+      if (next.has(val)) { if (next.size > 1) next.delete(val) } else { next.add(val) }
+      return next
+    })
+  }, [allCategories])
+  const catToggleAll = useCallback(() => {
+    setSelectedCats(new Set(allCategories))
+  }, [allCategories])
+
+  // Reset filters when country changes (NUTS regions change per country)
+  useEffect(() => {
+    setSelectedNuts(new Set(allNutsRegions))
+  }, [allNutsRegions])
+  useEffect(() => {
+    setSelectedCats(new Set(allCategories))
+  }, [allCategories])
 
   const chartData = useMemo(() => {
     // Apply NUTS filter
-    const nutsFiltered = nutsData.filter(r => nutsFilter.selected.has(r.nutsRegion))
+    const nutsFiltered = nutsData.filter(r => selectedNuts.has(r.nutsRegion))
     const nutsMonthMap: Record<string, { spend: number; ttv: number }> = {}
     nutsFiltered.forEach(r => {
       if (!nutsMonthMap[r.month]) nutsMonthMap[r.month] = { spend: 0, ttv: 0 }
@@ -232,7 +260,7 @@ const SpendView: React.FC<SpendViewProps> = ({ nutsData, categoryData }) => {
     })
 
     // Apply Category filter
-    const catFiltered = categoryData.filter(r => catFilter.selected.has(r.category))
+    const catFiltered = categoryData.filter(r => selectedCats.has(r.category))
     const catMonthMap: Record<string, { spend: number; ttv: number }> = {}
     catFiltered.forEach(r => {
       if (!catMonthMap[r.month]) catMonthMap[r.month] = { spend: 0, ttv: 0 }
@@ -240,12 +268,9 @@ const SpendView: React.FC<SpendViewProps> = ({ nutsData, categoryData }) => {
       catMonthMap[r.month].ttv += r.ttv
     })
 
-    // When both filters are "All", both maps are identical (full dataset).
-    // When one filter is active, use the ratio from that filter to scale the other.
-    // If NUTS filtered and Category filtered, apply both scaling factors.
     const allMonths = Array.from(new Set([...Object.keys(nutsMonthMap), ...Object.keys(catMonthMap)])).sort()
 
-    // Get unfiltered totals from NUTS (same as category totals when both "All")
+    // Get unfiltered totals
     const totalMonthMap: Record<string, { spend: number; ttv: number }> = {}
     nutsData.forEach(r => {
       if (!totalMonthMap[r.month]) totalMonthMap[r.month] = { spend: 0, ttv: 0 }
@@ -258,8 +283,6 @@ const SpendView: React.FC<SpendViewProps> = ({ nutsData, categoryData }) => {
       const nuts = nutsMonthMap[month] || { spend: 0, ttv: 0 }
       const cat = catMonthMap[month] || { spend: 0, ttv: 0 }
 
-      // Proportional: if NUTS selected = 50% of total, and Category selected = 80% of total,
-      // then combined ≈ total × 50% × 80%
       const nutsSpendRatio = total.spend > 0 ? nuts.spend / total.spend : 0
       const nutsTtvRatio = total.ttv > 0 ? nuts.ttv / total.ttv : 0
       const catSpendRatio = total.spend > 0 ? cat.spend / total.spend : 0
@@ -273,18 +296,31 @@ const SpendView: React.FC<SpendViewProps> = ({ nutsData, categoryData }) => {
     })
 
     return computeComparisons(combined)
-  }, [nutsData, categoryData, nutsFilter.selected, catFilter.selected])
+  }, [nutsData, categoryData, selectedNuts, selectedCats])
 
   return (
     <div className="space-y-6">
+      {/* === Country Toggle === */}
+      <div className="flex items-center gap-2">
+        {countries.map((c) => (
+          <button
+            key={c}
+            onClick={() => onCountryChange(c)}
+            className={countryBtnClass(selectedCountry === c)}
+          >
+            {COUNTRY_LABELS[c]}
+          </button>
+        ))}
+      </div>
+
       {/* === Filters === */}
       <div className="bg-slate-800 rounded-lg p-4 space-y-3">
         <div className="flex items-center gap-3">
           <span className="text-xs text-slate-400 w-16 shrink-0">NUTS</span>
           <div className="flex gap-2 flex-wrap">
-            <button className={pillClass(nutsFilter.isAll)} onClick={nutsFilter.toggleAll}>All</button>
+            <button className={pillClass(nutsIsAll)} onClick={nutsToggleAll}>All</button>
             {allNutsRegions.map((r) => (
-              <button key={r} className={pillClass(nutsFilter.isActive(r))} onClick={() => nutsFilter.toggle(r)}>
+              <button key={r} className={pillClass(nutsIsActive(r))} onClick={() => nutsToggle(r)}>
                 {SHORT_REGION[r] || r}
               </button>
             ))}
@@ -293,9 +329,9 @@ const SpendView: React.FC<SpendViewProps> = ({ nutsData, categoryData }) => {
         <div className="flex items-center gap-3">
           <span className="text-xs text-slate-400 w-16 shrink-0">Category</span>
           <div className="flex gap-2 flex-wrap">
-            <button className={pillClass(catFilter.isAll)} onClick={catFilter.toggleAll}>All</button>
+            <button className={pillClass(catIsAll)} onClick={catToggleAll}>All</button>
             {allCategories.map((c) => (
-              <button key={c} className={pillClass(catFilter.isActive(c))} onClick={() => catFilter.toggle(c)}>
+              <button key={c} className={pillClass(catIsActive(c))} onClick={() => catToggle(c)}>
                 {c}
               </button>
             ))}
