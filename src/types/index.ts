@@ -121,3 +121,19 @@ export interface DateRange {
   startDate: string;
   endDate: string;
 }
+
+export interface DailyOverviewRow {
+  day: string;
+  category: string;
+  jobs: number;
+  ttv: number;
+  avFee: number;
+  allocSpend: number;
+  otdCancels: number;
+  tpCancels: number;
+  cantSourceCount: number;
+  deallocations: number;
+  otdDeallocations: number;
+  noSpendJobs: number;
+  otdAllocatedJobs: number;
+}

@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react'
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
-import { Country, CountryOverview, DailyRaw } from '../../types'
+import { Country, CountryOverview, DailyRaw, DailyOverviewRow, OverviewData } from '../../types'
 import { fmtGBP, fmtN, fmtP } from '../../utils/formatting'
 
 const COUNTRY_LABELS: Record<Country, string> = {
@@ -23,10 +23,14 @@ interface MetricDef {
   isCumRate?: boolean
 }
 
+type CategoryFilter = 'All' | 'Furniture' | 'Home Removal' | 'Car' | 'Motorbike' | 'Piano'
+
 interface OverviewViewProps {
   overviewByCountry: Record<Country, CountryOverview>
   selectedCountry: Country
   onCountryChange: (country: Country) => void
+  dailyOverview?: DailyOverviewRow[] | null
+  dailyOverviewPY?: DailyOverviewRow[] | null
 }
 
 function yoyChange(current: number, prior: number): { trend: 'up' | 'down' | 'flat'; label: string } {
@@ -57,10 +61,13 @@ interface ComparisonCardProps {
   invertColor?: boolean
   selected?: boolean
   onClick?: () => void
+  absoluteCount?: number
+  priorAbsoluteCount?: number
 }
 
 const ComparisonCard: React.FC<ComparisonCardProps> = ({
   title, currentValue, priorValue, trend, changeLabel, invertColor = false, selected = false, onClick,
+  absoluteCount, priorAbsoluteCount,
 }) => {
   const color = trend === 'flat'
     ? 'text-slate-400'
@@ -69,10 +76,13 @@ const ComparisonCard: React.FC<ComparisonCardProps> = ({
   return (
     <div
       onClick={onClick}
-      className={`rounded-xl bg-slate-800 p-5 border transition-colors cursor-pointer ${
+      className={`relative rounded-xl bg-slate-800 p-5 border transition-colors cursor-pointer ${
         selected ? 'border-blue-500 ring-1 ring-blue-500/50' : 'border-slate-700 hover:border-blue-500/50'
       }`}
     >
+      {absoluteCount !== undefined && (
+        <span className="absolute top-3 right-4 text-xs text-slate-500">{fmtN(absoluteCount)}</span>
+      )}
       <p className="text-slate-400 text-xs font-medium uppercase tracking-wide mb-3">{title}</p>
       <h3 className="text-2xl font-bold text-white">{currentValue}</h3>
       <div className="mt-3 flex items-center justify-between">
@@ -205,6 +215,119 @@ function buildDailyBarData(
   return result
 }
 
+/** Aggregate daily overview data for a given date range and optional category */
+function aggregateDaily(
+  dailyData: DailyOverviewRow[],
+  startDate: string,
+  endDate: string,
+  category?: string,
+): OverviewData {
+  const filtered = dailyData.filter(row => {
+    const matches = row.day >= startDate && row.day <= endDate
+    if (category && category !== 'All') {
+      return matches && row.category === category
+    }
+    return matches
+  })
+
+  const agg = {
+    jobs: 0,
+    ttv: 0,
+    avFee: 0,
+    allocSpend: 0,
+    otdCancels: 0,
+    tpCancels: 0,
+    cantSourceCount: 0,
+    deallocations: 0,
+    otdDeallocations: 0,
+    noSpendJobs: 0,
+    otdAllocatedJobs: 0,
+  }
+
+  filtered.forEach(row => {
+    agg.jobs += row.jobs
+    agg.ttv += row.ttv
+    agg.avFee += row.avFee
+    agg.allocSpend += row.allocSpend
+    agg.otdCancels += row.otdCancels
+    agg.tpCancels += row.tpCancels
+    agg.cantSourceCount += row.cantSourceCount
+    agg.deallocations += row.deallocations
+    agg.otdDeallocations += row.otdDeallocations
+    agg.noSpendJobs += row.noSpendJobs
+    agg.otdAllocatedJobs += row.otdAllocatedJobs
+  })
+
+  return {
+    jobs: agg.jobs,
+    ttv: agg.ttv,
+    avgTtv: agg.jobs > 0 ? agg.ttv / agg.jobs : 0,
+    avFee: agg.avFee,
+    marginPct: agg.ttv > 0 ? (agg.avFee / agg.ttv) * 100 : 0,
+    allocSpend: agg.allocSpend,
+    spendTtvPct: agg.ttv > 0 ? (agg.allocSpend / agg.ttv) * 100 : 0,
+    otdCancels: agg.otdCancels,
+    cantSourceCount: agg.cantSourceCount,
+    cantSourceRate: agg.jobs > 0 ? (agg.cantSourceCount / agg.jobs) * 100 : 0,
+    tpCancels: agg.tpCancels,
+    deallocations: agg.deallocations,
+    otdDeallocations: agg.otdDeallocations,
+    otdDealloPct: agg.jobs > 0 ? (agg.otdDeallocations / agg.jobs) * 100 : 0,
+    otdAllocSpend: 0,
+    noSpendJobs: agg.noSpendJobs,
+    noSpendPct: agg.otdAllocatedJobs > 0 ? (agg.noSpendJobs / agg.otdAllocatedJobs) * 100 : 0,
+    otdAllocatedJobs: agg.otdAllocatedJobs,
+    furnRoutedPct: 0,
+    tpCancelRate: agg.jobs > 0 ? (agg.tpCancels / agg.jobs) * 100 : 0,
+  }
+}
+
+/** Convert filtered daily overview data to DailyRaw format for charting */
+function convertToDailyRaw(
+  dailyData: DailyOverviewRow[],
+  startDate: string,
+  endDate: string,
+  category?: string,
+): DailyRaw[] {
+  const filtered = dailyData.filter(row => {
+    const matches = row.day >= startDate && row.day <= endDate
+    if (category && category !== 'All') {
+      return matches && row.category === category
+    }
+    return matches
+  })
+
+  // Group by day and sum across categories if 'All'
+  const byDay: Record<number, DailyRaw> = {}
+
+  filtered.forEach(row => {
+    const dayNum = parseInt(row.day.split('-')[2], 10)
+    if (!byDay[dayNum]) {
+      byDay[dayNum] = {
+        day: dayNum,
+        jobs: 0,
+        ttv: 0,
+        avFee: 0,
+        allocSpend: 0,
+        cantSource: 0,
+        tpCancels: 0,
+        otdDealloCount: 0,
+        furnRouted: 0,
+        furnTotal: 0,
+      }
+    }
+    byDay[dayNum].jobs += row.jobs
+    byDay[dayNum].ttv += row.ttv
+    byDay[dayNum].avFee += row.avFee
+    byDay[dayNum].allocSpend += row.allocSpend
+    byDay[dayNum].cantSource += row.cantSourceCount
+    byDay[dayNum].tpCancels += row.tpCancels
+    byDay[dayNum].otdDealloCount += row.otdDeallocations
+  })
+
+  return Object.values(byDay).sort((a, b) => a.day - b.day)
+}
+
 const METRICS: MetricDef[] = [
   { title: 'Completed Jobs', key: 'jobs', fmt: fmtN, type: 'yoy', dailyValue: d => d.jobs },
   { title: 'Total TTV', key: 'ttv', fmt: fmtGBP, type: 'yoy', dailyValue: d => d.ttv },
@@ -218,34 +341,77 @@ const METRICS: MetricDef[] = [
   { title: 'TP Cancel Rate', key: 'tpCancelRate', fmt: fmtP, type: 'pp', invert: true, dailyValue: () => 0, isCumRate: true },
 ]
 
-const OverviewView: React.FC<OverviewViewProps> = ({ overviewByCountry, selectedCountry, onCountryChange }) => {
+const OverviewView: React.FC<OverviewViewProps> = ({
+  overviewByCountry,
+  selectedCountry,
+  onCountryChange,
+  dailyOverview,
+  dailyOverviewPY,
+}) => {
   const [selectedMetric, setSelectedMetric] = useState<MetricKey | null>(null)
+  const [dateRange, setDateRange] = useState({ start: '2026-03-01', end: '2026-03-16' })
+  const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>('All')
+
   const countryData = overviewByCountry[selectedCountry]
-  const { current: data, priorYear } = countryData
+  const countries: Country[] = ['uk', 'spain', 'france']
+
+  // For UK, use daily overview data; for others, use existing aggregated data
+  const { current: baseData, priorYear: basePriorYear } = countryData
+
+  const { data, priorYear } = useMemo(() => {
+    // Only use daily data for UK
+    if (selectedCountry === 'uk' && dailyOverview && dailyOverviewPY) {
+      const cyData = aggregateDaily(dailyOverview, dateRange.start, dateRange.end, selectedCategory === 'All' ? undefined : selectedCategory)
+      const pyData = aggregateDaily(dailyOverviewPY, dateRange.start.replace('2026', '2025'), dateRange.end.replace('2026', '2025'), selectedCategory === 'All' ? undefined : selectedCategory)
+      return { data: cyData, priorYear: pyData }
+    }
+    // For other countries, use existing data
+    return { data: baseData, priorYear: basePriorYear }
+  }, [selectedCountry, dailyOverview, dailyOverviewPY, dateRange, selectedCategory, baseData, basePriorYear])
 
   const chartData = useMemo(() => {
     if (!selectedMetric) return []
     const metric = METRICS.find(m => m.key === selectedMetric)
     if (!metric) return []
+
+    // For UK with daily data, use converted format
+    if (selectedCountry === 'uk' && dailyOverview && dailyOverviewPY) {
+      const cyCY = convertToDailyRaw(dailyOverview, dateRange.start, dateRange.end, selectedCategory === 'All' ? undefined : selectedCategory)
+      const cyPY = convertToDailyRaw(dailyOverviewPY, dateRange.start.replace('2026', '2025'), dateRange.end.replace('2026', '2025'), selectedCategory === 'All' ? undefined : selectedCategory)
+      return buildChartData(cyCY, cyPY, metric)
+    }
     return buildChartData(countryData.dailyCY, countryData.dailyPY, metric)
-  }, [selectedMetric, countryData])
+  }, [selectedMetric, selectedCountry, countryData, dailyOverview, dailyOverviewPY, dateRange, selectedCategory])
 
   const dailyBarData = useMemo(() => {
     if (!selectedMetric) return []
     const metric = METRICS.find(m => m.key === selectedMetric)
     if (!metric) return []
+
+    // For UK with daily data, use converted format
+    if (selectedCountry === 'uk' && dailyOverview && dailyOverviewPY) {
+      const cyCY = convertToDailyRaw(dailyOverview, dateRange.start, dateRange.end, selectedCategory === 'All' ? undefined : selectedCategory)
+      const cyPY = convertToDailyRaw(dailyOverviewPY, dateRange.start.replace('2026', '2025'), dateRange.end.replace('2026', '2025'), selectedCategory === 'All' ? undefined : selectedCategory)
+      return buildDailyBarData(cyCY, cyPY, metric)
+    }
     return buildDailyBarData(countryData.dailyCY, countryData.dailyPY, metric)
-  }, [selectedMetric, countryData])
+  }, [selectedMetric, selectedCountry, countryData, dailyOverview, dailyOverviewPY, dateRange, selectedCategory])
 
   const selectedMetricDef = METRICS.find(m => m.key === selectedMetric)
-
-  const countries: Country[] = ['uk', 'spain', 'france']
 
   // Format tooltip values
   const formatTooltipValue = (value: number) => {
     if (!selectedMetricDef) return String(value)
     return selectedMetricDef.fmt(value)
   }
+
+  // Determine display header
+  const isFullMonth = dateRange.start === '2026-03-01' && dateRange.end === '2026-03-16'
+  const headerText = isFullMonth
+    ? 'MTD March 2026'
+    : `${parseInt(dateRange.start.split('-')[2], 10)}-${parseInt(dateRange.end.split('-')[2], 10)} Mar 2026`
+
+  const categoryOptions: CategoryFilter[] = ['All', 'Furniture', 'Home Removal', 'Car', 'Motorbike', 'Piano']
 
   return (
     <div className="space-y-4">
@@ -266,12 +432,57 @@ const OverviewView: React.FC<OverviewViewProps> = ({ overviewByCountry, selected
         ))}
       </div>
 
+      {/* Date Range and Category Filters - only for UK */}
+      {selectedCountry === 'uk' && (
+        <div className="bg-slate-800 rounded-lg border border-slate-700 p-4 space-y-4">
+          {/* Date Range Picker */}
+          <div className="flex items-end gap-4">
+            <div>
+              <label className="block text-xs font-medium text-slate-400 mb-2">Start Date</label>
+              <input
+                type="date"
+                value={dateRange.start}
+                onChange={(e) => setDateRange(prev => ({ ...prev, start: e.target.value }))}
+                className="bg-slate-700 border border-slate-600 rounded px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-slate-400 mb-2">End Date</label>
+              <input
+                type="date"
+                value={dateRange.end}
+                onChange={(e) => setDateRange(prev => ({ ...prev, end: e.target.value }))}
+                className="bg-slate-700 border border-slate-600 rounded px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500"
+              />
+            </div>
+          </div>
+
+          {/* Category Pills */}
+          <div className="flex flex-wrap gap-2">
+            <span className="text-xs font-medium text-slate-400">Category:</span>
+            {categoryOptions.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                className={`px-3 py-1 text-xs font-medium rounded-full transition-colors ${
+                  selectedCategory === cat
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="flex items-center justify-between mb-2">
         <h2 className="text-lg font-semibold text-white">
-          MTD March 2026 — {COUNTRY_LABELS[selectedCountry]}
+          {headerText} — {COUNTRY_LABELS[selectedCountry]}
         </h2>
         <span className="text-xs text-slate-500 bg-slate-800 px-3 py-1 rounded-full border border-slate-700">
-          vs MTD March 2025
+          vs March 2025 ({selectedCategory !== 'All' ? selectedCategory : 'all categories'})
         </span>
       </div>
 
@@ -286,6 +497,22 @@ const OverviewView: React.FC<OverviewViewProps> = ({ overviewByCountry, selected
           const currentVal = data[m.key as keyof typeof data] as number
           const priorVal = priorYear[m.key as keyof typeof priorYear] as number
           const change = m.type === 'pp' ? ppChange(currentVal, priorVal) : yoyChange(currentVal, priorVal)
+
+          // For these cards, show absolute counts
+          let absoluteCount: number | undefined
+          let priorAbsoluteCount: number | undefined
+
+          if (m.key === 'cantSourceRate') {
+            absoluteCount = data.cantSourceCount
+            priorAbsoluteCount = priorYear.cantSourceCount
+          } else if (m.key === 'tpCancelRate') {
+            absoluteCount = data.tpCancels
+            priorAbsoluteCount = priorYear.tpCancels
+          } else if (m.key === 'otdDealloPct') {
+            absoluteCount = data.otdDeallocations
+            priorAbsoluteCount = priorYear.otdDeallocations
+          }
+
           return (
             <ComparisonCard
               key={m.key}
@@ -297,6 +524,8 @@ const OverviewView: React.FC<OverviewViewProps> = ({ overviewByCountry, selected
               invertColor={m.invert}
               selected={selectedMetric === m.key}
               onClick={() => setSelectedMetric(selectedMetric === m.key ? null : m.key)}
+              absoluteCount={absoluteCount}
+              priorAbsoluteCount={priorAbsoluteCount}
             />
           )
         })}
