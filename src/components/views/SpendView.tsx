@@ -221,74 +221,93 @@ const SpendView: React.FC<SpendViewProps> = ({ nutsData, categoryData }) => {
 
   const catFilter = useMultiFilter(allCategories as unknown as readonly string[])
 
-  const nutsChartData = useMemo(() => {
-    const filtered = nutsData.filter(r => nutsFilter.selected.has(r.nutsRegion))
-    const monthMap: Record<string, { spend: number; ttv: number }> = {}
-    filtered.forEach(r => {
-      if (!monthMap[r.month]) monthMap[r.month] = { spend: 0, ttv: 0 }
-      monthMap[r.month].spend += r.spend
-      monthMap[r.month].ttv += r.ttv
+  const chartData = useMemo(() => {
+    // Apply NUTS filter
+    const nutsFiltered = nutsData.filter(r => nutsFilter.selected.has(r.nutsRegion))
+    const nutsMonthMap: Record<string, { spend: number; ttv: number }> = {}
+    nutsFiltered.forEach(r => {
+      if (!nutsMonthMap[r.month]) nutsMonthMap[r.month] = { spend: 0, ttv: 0 }
+      nutsMonthMap[r.month].spend += r.spend
+      nutsMonthMap[r.month].ttv += r.ttv
     })
-    return computeComparisons(Object.entries(monthMap).map(([month, d]) => ({ month, ...d })))
-  }, [nutsData, nutsFilter.selected])
 
-  const catChartData = useMemo(() => {
-    const filtered = categoryData.filter(r => catFilter.selected.has(r.category))
-    const monthMap: Record<string, { spend: number; ttv: number }> = {}
-    filtered.forEach(r => {
-      if (!monthMap[r.month]) monthMap[r.month] = { spend: 0, ttv: 0 }
-      monthMap[r.month].spend += r.spend
-      monthMap[r.month].ttv += r.ttv
+    // Apply Category filter
+    const catFiltered = categoryData.filter(r => catFilter.selected.has(r.category))
+    const catMonthMap: Record<string, { spend: number; ttv: number }> = {}
+    catFiltered.forEach(r => {
+      if (!catMonthMap[r.month]) catMonthMap[r.month] = { spend: 0, ttv: 0 }
+      catMonthMap[r.month].spend += r.spend
+      catMonthMap[r.month].ttv += r.ttv
     })
-    return computeComparisons(Object.entries(monthMap).map(([month, d]) => ({ month, ...d })))
-  }, [categoryData, catFilter.selected])
+
+    // When both filters are "All", both maps are identical (full dataset).
+    // When one filter is active, use the ratio from that filter to scale the other.
+    // If NUTS filtered and Category filtered, apply both scaling factors.
+    const allMonths = Array.from(new Set([...Object.keys(nutsMonthMap), ...Object.keys(catMonthMap)])).sort()
+
+    // Get unfiltered totals from NUTS (same as category totals when both "All")
+    const totalMonthMap: Record<string, { spend: number; ttv: number }> = {}
+    nutsData.forEach(r => {
+      if (!totalMonthMap[r.month]) totalMonthMap[r.month] = { spend: 0, ttv: 0 }
+      totalMonthMap[r.month].spend += r.spend
+      totalMonthMap[r.month].ttv += r.ttv
+    })
+
+    const combined = allMonths.map(month => {
+      const total = totalMonthMap[month] || { spend: 1, ttv: 1 }
+      const nuts = nutsMonthMap[month] || { spend: 0, ttv: 0 }
+      const cat = catMonthMap[month] || { spend: 0, ttv: 0 }
+
+      // Proportional: if NUTS selected = 50% of total, and Category selected = 80% of total,
+      // then combined ≈ total × 50% × 80%
+      const nutsSpendRatio = total.spend > 0 ? nuts.spend / total.spend : 0
+      const nutsTtvRatio = total.ttv > 0 ? nuts.ttv / total.ttv : 0
+      const catSpendRatio = total.spend > 0 ? cat.spend / total.spend : 0
+      const catTtvRatio = total.ttv > 0 ? cat.ttv / total.ttv : 0
+
+      return {
+        month,
+        spend: Math.round(total.spend * nutsSpendRatio * catSpendRatio * 100) / 100,
+        ttv: Math.round(total.ttv * nutsTtvRatio * catTtvRatio * 100) / 100,
+      }
+    })
+
+    return computeComparisons(combined)
+  }, [nutsData, categoryData, nutsFilter.selected, catFilter.selected])
 
   return (
     <div className="space-y-6">
-      {/* === NUTS Section === */}
-      <div className="space-y-4">
-        <h2 className="text-base font-semibold text-white">Spend vs TTV% by NUTS Region</h2>
-
-        <div className="bg-slate-800 rounded-lg p-4">
-          <div className="flex items-center gap-3">
-            <span className="text-xs text-slate-400 w-16 shrink-0">NUTS</span>
-            <div className="flex gap-2 flex-wrap">
-              <button className={pillClass(nutsFilter.isAll)} onClick={nutsFilter.toggleAll}>All</button>
-              {allNutsRegions.map((r) => (
-                <button key={r} className={pillClass(nutsFilter.isActive(r))} onClick={() => nutsFilter.toggle(r)}>
-                  {SHORT_REGION[r] || r}
-                </button>
-              ))}
-            </div>
+      {/* === Filters === */}
+      <div className="bg-slate-800 rounded-lg p-4 space-y-3">
+        <div className="flex items-center gap-3">
+          <span className="text-xs text-slate-400 w-16 shrink-0">NUTS</span>
+          <div className="flex gap-2 flex-wrap">
+            <button className={pillClass(nutsFilter.isAll)} onClick={nutsFilter.toggleAll}>All</button>
+            {allNutsRegions.map((r) => (
+              <button key={r} className={pillClass(nutsFilter.isActive(r))} onClick={() => nutsFilter.toggle(r)}>
+                {SHORT_REGION[r] || r}
+              </button>
+            ))}
           </div>
         </div>
-
-        <SpendAmountChart data={nutsChartData} />
-        <SpendTtvPctChart data={nutsChartData} />
-        <ComparisonTable data={nutsChartData} />
+        <div className="flex items-center gap-3">
+          <span className="text-xs text-slate-400 w-16 shrink-0">Category</span>
+          <div className="flex gap-2 flex-wrap">
+            <button className={pillClass(catFilter.isAll)} onClick={catFilter.toggleAll}>All</button>
+            {allCategories.map((c) => (
+              <button key={c} className={pillClass(catFilter.isActive(c))} onClick={() => catFilter.toggle(c)}>
+                {c}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
-      {/* === Category Section === */}
-      <div className="space-y-4 mt-8 pt-8 border-t border-slate-700">
-        <h2 className="text-base font-semibold text-white">Spend vs TTV% by Category</h2>
-
-        <div className="bg-slate-800 rounded-lg p-4">
-          <div className="flex items-center gap-3">
-            <span className="text-xs text-slate-400 w-16 shrink-0">Category</span>
-            <div className="flex gap-2 flex-wrap">
-              <button className={pillClass(catFilter.isAll)} onClick={catFilter.toggleAll}>All</button>
-              {allCategories.map((c) => (
-                <button key={c} className={pillClass(catFilter.isActive(c))} onClick={() => catFilter.toggle(c)}>
-                  {c}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <SpendAmountChart data={catChartData} />
-        <SpendTtvPctChart data={catChartData} />
-        <ComparisonTable data={catChartData} />
+      {/* === Charts === */}
+      <div className="space-y-4">
+        <SpendAmountChart data={chartData} />
+        <SpendTtvPctChart data={chartData} />
+        <ComparisonTable data={chartData} />
       </div>
     </div>
   )
