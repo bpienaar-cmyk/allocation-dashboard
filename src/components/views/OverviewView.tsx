@@ -29,8 +29,7 @@ interface OverviewViewProps {
   overviewByCountry: Record<Country, CountryOverview>
   selectedCountry: Country
   onCountryChange: (country: Country) => void
-  dailyOverview?: DailyOverviewRow[] | null
-  dailyOverviewPY?: DailyOverviewRow[] | null
+  dailyOverviewByCountry?: Record<string, { cy: DailyOverviewRow[], py: DailyOverviewRow[] }> | null
 }
 
 function yoyChange(current: number, prior: number): { trend: 'up' | 'down' | 'flat'; label: string } {
@@ -101,7 +100,10 @@ function buildChartData(
   dailyPY: DailyRaw[],
   metric: MetricDef,
 ): { day: number; dayLabel: string; cy: number; py: number }[] {
-  const maxDay = dailyCY.length
+  // Build a map of PY data keyed by day number for alignment
+  const pyByDay: Record<number, DailyRaw> = {}
+  dailyPY.forEach(d => { pyByDay[d.day] = d })
+
   const result: { day: number; dayLabel: string; cy: number; py: number }[] = []
 
   // For cumulative rates we need running totals
@@ -109,10 +111,10 @@ function buildChartData(
   // For derived rates we need cumulative numerator & denominator
   let cumCYNum = 0, cumCYDen = 0, cumPYNum = 0, cumPYDen = 0
 
-  for (let i = 0; i < maxDay; i++) {
+  for (let i = 0; i < dailyCY.length; i++) {
     const cy = dailyCY[i]
-    const py = dailyPY[i]
-    const day = i + 1
+    const day = cy.day  // Use actual day number from data
+    const py = pyByDay[day]  // Match PY by same day number
 
     let cyVal = 0, pyVal = 0
 
@@ -171,13 +173,16 @@ function buildDailyBarData(
   dailyPY: DailyRaw[],
   metric: MetricDef,
 ): { day: number; dayLabel: string; cy: number; py: number }[] {
-  const maxDay = dailyCY.length
+  // Build a map of PY data keyed by day number for alignment
+  const pyByDay: Record<number, DailyRaw> = {}
+  dailyPY.forEach(d => { pyByDay[d.day] = d })
+
   const result: { day: number; dayLabel: string; cy: number; py: number }[] = []
 
-  for (let i = 0; i < maxDay; i++) {
+  for (let i = 0; i < dailyCY.length; i++) {
     const cy = dailyCY[i]
-    const py = dailyPY[i]
-    const day = i + 1
+    const day = cy.day  // Use actual day number from data
+    const py = pyByDay[day]  // Match PY by same day number
     let cyVal = 0, pyVal = 0
 
     if (metric.key === 'marginPct') {
@@ -345,57 +350,57 @@ const OverviewView: React.FC<OverviewViewProps> = ({
   overviewByCountry,
   selectedCountry,
   onCountryChange,
-  dailyOverview,
-  dailyOverviewPY,
+  dailyOverviewByCountry,
 }) => {
   const [selectedMetric, setSelectedMetric] = useState<MetricKey | null>(null)
-  const [dateRange, setDateRange] = useState({ start: '2026-03-01', end: '2026-03-16' })
+  const [dateRange, setDateRange] = useState({ start: '2026-03-01', end: '2026-03-17' })
   const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>('All')
 
   const countryData = overviewByCountry[selectedCountry]
   const countries: Country[] = ['uk', 'spain', 'france']
 
-  // For UK, use daily overview data; for others, use existing aggregated data
+  // Get country-specific daily data
+  const countryDailyData = dailyOverviewByCountry?.[selectedCountry]
   const { current: baseData, priorYear: basePriorYear } = countryData
 
   const { data, priorYear } = useMemo(() => {
-    // Only use daily data for UK
-    if (selectedCountry === 'uk' && dailyOverview && dailyOverviewPY) {
-      const cyData = aggregateDaily(dailyOverview, dateRange.start, dateRange.end, selectedCategory === 'All' ? undefined : selectedCategory)
-      const pyData = aggregateDaily(dailyOverviewPY, dateRange.start.replace('2026', '2025'), dateRange.end.replace('2026', '2025'), selectedCategory === 'All' ? undefined : selectedCategory)
+    // Use daily data for all countries if available
+    if (countryDailyData && countryDailyData.cy && countryDailyData.cy.length > 0) {
+      const cyData = aggregateDaily(countryDailyData.cy, dateRange.start, dateRange.end, selectedCategory === 'All' ? undefined : selectedCategory)
+      const pyData = aggregateDaily(countryDailyData.py, dateRange.start.replace('2026', '2025'), dateRange.end.replace('2026', '2025'), selectedCategory === 'All' ? undefined : selectedCategory)
       return { data: cyData, priorYear: pyData }
     }
-    // For other countries, use existing data
+    // Fallback to existing aggregated data
     return { data: baseData, priorYear: basePriorYear }
-  }, [selectedCountry, dailyOverview, dailyOverviewPY, dateRange, selectedCategory, baseData, basePriorYear])
+  }, [selectedCountry, countryDailyData, dateRange, selectedCategory, baseData, basePriorYear])
 
   const chartData = useMemo(() => {
     if (!selectedMetric) return []
     const metric = METRICS.find(m => m.key === selectedMetric)
     if (!metric) return []
 
-    // For UK with daily data, use converted format
-    if (selectedCountry === 'uk' && dailyOverview && dailyOverviewPY) {
-      const cyCY = convertToDailyRaw(dailyOverview, dateRange.start, dateRange.end, selectedCategory === 'All' ? undefined : selectedCategory)
-      const cyPY = convertToDailyRaw(dailyOverviewPY, dateRange.start.replace('2026', '2025'), dateRange.end.replace('2026', '2025'), selectedCategory === 'All' ? undefined : selectedCategory)
+    // Use daily data for all countries if available
+    if (countryDailyData && countryDailyData.cy && countryDailyData.cy.length > 0) {
+      const cyCY = convertToDailyRaw(countryDailyData.cy, dateRange.start, dateRange.end, selectedCategory === 'All' ? undefined : selectedCategory)
+      const cyPY = convertToDailyRaw(countryDailyData.py, dateRange.start.replace('2026', '2025'), dateRange.end.replace('2026', '2025'), selectedCategory === 'All' ? undefined : selectedCategory)
       return buildChartData(cyCY, cyPY, metric)
     }
     return buildChartData(countryData.dailyCY, countryData.dailyPY, metric)
-  }, [selectedMetric, selectedCountry, countryData, dailyOverview, dailyOverviewPY, dateRange, selectedCategory])
+  }, [selectedMetric, selectedCountry, countryData, countryDailyData, dateRange, selectedCategory])
 
   const dailyBarData = useMemo(() => {
     if (!selectedMetric) return []
     const metric = METRICS.find(m => m.key === selectedMetric)
     if (!metric) return []
 
-    // For UK with daily data, use converted format
-    if (selectedCountry === 'uk' && dailyOverview && dailyOverviewPY) {
-      const cyCY = convertToDailyRaw(dailyOverview, dateRange.start, dateRange.end, selectedCategory === 'All' ? undefined : selectedCategory)
-      const cyPY = convertToDailyRaw(dailyOverviewPY, dateRange.start.replace('2026', '2025'), dateRange.end.replace('2026', '2025'), selectedCategory === 'All' ? undefined : selectedCategory)
+    // Use daily data for all countries if available
+    if (countryDailyData && countryDailyData.cy && countryDailyData.cy.length > 0) {
+      const cyCY = convertToDailyRaw(countryDailyData.cy, dateRange.start, dateRange.end, selectedCategory === 'All' ? undefined : selectedCategory)
+      const cyPY = convertToDailyRaw(countryDailyData.py, dateRange.start.replace('2026', '2025'), dateRange.end.replace('2026', '2025'), selectedCategory === 'All' ? undefined : selectedCategory)
       return buildDailyBarData(cyCY, cyPY, metric)
     }
     return buildDailyBarData(countryData.dailyCY, countryData.dailyPY, metric)
-  }, [selectedMetric, selectedCountry, countryData, dailyOverview, dailyOverviewPY, dateRange, selectedCategory])
+  }, [selectedMetric, selectedCountry, countryData, countryDailyData, dateRange, selectedCategory])
 
   const selectedMetricDef = METRICS.find(m => m.key === selectedMetric)
 
@@ -406,7 +411,7 @@ const OverviewView: React.FC<OverviewViewProps> = ({
   }
 
   // Determine display header
-  const isFullMonth = dateRange.start === '2026-03-01' && dateRange.end === '2026-03-16'
+  const isFullMonth = dateRange.start === '2026-03-01' && dateRange.end >= '2026-03-16'
   const headerText = isFullMonth
     ? 'MTD March 2026'
     : `${parseInt(dateRange.start.split('-')[2], 10)}-${parseInt(dateRange.end.split('-')[2], 10)} Mar 2026`
@@ -432,8 +437,8 @@ const OverviewView: React.FC<OverviewViewProps> = ({
         ))}
       </div>
 
-      {/* Date Range and Category Filters - only for UK */}
-      {selectedCountry === 'uk' && (
+      {/* Date Range and Category Filters */}
+      {countryDailyData && countryDailyData.cy && countryDailyData.cy.length > 0 && (
         <div className="bg-slate-800 rounded-lg border border-slate-700 p-4 space-y-4">
           {/* Date Range Picker */}
           <div className="flex items-end gap-4">
