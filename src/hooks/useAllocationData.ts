@@ -10,6 +10,7 @@ import {
   Country,
   CountryOverview,
   DailyOverviewRow,
+  IResReservationRow,
 } from '../types/index';
 import {
   overviewByCountry,
@@ -22,6 +23,7 @@ import {
   dailyOverviewByCountry,
   furnRoutingByCountry,
   tpCancelsByCountry,
+  iresReservationData,
 } from '../data/dashboardData';
 
 export interface UseAllocationDataResult {
@@ -32,6 +34,7 @@ export interface UseAllocationDataResult {
   trendsByCountry: Record<Country, TrendPoint[]> | null;
   categories: CategoryRow[] | null;
   regions: RegionRow[] | null;
+  iresReservations: IResReservationRow[] | null;
   otdMetrics: OtdMetrics | null;
   deallocations: DeallocationData | null;
   dailyOverviewByCountry: Record<string, { cy: DailyOverviewRow[], py: DailyOverviewRow[] }> | null;
@@ -54,6 +57,7 @@ export function useAllocationData(dateRange: DateRange): UseAllocationDataResult
   const [trendsByCountryData, setTrendsByCountryData] = useState<Record<Country, TrendPoint[]> | null>(null);
   const [categories, setCategories] = useState<CategoryRow[] | null>(null);
   const [regions, setRegions] = useState<RegionRow[] | null>(null);
+  const [iresReservations, setIresReservations] = useState<IResReservationRow[] | null>(null);
   const [otdMetrics, setOtdMetrics] = useState<OtdMetrics | null>(null);
   const [deallocations, setDeallocations] = useState<DeallocationData | null>(null);
   const [dailyOvrvwByCountry, setDailyOvrvwByCountry] = useState<Record<string, { cy: DailyOverviewRow[], py: DailyOverviewRow[] }> | null>(null);
@@ -73,6 +77,7 @@ export function useAllocationData(dateRange: DateRange): UseAllocationDataResult
       setTrendsByCountryData(trendsByCountry);
       setCategories(categoriesData);
       setRegions(regionsData);
+      setIresReservations(iresReservationData);
       setOtdMetrics(otdMetricsData);
       setDeallocations(deallocationsData);
       setDailyOvrvwByCountry(dailyOverviewByCountry);
@@ -97,6 +102,7 @@ export function useAllocationData(dateRange: DateRange): UseAllocationDataResult
     trendsByCountry: trendsByCountryData,
     categories,
     regions,
+    iresReservations,
     otdMetrics,
     deallocations,
     dailyOverviewByCountry: dailyOvrvwByCountry,

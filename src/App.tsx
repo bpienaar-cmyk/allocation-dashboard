@@ -7,7 +7,7 @@ import ErrorDisplay from './components/common/ErrorDisplay'
 import OverviewView from './components/views/OverviewView'
 import TrendsView from './components/views/TrendsView'
 import CategoryView from './components/views/CategoryView'
-import RegionalView from './components/views/RegionalView'
+import ReservationsView from './components/views/ReservationsView'
 import OTDMetricsView from './components/views/OTDMetricsView'
 import DeallocationView from './components/views/DeallocationView'
 import { useAllocationData } from './hooks/useAllocationData'
@@ -20,7 +20,7 @@ const App: React.FC = () => {
   const [selectedCountry, setSelectedCountry] = useState<Country>('uk')
   const defaultDateRange = getDefaultDateRange()
 
-  const { overview, overviewByCountry, trends, trendsByCountry, categories, regions, otdMetrics, deallocations, dailyOverviewByCountry, furnRoutingByCountry, tpCancelsByCountry, loading, error, refetch } = useAllocationData(defaultDateRange)
+  const { overview, overviewByCountry, trends, trendsByCountry, categories, regions, iresReservations, otdMetrics, deallocations, dailyOverviewByCountry, furnRoutingByCountry, tpCancelsByCountry, loading, error, refetch } = useAllocationData(defaultDateRange)
 
   return (
     <ErrorBoundary>
@@ -63,7 +63,7 @@ const App: React.FC = () => {
                     onCountryChange={setSelectedCountry}
                   />
                 )}
-                {activeTab === 'regional' && regions && <RegionalView data={regions} />}
+                {activeTab === 'reservations' && iresReservations && <ReservationsView data={iresReservations} />}
                 {activeTab === 'otd' && otdMetrics && <OTDMetricsView data={otdMetrics} />}
                 {activeTab === 'deallocations' && deallocations && <DeallocationView data={deallocations} />}
               </div>

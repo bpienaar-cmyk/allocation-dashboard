@@ -115,7 +115,7 @@ export interface CountryOverview {
   dailyPY: DailyRaw[];
 }
 
-export type TabId = 'overview' | 'trends' | 'category' | 'regional' | 'otd' | 'deallocations';
+export type TabId = 'overview' | 'trends' | 'category' | 'reservations' | 'otd' | 'deallocations';
 
 export interface DateRange {
   startDate: string;
@@ -136,4 +136,11 @@ export interface DailyOverviewRow {
   otdDeallocations: number;
   noSpendJobs: number;
   otdAllocatedJobs: number;
+}
+
+export interface IResReservationRow {
+  day: string;
+  nutsRegion: string;
+  status: string;
+  count: number;
 }
