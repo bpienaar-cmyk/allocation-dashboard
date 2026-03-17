@@ -131,7 +131,7 @@ const SpendView: React.FC<SpendViewProps> = ({ nutsDataByCountry, categoryDataBy
   const categoryData = categoryDataByCountry[selectedCountry] || []
 
   const allNutsRegions = useMemo(() => {
-    return Array.from(new Set(nutsData.map(r => r.nutsRegion))).sort()
+    return Array.from(new Set(nutsData.map(r => r.nutsRegion))).filter(r => r !== '').sort()
   }, [nutsData]) as string[]
 
   const allCategories = useMemo(() => {
