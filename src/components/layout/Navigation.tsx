@@ -9,7 +9,7 @@ interface NavigationProps {
 const TABS: { id: TabId; label: string }[] = [
   { id: 'overview', label: 'Overview' },
   { id: 'trends', label: 'Trends' },
-  { id: 'category', label: 'Category' },
+  { id: 'category', label: 'Bookings' },
   { id: 'reservations', label: 'Reservations' },
   { id: 'spend', label: 'Spend' },
   { id: 'deallocations', label: 'Deallocations' },
