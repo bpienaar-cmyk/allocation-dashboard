@@ -114,9 +114,9 @@ const SpendAmountChart: React.FC<{ data: ChartRow[] }> = ({ data }) => (
     <h3 className="text-sm font-semibold text-slate-300">Spend Amount (£)</h3>
     <div className="rounded-lg border border-slate-700 bg-slate-800 p-4" style={{ height: '300px' }}>
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={data} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
+        <LineChart data={data} margin={{ top: 20, right: 20, left: 10, bottom: 5 }}>
           <XAxis dataKey="month" tickFormatter={formatMonthLabel} stroke="#94a3b8" tick={{ fill: '#e2e8f0', fontSize: 12 }} />
-          <YAxis stroke="#3b82f6" tick={{ fill: '#93c5fd', fontSize: 12 }} tickFormatter={(val: number) => fmtCurrency(val)} />
+          <YAxis stroke="#3b82f6" tick={{ fill: '#93c5fd', fontSize: 12 }} tickFormatter={(val: number) => fmtCurrency(val)} domain={[0, (max: number) => Math.ceil(max * 1.15)]} />
           <Tooltip
             {...tooltipStyle}
             labelFormatter={(label: any) => formatMonthLabel(label)}
