@@ -116,6 +116,36 @@ const SpendAmountChart: React.FC<{ data: ChartRow[] }> = ({ data }) => (
   </div>
 )
 
+const SpendTtvPctChart: React.FC<{ data: ChartRow[] }> = ({ data }) => (
+  <div className="space-y-2">
+    <h3 className="text-sm font-semibold text-slate-300">Spend / TTV %</h3>
+    <div className="rounded-lg border border-slate-700 bg-slate-800 p-4" style={{ height: '300px' }}>
+      <ResponsiveContainer width="100%" height="100%">
+        <LineChart data={data} margin={{ top: 20, right: 20, left: 10, bottom: 5 }}>
+          <XAxis dataKey="month" tickFormatter={formatMonthLabel} stroke="#94a3b8" tick={{ fill: '#e2e8f0', fontSize: 12 }} />
+          <YAxis stroke="#f59e0b" tick={{ fill: '#fcd34d', fontSize: 12 }} tickFormatter={(val: number) => `${val}%`} />
+          <Tooltip
+            {...tooltipStyle}
+            labelFormatter={(label: any) => formatMonthLabel(label)}
+            formatter={(value: any, name: any) => [`${value}%`, name]}
+          />
+          <Legend wrapperStyle={{ color: '#cbd5e1' }} />
+          <Line
+            type="monotone"
+            dataKey="spendTtvPct"
+            stroke="#f59e0b"
+            dot={{ fill: '#f59e0b', r: 4 }}
+            activeDot={{ r: 6 }}
+            strokeWidth={2}
+            name="Spend/TTV %"
+            label={{ position: 'top', fill: '#fcd34d', fontSize: 10, formatter: (val: any) => `${val}%` }}
+          />
+        </LineChart>
+      </ResponsiveContainer>
+    </div>
+  </div>
+)
+
 // === Days-before-pickup line graph ===
 const DAYS_BUCKETS = ['OTD', '1d', '2d', '3d', '4d+'] as const
 const DAYS_COLORS: Record<string, string> = {
@@ -338,6 +368,9 @@ const SpendView: React.FC<SpendViewProps> = ({ nutsDataByCountry, categoryDataBy
 
       {/* === Spend Amount Chart === */}
       <SpendAmountChart data={chartData} />
+
+      {/* === Spend / TTV % Chart === */}
+      <SpendTtvPctChart data={chartData} />
 
       {/* === Spend by Days Before Pickup Line Graph === */}
       <div className="space-y-3">
