@@ -11,7 +11,7 @@ const TABS: { id: TabId; label: string }[] = [
   { id: 'trends', label: 'Trends' },
   { id: 'category', label: 'Category' },
   { id: 'reservations', label: 'Reservations' },
-  { id: 'otd', label: 'OTD Metrics' },
+  { id: 'spend', label: 'Spend' },
   { id: 'deallocations', label: 'Deallocations' },
 ];
 

@@ -115,7 +115,23 @@ export interface CountryOverview {
   dailyPY: DailyRaw[];
 }
 
-export type TabId = 'overview' | 'trends' | 'category' | 'reservations' | 'otd' | 'deallocations';
+export type TabId = 'overview' | 'trends' | 'category' | 'reservations' | 'spend' | 'deallocations';
+
+export interface SpendNutsRow {
+  month: string;
+  nutsRegion: string;
+  spend: number;
+  ttv: number;
+  jobs: number;
+}
+
+export interface SpendCategoryRow {
+  month: string;
+  category: string;
+  spend: number;
+  ttv: number;
+  jobs: number;
+}
 
 export interface DateRange {
   startDate: string;

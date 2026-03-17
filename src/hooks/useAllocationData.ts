@@ -12,6 +12,8 @@ import {
   DailyOverviewRow,
   IResReservationRow,
   IResTrendRow,
+  SpendNutsRow,
+  SpendCategoryRow,
 } from '../types/index';
 import {
   overviewByCountry,
@@ -26,6 +28,8 @@ import {
   tpCancelsByCountry,
   iresReservationData,
   iresTrendData,
+  spendByNutsData,
+  spendByCategoryData,
 } from '../data/dashboardData';
 
 export interface UseAllocationDataResult {
@@ -43,6 +47,8 @@ export interface UseAllocationDataResult {
   dailyOverviewByCountry: Record<string, { cy: DailyOverviewRow[], py: DailyOverviewRow[] }> | null;
   furnRoutingByCountry: Record<string, Record<string, { routed: number; total: number }>> | null;
   tpCancelsByCountry: Record<string, Record<string, number>> | null;
+  spendByNuts: SpendNutsRow[];
+  spendByCategory: SpendCategoryRow[];
   loading: boolean;
   error: Error | null;
   refetch: () => Promise<void>;
@@ -114,6 +120,8 @@ export function useAllocationData(dateRange: DateRange): UseAllocationDataResult
     dailyOverviewByCountry: dailyOvrvwByCountry,
     furnRoutingByCountry,
     tpCancelsByCountry,
+    spendByNuts: spendByNutsData,
+    spendByCategory: spendByCategoryData,
     loading,
     error,
     refetch: loadData,
