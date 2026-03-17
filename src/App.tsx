@@ -20,7 +20,7 @@ const App: React.FC = () => {
   const [selectedCountry, setSelectedCountry] = useState<Country>('uk')
   const defaultDateRange = getDefaultDateRange()
 
-  const { overview, overviewByCountry, trends, trendsByCountry, categories, regions, iresReservations, iresTrendData, otdMetrics, deallocations, dailyOverviewByCountry, furnRoutingByCountry, tpCancelsByCountry, spendByNuts, spendByCategory, spendByNutsByCountry, spendByCategoryByCountry, loading, error, refetch } = useAllocationData(defaultDateRange)
+  const { overview, overviewByCountry, trends, trendsByCountry, categories, regions, iresReservations, iresTrendData, otdMetrics, deallocations, dailyOverviewByCountry, furnRoutingByCountry, tpCancelsByCountry, spendByNuts, spendByCategory, spendByNutsByCountry, spendByCategoryByCountry, spendByDaysByCountry, agentSpendByCountry, loading, error, refetch } = useAllocationData(defaultDateRange)
 
   return (
     <ErrorBoundary>
@@ -68,6 +68,8 @@ const App: React.FC = () => {
                   <SpendView
                     nutsDataByCountry={spendByNutsByCountry}
                     categoryDataByCountry={spendByCategoryByCountry}
+                    spendByDaysByCountry={spendByDaysByCountry}
+                    agentSpendByCountry={agentSpendByCountry}
                     selectedCountry={selectedCountry}
                     onCountryChange={setSelectedCountry}
                   />

@@ -14,6 +14,8 @@ import {
   IResTrendRow,
   SpendNutsRow,
   SpendCategoryRow,
+  SpendByDaysRow,
+  AgentSpendRow,
 } from '../types/index';
 import {
   overviewByCountry,
@@ -32,6 +34,8 @@ import {
   spendByCategoryData,
   spendByNutsByCountry,
   spendByCategoryByCountry,
+  spendByDaysByCountry,
+  agentSpendByCountry,
 } from '../data/dashboardData';
 
 export interface UseAllocationDataResult {
@@ -53,6 +57,8 @@ export interface UseAllocationDataResult {
   spendByCategory: SpendCategoryRow[];
   spendByNutsByCountry: Record<string, SpendNutsRow[]>;
   spendByCategoryByCountry: Record<string, SpendCategoryRow[]>;
+  spendByDaysByCountry: Record<string, SpendByDaysRow[]>;
+  agentSpendByCountry: Record<string, AgentSpendRow[]>;
   loading: boolean;
   error: Error | null;
   refetch: () => Promise<void>;
@@ -128,6 +134,8 @@ export function useAllocationData(dateRange: DateRange): UseAllocationDataResult
     spendByCategory: spendByCategoryData,
     spendByNutsByCountry,
     spendByCategoryByCountry,
+    spendByDaysByCountry,
+    agentSpendByCountry,
     loading,
     error,
     refetch: loadData,

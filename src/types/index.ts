@@ -171,3 +171,22 @@ export interface IResTrendRow {
   journeyAssoc: number;
   unsuccessful: number;
 }
+
+export interface SpendByDaysRow {
+  month: string;
+  nutsRegion: string;
+  category: string;
+  daysBucket: string;
+  spend: number;
+  jobs: number;
+}
+
+export interface AgentSpendRow {
+  month: string;
+  nutsRegion: string;
+  category: string;
+  daysBucket: string;
+  agentName: string;
+  spend: number;
+  jobs: number;
+}

@@ -8,12 +8,15 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts'
-import { SpendNutsRow, SpendCategoryRow, Country } from '../../types'
+import { SpendNutsRow, SpendCategoryRow, SpendByDaysRow, AgentSpendRow, Country } from '../../types'
 import { fmtN } from '../../utils/formatting'
+import AgentBreakdownModal from '../common/AgentBreakdownModal'
 
 interface SpendViewProps {
   nutsDataByCountry: Record<string, SpendNutsRow[]>
   categoryDataByCountry: Record<string, SpendCategoryRow[]>
+  spendByDaysByCountry: Record<string, SpendByDaysRow[]>
+  agentSpendByCountry: Record<string, AgentSpendRow[]>
   selectedCountry: Country
   onCountryChange: (c: Country) => void
 }
@@ -158,46 +161,9 @@ const SpendTtvPctChart: React.FC<{ data: ChartRow[] }> = ({ data }) => (
   </div>
 )
 
-const ComparisonTable: React.FC<{ data: ChartRow[] }> = ({ data }) => (
-  <div className="rounded-lg border border-slate-700 overflow-auto">
-    <table className="w-full text-xs text-white">
-      <thead className="bg-slate-700">
-        <tr>
-          <th className="px-3 py-2 text-left font-semibold">Month</th>
-          <th className="px-3 py-2 text-right font-semibold">Spend</th>
-          <th className="px-3 py-2 text-right font-semibold">Spend/TTV %</th>
-          <th className="px-3 py-2 text-right font-semibold">MoM Spend</th>
-          <th className="px-3 py-2 text-right font-semibold">MoM TTV%</th>
-          <th className="px-3 py-2 text-right font-semibold">YoY Spend</th>
-          <th className="px-3 py-2 text-right font-semibold">YoY TTV%</th>
-        </tr>
-      </thead>
-      <tbody className="divide-y divide-slate-700/50">
-        {data.map((row) => (
-          <tr key={row.month} className="hover:bg-slate-800/80">
-            <td className="px-3 py-2 font-medium">{formatMonthLabel(row.month)}</td>
-            <td className="px-3 py-2 text-right tabular-nums">£{fmtN(row.spend)}</td>
-            <td className="px-3 py-2 text-right tabular-nums">{row.spendTtvPct}%</td>
-            <td className={`px-3 py-2 text-right tabular-nums ${row.momSpendChange === null ? 'text-slate-500' : row.momSpendChange > 0 ? 'text-red-400' : 'text-green-400'}`}>
-              {row.momSpendChange !== null ? `${row.momSpendChange > 0 ? '+' : ''}${row.momSpendChange}%` : '-'}
-            </td>
-            <td className={`px-3 py-2 text-right tabular-nums ${row.momTtvPctChange === null ? 'text-slate-500' : row.momTtvPctChange > 0 ? 'text-red-400' : 'text-green-400'}`}>
-              {row.momTtvPctChange !== null ? `${row.momTtvPctChange > 0 ? '+' : ''}${row.momTtvPctChange}pp` : '-'}
-            </td>
-            <td className={`px-3 py-2 text-right tabular-nums ${row.yoySpendChange === null ? 'text-slate-500' : row.yoySpendChange > 0 ? 'text-red-400' : 'text-green-400'}`}>
-              {row.yoySpendChange !== null ? `${row.yoySpendChange > 0 ? '+' : ''}${row.yoySpendChange}%` : '-'}
-            </td>
-            <td className={`px-3 py-2 text-right tabular-nums ${row.yoyTtvPctChange === null ? 'text-slate-500' : row.yoyTtvPctChange > 0 ? 'text-red-400' : 'text-green-400'}`}>
-              {row.yoyTtvPctChange !== null ? `${row.yoyTtvPctChange > 0 ? '+' : ''}${row.yoyTtvPctChange}pp` : '-'}
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
-)
+const DAYS_BUCKETS = ['OTD', '1d', '2d', '3d', '4d+'] as const
 
-const SpendView: React.FC<SpendViewProps> = ({ nutsDataByCountry, categoryDataByCountry, selectedCountry, onCountryChange }) => {
+const SpendView: React.FC<SpendViewProps> = ({ nutsDataByCountry, categoryDataByCountry, spendByDaysByCountry, agentSpendByCountry, selectedCountry, onCountryChange }) => {
   const nutsData = nutsDataByCountry[selectedCountry] || []
   const categoryData = categoryDataByCountry[selectedCountry] || []
 
@@ -298,6 +264,68 @@ const SpendView: React.FC<SpendViewProps> = ({ nutsDataByCountry, categoryDataBy
     return computeComparisons(combined)
   }, [nutsData, categoryData, selectedNuts, selectedCats])
 
+  // === Days-before-pickup data ===
+  const daysData = spendByDaysByCountry[selectedCountry] || []
+  const agentData = agentSpendByCountry[selectedCountry] || []
+
+  // Available months from days data
+  const availableMonths = useMemo(() => {
+    const months = Array.from(new Set(daysData.map(r => r.month))).sort().reverse()
+    return months
+  }, [daysData])
+
+  // Default to current month (2026-03) or latest available
+  const currentMonth = useMemo(() => {
+    const now = new Date()
+    const ym = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+    return availableMonths.includes(ym) ? ym : (availableMonths[0] || '')
+  }, [availableMonths])
+
+  const [selectedMonth, setSelectedMonth] = useState(currentMonth)
+
+  // Reset month when country changes
+  useEffect(() => {
+    setSelectedMonth(currentMonth)
+  }, [currentMonth])
+
+  // Filter days data by selected month + NUTS + category
+  const filteredDaysData = useMemo(() => {
+    return daysData.filter(
+      r => r.month === selectedMonth && selectedNuts.has(r.nutsRegion) && selectedCats.has(r.category)
+    )
+  }, [daysData, selectedMonth, selectedNuts, selectedCats])
+
+  // Aggregate by daysBucket
+  const daysBucketRows = useMemo(() => {
+    const map: Record<string, { spend: number; jobs: number }> = {}
+    DAYS_BUCKETS.forEach(b => { map[b] = { spend: 0, jobs: 0 } })
+    filteredDaysData.forEach(r => {
+      if (map[r.daysBucket]) {
+        map[r.daysBucket].spend += r.spend
+        map[r.daysBucket].jobs += r.jobs
+      }
+    })
+    const totalSpend = Object.values(map).reduce((s, v) => s + v.spend, 0)
+    const totalJobs = Object.values(map).reduce((s, v) => s + v.jobs, 0)
+    const rows = DAYS_BUCKETS.map(bucket => ({
+      bucket,
+      spend: Math.round(map[bucket].spend * 100) / 100,
+      jobs: map[bucket].jobs,
+      pct: totalSpend > 0 ? ((map[bucket].spend / totalSpend) * 100) : 0,
+    }))
+    return { rows, totalSpend, totalJobs }
+  }, [filteredDaysData])
+
+  // Modal state
+  const [modalBucket, setModalBucket] = useState<string | null>(null)
+
+  const modalAgentData = useMemo(() => {
+    if (!modalBucket) return []
+    return agentData.filter(
+      r => r.month === selectedMonth && r.daysBucket === modalBucket && selectedNuts.has(r.nutsRegion) && selectedCats.has(r.category)
+    )
+  }, [agentData, selectedMonth, modalBucket, selectedNuts, selectedCats])
+
   return (
     <div className="space-y-6">
       {/* === Country Toggle === */}
@@ -343,8 +371,73 @@ const SpendView: React.FC<SpendViewProps> = ({ nutsDataByCountry, categoryDataBy
       <div className="space-y-4">
         <SpendAmountChart data={chartData} />
         <SpendTtvPctChart data={chartData} />
-        <ComparisonTable data={chartData} />
       </div>
+
+      {/* === Spend by Days Before Pickup === */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-semibold text-slate-300">Spend by Days Before Pickup</h3>
+          <select
+            value={selectedMonth}
+            onChange={(e) => setSelectedMonth(e.target.value)}
+            className="bg-slate-700 text-white text-sm rounded-lg px-3 py-1.5 border border-slate-600 focus:outline-none focus:border-blue-500"
+          >
+            {availableMonths.map((m) => (
+              <option key={m} value={m}>{formatMonthLabel(m)}</option>
+            ))}
+          </select>
+        </div>
+
+        <div className="rounded-lg border border-slate-700 overflow-auto">
+          <table className="w-full text-sm text-white">
+            <thead className="bg-slate-700">
+              <tr>
+                <th className="px-4 py-3 text-left font-semibold">Days Before Pickup</th>
+                <th className="px-4 py-3 text-right font-semibold">Spend (£)</th>
+                <th className="px-4 py-3 text-right font-semibold">Jobs</th>
+                <th className="px-4 py-3 text-right font-semibold">% of Total</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-700/50">
+              {daysBucketRows.rows.map((row) => (
+                <tr
+                  key={row.bucket}
+                  onClick={() => setModalBucket(row.bucket)}
+                  className="hover:bg-slate-700/60 cursor-pointer transition-colors"
+                >
+                  <td className="px-4 py-3 font-medium">{row.bucket}</td>
+                  <td className="px-4 py-3 text-right tabular-nums">
+                    £{row.spend.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </td>
+                  <td className="px-4 py-3 text-right tabular-nums">{row.jobs.toLocaleString()}</td>
+                  <td className="px-4 py-3 text-right tabular-nums">{row.pct.toFixed(1)}%</td>
+                </tr>
+              ))}
+            </tbody>
+            <tfoot className="bg-slate-700/50 font-semibold">
+              <tr>
+                <td className="px-4 py-3">Total</td>
+                <td className="px-4 py-3 text-right tabular-nums">
+                  £{daysBucketRows.totalSpend.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </td>
+                <td className="px-4 py-3 text-right tabular-nums">{daysBucketRows.totalJobs.toLocaleString()}</td>
+                <td className="px-4 py-3 text-right tabular-nums">100.0%</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+        <p className="text-xs text-slate-500">Click a row to see agent breakdown</p>
+      </div>
+
+      {/* === Agent Breakdown Modal === */}
+      {modalBucket && (
+        <AgentBreakdownModal
+          daysBucket={modalBucket}
+          month={selectedMonth}
+          agentData={modalAgentData}
+          onClose={() => setModalBucket(null)}
+        />
+      )}
     </div>
   )
 }
