@@ -2468,3 +2468,75 @@ export const activeBookingsByCountry: Record<Country, ActiveBookingRow[]> = {
   { day: '2026-06-25', nuts1: 'Ile-de-France', activeCount: 1 },
   ],
 };
+
+export interface PartialMonthComparison {
+  cutoffDay: number;
+  currentMonth: string;
+  mom: Record<string, Record<string, number>>;
+  yoy: Record<string, Record<string, number>>;
+}
+
+export const partialMonthComparisonByCountry: Record<Country, PartialMonthComparison> = {
+  uk: {
+    cutoffDay: 17,
+    currentMonth: '2026-03-01',
+    mom: {
+      'East Midlands (England)': { 'Car': 91, 'Furniture': 656, 'Home Removal': 93, 'Motorbike': 11, 'Piano': 4 },
+      'East of England': { 'Car': 174, 'Furniture': 1000, 'Home Removal': 192, 'Motorbike': 14, 'Piano': 7 },
+      'London': { 'Car': 88, 'Furniture': 3098, 'Home Removal': 177, 'Motorbike': 17, 'Piano': 9 },
+      'North East (England)': { 'Car': 21, 'Furniture': 264, 'Home Removal': 61, 'Motorbike': 6, 'Piano': 2 },
+      'North West (England)': { 'Car': 90, 'Furniture': 1043, 'Home Removal': 143, 'Motorbike': 11, 'Piano': 6 },
+      'Northern Ireland': { 'Furniture': 29, 'Home Removal': 6 },
+      'Scotland': { 'Car': 56, 'Furniture': 620, 'Home Removal': 84, 'Motorbike': 11, 'Piano': 6 },
+      'South East (England)': { 'Car': 238, 'Furniture': 1588, 'Home Removal': 226, 'Motorbike': 23, 'Piano': 7 },
+      'South West (England)': { 'Car': 113, 'Furniture': 762, 'Home Removal': 170, 'Motorbike': 22, 'Piano': 6 },
+      'Unknown': { 'Furniture': 1 },
+      'Wales': { 'Car': 31, 'Furniture': 219, 'Home Removal': 41, 'Motorbike': 3, 'Piano': 2 },
+      'West Midlands (England)': { 'Car': 104, 'Furniture': 762, 'Home Removal': 135, 'Motorbike': 4, 'Piano': 6 },
+      'Yorkshire and The Humber': { 'Car': 65, 'Furniture': 741, 'Home Removal': 107, 'Motorbike': 11, 'Piano': 5 },
+    },
+    yoy: {
+      'East Midlands (England)': { 'Car': 91, 'Furniture': 601, 'Home Removal': 131, 'Motorbike': 5, 'Piano': 6 },
+      'East of England': { 'Car': 171, 'Furniture': 1014, 'Home Removal': 166, 'Motorbike': 8, 'Piano': 11 },
+      'London': { 'Car': 144, 'Furniture': 3196, 'Home Removal': 254, 'Motorbike': 8, 'Piano': 8 },
+      'North East (England)': { 'Car': 26, 'Furniture': 266, 'Home Removal': 47, 'Motorbike': 3 },
+      'North West (England)': { 'Car': 151, 'Furniture': 972, 'Home Removal': 187, 'Motorbike': 9, 'Piano': 7 },
+      'Northern Ireland': { 'Furniture': 14, 'Home Removal': 6 },
+      'Scotland': { 'Car': 71, 'Furniture': 620, 'Home Removal': 60, 'Motorbike': 1, 'Piano': 1 },
+      'South East (England)': { 'Car': 199, 'Furniture': 1777, 'Home Removal': 290, 'Motorbike': 16, 'Piano': 19 },
+      'South West (England)': { 'Car': 151, 'Furniture': 835, 'Home Removal': 188, 'Motorbike': 12, 'Piano': 14 },
+      'Unknown': { 'Home Removal': 2 },
+      'Wales': { 'Car': 32, 'Furniture': 191, 'Home Removal': 49, 'Motorbike': 1, 'Piano': 2 },
+      'West Midlands (England)': { 'Car': 211, 'Furniture': 707, 'Home Removal': 129, 'Motorbike': 7, 'Piano': 5 },
+      'Yorkshire and The Humber': { 'Car': 41, 'Furniture': 752, 'Home Removal': 114, 'Motorbike': 4, 'Piano': 3 },
+    },
+  },
+  spain: {
+    cutoffDay: 17,
+    currentMonth: '2026-03-01',
+    mom: {
+      'Centro (ES)': { 'Furniture': 22, 'Home Removal': 11 },
+      'Comunidad de Madrid': { 'Furniture': 102, 'Home Removal': 82 },
+      'Este': { 'Furniture': 101, 'Home Removal': 69 },
+      'Noreste': { 'Furniture': 18, 'Home Removal': 12 },
+      'Noroeste': { 'Furniture': 5, 'Home Removal': 8 },
+      'Sur': { 'Furniture': 44, 'Home Removal': 57 },
+    },
+    yoy: {
+      'Centro (ES)': { 'Home Removal': 25 },
+      'Comunidad de Madrid': { 'Home Removal': 67 },
+      'Este': { 'Home Removal': 65 },
+      'Noreste': { 'Home Removal': 15 },
+      'Noroeste': { 'Home Removal': 14 },
+      'Sur': { 'Home Removal': 46 },
+    },
+  },
+  france: {
+    cutoffDay: 17,
+    currentMonth: '2026-03-01',
+    mom: {
+      'Ile-de-France': { 'Furniture': 71, 'Home Removal': 45 },
+    },
+    yoy: {},
+  },
+};

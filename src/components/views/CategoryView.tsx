@@ -18,9 +18,17 @@ const CAT_SHORT: Record<string, string> = {
   'Piano': 'Pianos',
 }
 
+interface PartialMonthComparison {
+  cutoffDay: number
+  currentMonth: string
+  mom: Record<string, Record<string, number>>
+  yoy: Record<string, Record<string, number>>
+}
+
 interface CategoryViewProps {
   breakdownByCountry: Record<Country, CategoryBreakdownRow[]>
   activeBookingsByCountry: Record<Country, ActiveBookingRow[]>
+  partialMonthByCountry: Record<Country, PartialMonthComparison>
   selectedCountry: Country
   onCountryChange: (country: Country) => void
 }
@@ -42,6 +50,7 @@ function DeltaCell({ current, previous, label }: { current: number; previous: nu
 const CategoryView: React.FC<CategoryViewProps> = ({
   breakdownByCountry,
   activeBookingsByCountry,
+  partialMonthByCountry,
   selectedCountry,
   onCountryChange,
 }) => {
@@ -70,6 +79,10 @@ const CategoryView: React.FC<CategoryViewProps> = ({
   const prevMonthStr = `${prevMonthDate.getFullYear()}-${String(prevMonthDate.getMonth() + 1).padStart(2, '0')}-01`
   const yoyStr = `${selectedYear - 1}-${String(selectedMonth + 1).padStart(2, '0')}-01`
 
+  // Check if this is the current (partial) month
+  const partial = partialMonthByCountry[selectedCountry]
+  const isPartialMonth = partial && monthStr === partial.currentMonth
+
   // ─── Completed & Paid comparison table ───
   // Build lookup: monthStr -> nuts1 -> category -> jobs
   const buildLookup = (data: CategoryBreakdownRow[]) => {
@@ -89,6 +102,22 @@ const CategoryView: React.FC<CategoryViewProps> = ({
     return lookup[month]?.[nuts1]?.[cat] ?? null
   }
 
+  // For partial month: get MoM/YoY from the partial comparison data (same-day cutoff)
+  // For full months: get MoM/YoY from the full-month baked data as before
+  const getMomJobs = (nuts1: string, cat: string): number | null => {
+    if (isPartialMonth) {
+      return partial.mom[nuts1]?.[cat] ?? null
+    }
+    return getJobs(prevMonthStr, nuts1, cat)
+  }
+
+  const getYoyJobs = (nuts1: string, cat: string): number | null => {
+    if (isPartialMonth) {
+      return partial.yoy[nuts1]?.[cat] ?? null
+    }
+    return getJobs(yoyStr, nuts1, cat)
+  }
+
   // Table rows: one per NUTS1 region
   const completedTableData = useMemo(() => {
     return nuts1Regions.map(nuts1 => {
@@ -101,8 +130,8 @@ const CategoryView: React.FC<CategoryViewProps> = ({
 
       CATEGORIES.forEach(cat => {
         const cur = getJobs(monthStr, nuts1, cat) ?? 0
-        const prev = getJobs(prevMonthStr, nuts1, cat)
-        const lastYear = getJobs(yoyStr, nuts1, cat)
+        const prev = getMomJobs(nuts1, cat)
+        const lastYear = getYoyJobs(nuts1, cat)
         row[cat] = { current: cur, mom: prev, yoy: lastYear }
         total += cur
         if (prev !== null) { totalMom += prev; hasMom = true }
@@ -118,7 +147,8 @@ const CategoryView: React.FC<CategoryViewProps> = ({
       }
     }).filter(r => r.total > 0 || Object.values(r.categories).some(c => c.current > 0))
       .sort((a, b) => b.total - a.total)
-  }, [nuts1Regions, monthStr, prevMonthStr, yoyStr, lookup])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nuts1Regions, monthStr, prevMonthStr, yoyStr, lookup, isPartialMonth, partial])
 
   // Grand totals
   const grandTotals = useMemo(() => {
@@ -226,6 +256,11 @@ const CategoryView: React.FC<CategoryViewProps> = ({
       {/* ═══ COMPLETED & PAID TABLE ═══ */}
       <h2 className="text-lg font-semibold text-white">
         Completed & Paid — {MONTH_LABELS[selectedMonth]} {selectedYear} — {COUNTRY_LABELS[selectedCountry]}
+        {isPartialMonth && (
+          <span className="text-sm font-normal text-amber-400 ml-2">
+            (MTD as of {partial.cutoffDay}{partial.cutoffDay === 1 ? 'st' : partial.cutoffDay === 2 ? 'nd' : partial.cutoffDay === 3 ? 'rd' : 'th'} — MoM/YoY compared to same date)
+          </span>
+        )}
       </h2>
 
       {completedTableData.length === 0 ? (
