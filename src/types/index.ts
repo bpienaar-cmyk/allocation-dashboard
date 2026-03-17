@@ -142,5 +142,7 @@ export interface IResReservationRow {
   day: string;
   nutsRegion: string;
   status: string;
+  resType: string;
+  people: number;
   count: number;
 }

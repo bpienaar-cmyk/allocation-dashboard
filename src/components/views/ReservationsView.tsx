@@ -1,32 +1,10 @@
 import React, { useState, useMemo } from 'react'
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from 'recharts'
 import { IResReservationRow } from '../../types'
-import { fmtN, fmtP } from '../../utils/formatting'
+import { fmtN } from '../../utils/formatting'
 
 interface ReservationsViewProps {
   data: IResReservationRow[]
 }
-
-interface RegionStatData {
-  region: string;
-  pending: number;
-  accepted: number;
-  journey_associated: number;
-  unsuccessful: number;
-  total: number;
-  associationPct: number;
-}
-
-type SortField = keyof Omit<RegionStatData, 'region'>
 
 const REGION_ORDER = [
   'East Midlands (England)',
@@ -43,207 +21,259 @@ const REGION_ORDER = [
   'Yorkshire and The Humber',
 ]
 
-const STATUS_COLORS: Record<string, string> = {
-  pending: '#f59e0b',
-  accepted: '#3b82f6',
-  journey_associated: '#22c55e',
-  unsuccessful: '#ef4444',
+const SHORT_REGION: Record<string, string> = {
+  'East Midlands (England)': 'E. Midlands',
+  'East of England': 'E. of England',
+  'London': 'London',
+  'North East (England)': 'N. East',
+  'North West (England)': 'N. West',
+  'Northern Ireland': 'N. Ireland',
+  'Scotland': 'Scotland',
+  'South East (England)': 'S. East',
+  'South West (England)': 'S. West',
+  'Wales': 'Wales',
+  'West Midlands (England)': 'W. Midlands',
+  'Yorkshire and The Humber': 'Yorkshire',
 }
 
-const TRACKED_STATUSES = ['pending', 'accepted', 'journey_associated', 'unsuccessful']
+type PeopleFilter = 'All' | '1' | '2' | '12'
+type TypeFilter = 'All' | 'Returns' | 'Customs' | 'Local' | 'Nationwide'
+type StatusFilter = 'All' | 'pending' | 'accepted' | 'journey_associated' | 'unsuccessful'
+
+const STATUS_COLORS: Record<string, string> = {
+  pending: 'text-amber-400',
+  accepted: 'text-blue-400',
+  journey_associated: 'text-green-400',
+  unsuccessful: 'text-red-400',
+}
+
+const STATUS_BG: Record<string, string> = {
+  pending: 'bg-amber-500/20',
+  accepted: 'bg-blue-500/20',
+  journey_associated: 'bg-green-500/20',
+  unsuccessful: 'bg-red-500/20',
+}
+
+const STATUS_LABELS: Record<string, string> = {
+  pending: 'Pending',
+  accepted: 'Accepted',
+  journey_associated: 'Journey Assoc.',
+  unsuccessful: 'Unsuccessful',
+}
 
 const ReservationsView: React.FC<ReservationsViewProps> = ({ data }) => {
-  const [sortField, setSortField] = useState<SortField>('total')
-  const [sortAsc, setSortAsc] = useState(false)
+  const [peopleFilter, setPeopleFilter] = useState<PeopleFilter>('All')
+  const [typeFilter, setTypeFilter] = useState<TypeFilter>('All')
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('All')
 
-  const aggregatedData = useMemo(() => {
-    const regionMap: Record<string, Record<string, number>> = {}
-
-    REGION_ORDER.forEach((region) => {
-      regionMap[region] = { pending: 0, accepted: 0, journey_associated: 0, unsuccessful: 0 }
-    })
-
-    data.forEach((row) => {
-      if (!TRACKED_STATUSES.includes(row.status)) return
-      if (!regionMap[row.nutsRegion]) {
-        regionMap[row.nutsRegion] = { pending: 0, accepted: 0, journey_associated: 0, unsuccessful: 0 }
-      }
-      regionMap[row.nutsRegion][row.status] += row.count
-    })
-
-    const tableData: RegionStatData[] = REGION_ORDER
-      .filter((region) => regionMap[region])
-      .map((region) => {
-        const s = regionMap[region]
-        const total = s.pending + s.accepted + s.journey_associated + s.unsuccessful
-        return {
-          region,
-          pending: s.pending,
-          accepted: s.accepted,
-          journey_associated: s.journey_associated,
-          unsuccessful: s.unsuccessful,
-          total,
-          associationPct: total > 0 ? s.journey_associated / total * 100 : 0,
-        }
-      })
-
-    return tableData
+  // Get all unique dates sorted
+  const allDays = useMemo(() => {
+    const daySet = new Set<string>()
+    data.forEach((r) => daySet.add(r.day))
+    return Array.from(daySet).sort()
   }, [data])
 
-  const totalsRow = useMemo(() => {
-    const t: RegionStatData = {
-      region: 'TOTAL',
-      pending: 0, accepted: 0, journey_associated: 0, unsuccessful: 0,
-      total: 0, associationPct: 0,
-    }
-    aggregatedData.forEach((row) => {
-      t.pending += row.pending
-      t.accepted += row.accepted
-      t.journey_associated += row.journey_associated
-      t.unsuccessful += row.unsuccessful
-      t.total += row.total
+  // Filter data based on toggles
+  const filteredData = useMemo(() => {
+    return data.filter((row) => {
+      if (peopleFilter !== 'All' && row.people !== Number(peopleFilter)) return false
+      if (typeFilter !== 'All' && row.resType !== typeFilter) return false
+      if (statusFilter !== 'All' && row.status !== statusFilter) return false
+      return true
     })
-    t.associationPct = t.total > 0 ? t.journey_associated / t.total * 100 : 0
-    return t
-  }, [aggregatedData])
+  }, [data, peopleFilter, typeFilter, statusFilter])
 
-  const sortedData = useMemo(() => {
-    return [...aggregatedData].sort((a, b) => {
-      const result = (b[sortField] as number) - (a[sortField] as number)
-      return sortAsc ? -result : result
+  // Build date × region grid: { [region]: { [day]: count } }
+  const gridData = useMemo(() => {
+    const grid: Record<string, Record<string, number>> = {}
+    REGION_ORDER.forEach((r) => {
+      grid[r] = {}
+      allDays.forEach((d) => { grid[r][d] = 0 })
     })
-  }, [aggregatedData, sortField, sortAsc])
+    filteredData.forEach((row) => {
+      if (grid[row.nutsRegion]) {
+        grid[row.nutsRegion][row.day] = (grid[row.nutsRegion][row.day] || 0) + row.count
+      }
+    })
+    return grid
+  }, [filteredData, allDays])
 
-  const chartData = useMemo(() => {
-    return aggregatedData.map((row) => ({
-      region: row.region.replace(' (England)', ''),
-      pending: row.pending,
-      accepted: row.accepted,
-      journey_associated: row.journey_associated,
-      unsuccessful: row.unsuccessful,
-    }))
-  }, [aggregatedData])
+  // Column totals
+  const dayTotals = useMemo(() => {
+    const totals: Record<string, number> = {}
+    allDays.forEach((d) => {
+      totals[d] = REGION_ORDER.reduce((sum, r) => sum + (gridData[r]?.[d] || 0), 0)
+    })
+    return totals
+  }, [gridData, allDays])
 
-  const handleHeaderClick = (field: SortField) => {
-    if (sortField === field) setSortAsc(!sortAsc)
-    else { setSortField(field); setSortAsc(false) }
+  // Row totals
+  const regionTotals = useMemo(() => {
+    const totals: Record<string, number> = {}
+    REGION_ORDER.forEach((r) => {
+      totals[r] = allDays.reduce((sum, d) => sum + (gridData[r]?.[d] || 0), 0)
+    })
+    return totals
+  }, [gridData, allDays])
+
+  const grandTotal = Object.values(dayTotals).reduce((s, v) => s + v, 0)
+
+  // Format day header: "1 Mar", "2 Mar" etc
+  const formatDayHeader = (day: string) => {
+    const d = new Date(day + 'T00:00:00')
+    return `${d.getDate()} ${d.toLocaleString('en-GB', { month: 'short' })}`
   }
 
-  const getSortIndicator = (field: SortField) => {
-    if (sortField !== field) return ' \u2195'
-    return sortAsc ? ' \u2191' : ' \u2193'
-  }
+  // Determine if a day is today or in the future (for highlighting)
+  const today = new Date().toISOString().slice(0, 10)
 
-  const CustomTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
-      const item = payload[0].payload
-      return (
-        <div className="bg-slate-800 border border-slate-700 rounded p-3 text-white text-sm space-y-1">
-          <p className="font-semibold">{item.region}</p>
-          <p className="text-amber-400">Pending: {fmtN(item.pending)}</p>
-          <p className="text-blue-400">Accepted: {fmtN(item.accepted)}</p>
-          <p className="text-green-400">Journey Associated: {fmtN(item.journey_associated)}</p>
-          <p className="text-red-400">Unsuccessful: {fmtN(item.unsuccessful)}</p>
-        </div>
-      )
-    }
-    return null
+  const pillClass = (active: boolean) =>
+    `px-3 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer ${
+      active
+        ? 'bg-blue-600 text-white'
+        : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+    }`
+
+  // Find max value for heatmap colouring
+  const maxVal = useMemo(() => {
+    let mx = 0
+    REGION_ORDER.forEach((r) => {
+      allDays.forEach((d) => {
+        if (gridData[r]?.[d] > mx) mx = gridData[r][d]
+      })
+    })
+    return mx || 1
+  }, [gridData, allDays])
+
+  const cellBg = (val: number) => {
+    if (val === 0) return ''
+    const intensity = Math.min(val / maxVal, 1)
+    const alpha = 0.1 + intensity * 0.4
+    if (statusFilter === 'journey_associated') return `rgba(34, 197, 94, ${alpha})`
+    if (statusFilter === 'accepted') return `rgba(59, 130, 246, ${alpha})`
+    if (statusFilter === 'unsuccessful') return `rgba(239, 68, 68, ${alpha})`
+    if (statusFilter === 'pending') return `rgba(245, 158, 11, ${alpha})`
+    return `rgba(59, 130, 246, ${alpha})`
   }
 
   return (
-    <div className="space-y-6">
-      <div className="bg-slate-800 rounded-lg p-6" style={{ height: '420px' }}>
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart
-            data={chartData}
-            layout="vertical"
-            margin={{ top: 5, right: 30, left: 150, bottom: 5 }}
-          >
-            <CartesianGrid strokeDasharray="3 3" stroke="#475569" />
-            <XAxis type="number" stroke="#94a3b8" tick={{ fontSize: 12 }} />
-            <YAxis
-              dataKey="region"
-              type="category"
-              stroke="#94a3b8"
-              tick={{ fontSize: 12 }}
-              width={140}
-            />
-            <Tooltip content={<CustomTooltip />} />
-            <Legend wrapperStyle={{ paddingTop: '20px', color: '#e2e8f0' }} />
-            <Bar dataKey="journey_associated" stackId="a" fill={STATUS_COLORS.journey_associated} name="Journey Associated" />
-            <Bar dataKey="accepted" stackId="a" fill={STATUS_COLORS.accepted} name="Accepted" />
-            <Bar dataKey="pending" stackId="a" fill={STATUS_COLORS.pending} name="Pending" />
-            <Bar dataKey="unsuccessful" stackId="a" fill={STATUS_COLORS.unsuccessful} name="Unsuccessful" />
-          </BarChart>
-        </ResponsiveContainer>
+    <div className="space-y-4">
+      {/* Filters */}
+      <div className="bg-slate-800 rounded-lg p-4 space-y-3">
+        {/* People filter */}
+        <div className="flex items-center gap-3">
+          <span className="text-xs text-slate-400 w-16 shrink-0">People</span>
+          <div className="flex gap-2 flex-wrap">
+            {(['All', '1', '2', '12'] as PeopleFilter[]).map((p) => (
+              <button key={p} className={pillClass(peopleFilter === p)} onClick={() => setPeopleFilter(p)}>
+                {p === 'All' ? 'All' : `${p} Man`}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Type filter */}
+        <div className="flex items-center gap-3">
+          <span className="text-xs text-slate-400 w-16 shrink-0">Type</span>
+          <div className="flex gap-2 flex-wrap">
+            {(['All', 'Returns', 'Customs', 'Local', 'Nationwide'] as TypeFilter[]).map((t) => (
+              <button key={t} className={pillClass(typeFilter === t)} onClick={() => setTypeFilter(t)}>
+                {t}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Status filter */}
+        <div className="flex items-center gap-3">
+          <span className="text-xs text-slate-400 w-16 shrink-0">Status</span>
+          <div className="flex gap-2 flex-wrap">
+            <button className={pillClass(statusFilter === 'All')} onClick={() => setStatusFilter('All')}>All</button>
+            {(['pending', 'accepted', 'journey_associated', 'unsuccessful'] as const).map((s) => (
+              <button key={s} className={pillClass(statusFilter === s)} onClick={() => setStatusFilter(s)}>
+                {STATUS_LABELS[s]}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
-      <div className="rounded-lg overflow-hidden border border-slate-700">
-        <table className="w-full text-sm text-white">
-          <thead className="bg-slate-700 text-white">
+      {/* Date × NUTS table */}
+      <div className="rounded-lg border border-slate-700 overflow-auto" style={{ maxHeight: '600px' }}>
+        <table className="text-xs text-white border-collapse" style={{ minWidth: `${allDays.length * 52 + 140}px` }}>
+          <thead className="bg-slate-700 sticky top-0 z-10">
             <tr>
-              <th className="px-6 py-3 text-left font-semibold">Region</th>
-              <th
-                className="px-4 py-3 text-right font-semibold cursor-pointer hover:bg-slate-600 transition-colors"
-                onClick={() => handleHeaderClick('pending')}
-              >
-                Pending{getSortIndicator('pending')}
+              <th className="px-3 py-2 text-left font-semibold sticky left-0 bg-slate-700 z-20 border-r border-slate-600" style={{ minWidth: '120px' }}>
+                Region
               </th>
-              <th
-                className="px-4 py-3 text-right font-semibold cursor-pointer hover:bg-slate-600 transition-colors"
-                onClick={() => handleHeaderClick('accepted')}
-              >
-                Accepted{getSortIndicator('accepted')}
-              </th>
-              <th
-                className="px-4 py-3 text-right font-semibold cursor-pointer hover:bg-slate-600 transition-colors"
-                onClick={() => handleHeaderClick('journey_associated')}
-              >
-                Journey Assoc.{getSortIndicator('journey_associated')}
-              </th>
-              <th
-                className="px-4 py-3 text-right font-semibold cursor-pointer hover:bg-slate-600 transition-colors"
-                onClick={() => handleHeaderClick('unsuccessful')}
-              >
-                Unsuccessful{getSortIndicator('unsuccessful')}
-              </th>
-              <th
-                className="px-4 py-3 text-right font-semibold cursor-pointer hover:bg-slate-600 transition-colors"
-                onClick={() => handleHeaderClick('total')}
-              >
-                Total{getSortIndicator('total')}
-              </th>
-              <th
-                className="px-4 py-3 text-right font-semibold cursor-pointer hover:bg-slate-600 transition-colors"
-                onClick={() => handleHeaderClick('associationPct')}
-              >
-                Association %{getSortIndicator('associationPct')}
+              {allDays.map((day) => (
+                <th
+                  key={day}
+                  className={`px-1 py-2 text-center font-medium whitespace-nowrap ${
+                    day === today ? 'bg-blue-900/40' : day > today ? 'bg-slate-700/60' : ''
+                  }`}
+                  style={{ minWidth: '48px' }}
+                >
+                  {formatDayHeader(day)}
+                </th>
+              ))}
+              <th className="px-3 py-2 text-right font-semibold border-l border-slate-600" style={{ minWidth: '60px' }}>
+                Total
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-700">
-            {sortedData.map((row) => (
-              <tr key={row.region} className="bg-slate-800 hover:bg-slate-750 transition-colors">
-                <td className="px-6 py-3 font-medium">{row.region}</td>
-                <td className="px-4 py-3 text-right text-amber-400">{fmtN(row.pending)}</td>
-                <td className="px-4 py-3 text-right text-blue-400">{fmtN(row.accepted)}</td>
-                <td className="px-4 py-3 text-right text-green-400">{fmtN(row.journey_associated)}</td>
-                <td className="px-4 py-3 text-right text-red-400">{fmtN(row.unsuccessful)}</td>
-                <td className="px-4 py-3 text-right font-medium">{fmtN(row.total)}</td>
-                <td className="px-4 py-3 text-right text-emerald-400">{fmtP(row.associationPct)}</td>
+          <tbody className="divide-y divide-slate-700/50">
+            {REGION_ORDER.map((region) => (
+              <tr key={region} className="hover:bg-slate-800/80 transition-colors">
+                <td className="px-3 py-2 font-medium sticky left-0 bg-slate-800 z-10 border-r border-slate-700" title={region}>
+                  {SHORT_REGION[region] || region}
+                </td>
+                {allDays.map((day) => {
+                  const val = gridData[region]?.[day] || 0
+                  return (
+                    <td
+                      key={day}
+                      className={`px-1 py-2 text-center tabular-nums ${
+                        day === today ? 'border-x border-blue-700/30' : ''
+                      }`}
+                      style={{ backgroundColor: cellBg(val) }}
+                    >
+                      {val > 0 ? val : <span className="text-slate-600">-</span>}
+                    </td>
+                  )
+                })}
+                <td className="px-3 py-2 text-right font-semibold border-l border-slate-600">
+                  {fmtN(regionTotals[region] || 0)}
+                </td>
               </tr>
             ))}
+            {/* Totals row */}
             <tr className="bg-slate-700 font-semibold border-t-2 border-slate-500">
-              <td className="px-6 py-3">{totalsRow.region}</td>
-              <td className="px-4 py-3 text-right text-amber-400">{fmtN(totalsRow.pending)}</td>
-              <td className="px-4 py-3 text-right text-blue-400">{fmtN(totalsRow.accepted)}</td>
-              <td className="px-4 py-3 text-right text-green-400">{fmtN(totalsRow.journey_associated)}</td>
-              <td className="px-4 py-3 text-right text-red-400">{fmtN(totalsRow.unsuccessful)}</td>
-              <td className="px-4 py-3 text-right">{fmtN(totalsRow.total)}</td>
-              <td className="px-4 py-3 text-right text-emerald-400">{fmtP(totalsRow.associationPct)}</td>
+              <td className="px-3 py-2 sticky left-0 bg-slate-700 z-10 border-r border-slate-600">TOTAL</td>
+              {allDays.map((day) => (
+                <td key={day} className="px-1 py-2 text-center tabular-nums">
+                  {dayTotals[day] > 0 ? dayTotals[day] : <span className="text-slate-500">-</span>}
+                </td>
+              ))}
+              <td className="px-3 py-2 text-right border-l border-slate-600">{fmtN(grandTotal)}</td>
             </tr>
           </tbody>
         </table>
+      </div>
+
+      {/* Summary cards */}
+      <div className="grid grid-cols-4 gap-3">
+        {(['pending', 'accepted', 'journey_associated', 'unsuccessful'] as const).map((status) => {
+          const count = filteredData
+            .filter((r) => r.status === status)
+            .reduce((s, r) => s + r.count, 0)
+          return (
+            <div key={status} className={`rounded-lg p-4 ${STATUS_BG[status]} border border-slate-700`}>
+              <div className="text-xs text-slate-400 mb-1">{STATUS_LABELS[status]}</div>
+              <div className={`text-2xl font-bold ${STATUS_COLORS[status]}`}>{fmtN(count)}</div>
+            </div>
+          )
+        })}
       </div>
     </div>
   )
