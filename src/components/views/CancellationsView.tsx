@@ -254,9 +254,9 @@ const MtdCancellationRateChart: React.FC<{
       r => selectedNuts.has(r.n) && selectedCats.has(r.c) && selectedReasons.has(r.r)
     )
 
-    // Filter completed paid rows by NUTS and Category (NOT reason — completed paid doesn't have reason)
-    const filteredPaid2025 = paidRaw2025.filter(r => selectedNuts.has(r.n) && selectedCats.has(r.c))
-    const filteredPaid2026 = paidRaw2026.filter(r => selectedNuts.has(r.n) && selectedCats.has(r.c))
+    // Use all completed paid rows (daily totals, not broken by NUTS/Category)
+    const filteredPaid2025 = paidRaw2025
+    const filteredPaid2026 = paidRaw2026
 
     // Group by day and sum counts
     const cancDaily2025: Record<number, number> = {}
