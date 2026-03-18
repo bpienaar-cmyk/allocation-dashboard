@@ -366,14 +366,14 @@ const MtdCancellationRateChart: React.FC<{
             <YAxis
               stroke="#94a3b8"
               tick={{ fill: '#e2e8f0', fontSize: 12 }}
-              tickFormatter={(val: number) => `${val.toFixed(1)}%`}
+              tickFormatter={(val: number) => `${val.toFixed(2)}%`}
             />
             <Tooltip
               {...tooltipStyle}
               labelFormatter={(label: any) => `Day ${label}`}
               formatter={(value: any, name: any) => {
                 if (value === null || value === undefined) return ['-', name]
-                return [`${Number(value).toFixed(2)}%`, name]
+                return [`${Number(value).toFixed(3)}%`, name]
               }}
             />
             <Legend wrapperStyle={{ color: '#cbd5e1' }} />
