@@ -307,6 +307,182 @@ const MtdSpendChart: React.FC<{
   )
 }
 
+// === MTD Spend / TTV % Chart ===
+interface MtdTtvChartData {
+  day: number;
+  pct2026: number | null;
+  pct2025: number;
+  forecastPct2026: number | null;
+}
+
+const MtdSpendTtvChart: React.FC<{
+  raw2025: MtdSpendRawRow[];
+  raw2026: MtdSpendRawRow[];
+  selectedNuts: Set<string>;
+  selectedCats: Set<string>;
+}> = ({ raw2025, raw2026, selectedNuts, selectedCats }) => {
+  const chartData = useMemo(() => {
+    // Filter raw rows by NUTS and Category
+    const filtered2025 = raw2025.filter(r => selectedNuts.has(r.n) && selectedCats.has(r.c))
+    const filtered2026 = raw2026.filter(r => selectedNuts.has(r.n) && selectedCats.has(r.c))
+
+    // Group by day and sum spend and ttv
+    const daily2025: Record<number, { s: number; t: number }> = {}
+    const daily2026: Record<number, { s: number; t: number }> = {}
+
+    filtered2025.forEach(row => {
+      if (!daily2025[row.d]) daily2025[row.d] = { s: 0, t: 0 }
+      daily2025[row.d].s += row.s
+      daily2025[row.d].t += row.t
+    })
+
+    filtered2026.forEach(row => {
+      if (!daily2026[row.d]) daily2026[row.d] = { s: 0, t: 0 }
+      daily2026[row.d].s += row.s
+      daily2026[row.d].t += row.t
+    })
+
+    // Get all days from 1 to 31
+    const allDays = Array.from({ length: 31 }, (_, i) => i + 1)
+
+    // Compute cumulative totals
+    let cum2025 = 0
+    let cumTtv2025 = 0
+    let cum2026 = 0
+    let cumTtv2026 = 0
+    const cumulative2025: Record<number, number> = {}
+    const cumulativeTtv2025: Record<number, number> = {}
+    const cumulative2026: Record<number, number> = {}
+    const cumulativeTtv2026: Record<number, number> = {}
+
+    allDays.forEach(day => {
+      cum2025 += daily2025[day]?.s || 0
+      cumTtv2025 += daily2025[day]?.t || 0
+      cum2026 += daily2026[day]?.s || 0
+      cumTtv2026 += daily2026[day]?.t || 0
+      cumulative2025[day] = cum2025
+      cumulativeTtv2025[day] = cumTtv2025
+      cumulative2026[day] = cum2026
+      cumulativeTtv2026[day] = cumTtv2026
+    })
+
+    // Calculate spend/TTV percentage for each day
+    const spendTtvPct2025: Record<number, number> = {}
+    const spendTtvPct2026: Record<number, number> = {}
+
+    allDays.forEach(day => {
+      spendTtvPct2025[day] = cumulativeTtv2025[day] > 0 ? (cumulative2025[day] / cumulativeTtv2025[day]) * 100 : 0
+      spendTtvPct2026[day] = cumulativeTtv2026[day] > 0 ? (cumulative2026[day] / cumulativeTtv2026[day]) * 100 : 0
+    })
+
+    // Find last actual day with 2026 data
+    const days2026WithData = Object.keys(daily2026).map(Number).sort((a, b) => a - b)
+    const lastDay = days2026WithData.length > 0 ? days2026WithData[days2026WithData.length - 1] : 0
+
+    // Calculate ratio for forecast
+    const ratio = lastDay > 0 && spendTtvPct2025[lastDay] > 0 ? spendTtvPct2026[lastDay] / spendTtvPct2025[lastDay] : 1
+
+    // Build chart data with forecast
+    const result: MtdTtvChartData[] = allDays.map(day => {
+      const pct2026Val = day <= lastDay ? spendTtvPct2026[day] : null
+      let forecastPct2026Val: number | null = null
+
+      if (day > lastDay && spendTtvPct2025[day] > 0) {
+        // Forecast: scale 2025 percentage by ratio
+        forecastPct2026Val = parseFloat((spendTtvPct2025[day] * ratio).toFixed(2))
+      } else if (day === lastDay) {
+        // Bridge point: forecast starts at last actual value
+        forecastPct2026Val = spendTtvPct2026[day]
+      }
+
+      return {
+        day,
+        pct2026: pct2026Val,
+        pct2025: spendTtvPct2025[day],
+        forecastPct2026: forecastPct2026Val,
+      }
+    })
+
+    return result
+  }, [raw2025, raw2026, selectedNuts, selectedCats])
+
+  const lastActualDay = chartData.filter(d => d.pct2026 !== null).length
+
+  return (
+    <div className="space-y-2">
+      <h3 className="text-sm font-semibold text-slate-300">MTD Cumulative Spend / TTV % — March</h3>
+      <div className="rounded-lg border border-slate-700 bg-slate-800 p-4" style={{ height: '350px' }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={chartData} margin={{ top: 20, right: 30, left: 10, bottom: 5 }}>
+            <XAxis
+              dataKey="day"
+              stroke="#94a3b8"
+              tick={{ fill: '#e2e8f0', fontSize: 12 }}
+              tickFormatter={(val: number) => `${val}`}
+              label={{ value: 'Day of Month', position: 'insideBottom', offset: -2, fill: '#94a3b8', fontSize: 11 }}
+            />
+            <YAxis
+              stroke="#94a3b8"
+              tick={{ fill: '#e2e8f0', fontSize: 12 }}
+              tickFormatter={(val: number) => `${val.toFixed(1)}%`}
+            />
+            <Tooltip
+              {...tooltipStyle}
+              labelFormatter={(label: any) => `Day ${label}`}
+              formatter={(value: any, name: any) => {
+                if (value === null || value === undefined) return ['-', name]
+                return [`${Number(value).toFixed(2)}%`, name]
+              }}
+            />
+            <Legend wrapperStyle={{ color: '#cbd5e1' }} />
+            <ReferenceLine
+              x={lastActualDay}
+              stroke="#475569"
+              strokeDasharray="4 4"
+              label={{ value: 'Today', position: 'top', fill: '#94a3b8', fontSize: 10 }}
+            />
+            {/* March 2025 actual */}
+            <Line
+              type="monotone"
+              dataKey="pct2025"
+              stroke="#64748b"
+              dot={{ fill: '#64748b', r: 2 }}
+              activeDot={{ r: 4 }}
+              strokeWidth={2}
+              name="March 2025"
+              connectNulls
+            />
+            {/* March 2026 actual */}
+            <Line
+              type="monotone"
+              dataKey="pct2026"
+              stroke="#f59e0b"
+              dot={{ fill: '#f59e0b', r: 3 }}
+              activeDot={{ r: 5 }}
+              strokeWidth={2.5}
+              name="March 2026 (Actual)"
+              connectNulls
+            />
+            {/* Forecast 2026 (dashed) */}
+            <Line
+              type="monotone"
+              dataKey="forecastPct2026"
+              stroke="#ef4444"
+              strokeDasharray="6 3"
+              dot={{ fill: '#ef4444', r: 2 }}
+              activeDot={{ r: 4 }}
+              strokeWidth={2}
+              name="2026 Forecast (based on 2025)"
+              connectNulls
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+      <p className="text-xs text-slate-500">Spend as % of TTV — cumulative MTD, filtered by region and category</p>
+    </div>
+  )
+}
+
 // === Days-before-pickup line graph ===
 const DAYS_BUCKETS = ['OTD', '1d', '2d', '3d', '4d+'] as const
 const DAYS_COLORS: Record<string, string> = {
@@ -529,6 +705,9 @@ const SpendView: React.FC<SpendViewProps> = ({ nutsDataByCountry, categoryDataBy
 
       {/* === MTD Cumulative Allocation Spend Chart === */}
       {selectedCountry === 'uk' && <MtdSpendChart raw2025={mtdRaw2025} raw2026={mtdRaw2026} selectedNuts={selectedNuts} selectedCats={selectedCats} />}
+
+      {/* === MTD Spend / TTV % Chart === */}
+      {selectedCountry === 'uk' && <MtdSpendTtvChart raw2025={mtdRaw2025} raw2026={mtdRaw2026} selectedNuts={selectedNuts} selectedCats={selectedCats} />}
 
       {/* === Spend Amount Chart === */}
       <SpendAmountChart data={chartData} />

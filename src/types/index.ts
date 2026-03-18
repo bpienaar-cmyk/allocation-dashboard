@@ -196,4 +196,5 @@ export interface MtdSpendRawRow {
   n: string;
   c: string;
   s: number;
+  t: number;
 }
