@@ -191,9 +191,9 @@ export interface AgentSpendRow {
   jobs: number;
 }
 
-export interface MtdDailySpendPoint {
-  day: number;
-  spend2026: number | null;
-  spend2025: number;
-  forecast2026: number | null;
+export interface MtdSpendRawRow {
+  d: number;
+  n: string;
+  c: string;
+  s: number;
 }

@@ -9,7 +9,7 @@ import {
   ResponsiveContainer,
   ReferenceLine,
 } from 'recharts'
-import { SpendNutsRow, SpendCategoryRow, SpendByDaysRow, AgentSpendRow, MtdDailySpendPoint, Country } from '../../types'
+import { SpendNutsRow, SpendCategoryRow, SpendByDaysRow, AgentSpendRow, MtdSpendRawRow, Country } from '../../types'
 import { fmtN } from '../../utils/formatting'
 import AgentBreakdownModal from '../common/AgentBreakdownModal'
 
@@ -18,7 +18,8 @@ interface SpendViewProps {
   categoryDataByCountry: Record<string, SpendCategoryRow[]>
   spendByDaysByCountry: Record<string, SpendByDaysRow[]>
   agentSpendByCountry: Record<string, AgentSpendRow[]>
-  mtdDailySpendData: MtdDailySpendPoint[]
+  mtdRaw2025: MtdSpendRawRow[]
+  mtdRaw2026: MtdSpendRawRow[]
   selectedCountry: Country
   onCountryChange: (c: Country) => void
 }
@@ -149,15 +150,92 @@ const SpendTtvPctChart: React.FC<{ data: ChartRow[] }> = ({ data }) => (
 )
 
 // === MTD Cumulative Allocation Spend Chart ===
-const MtdSpendChart: React.FC<{ data: MtdDailySpendPoint[] }> = ({ data }) => {
-  const lastActualDay = data.filter(d => d.spend2026 !== null).length
+interface MtdChartData {
+  day: number;
+  spend2026: number | null;
+  spend2025: number;
+  forecast2026: number | null;
+}
+
+const MtdSpendChart: React.FC<{
+  raw2025: MtdSpendRawRow[];
+  raw2026: MtdSpendRawRow[];
+  selectedNuts: Set<string>;
+  selectedCats: Set<string>;
+}> = ({ raw2025, raw2026, selectedNuts, selectedCats }) => {
+  const chartData = useMemo(() => {
+    // Filter raw rows by NUTS and Category
+    const filtered2025 = raw2025.filter(r => selectedNuts.has(r.n) && selectedCats.has(r.c))
+    const filtered2026 = raw2026.filter(r => selectedNuts.has(r.n) && selectedCats.has(r.c))
+
+    // Group by day and sum spend
+    const daily2025: Record<number, number> = {}
+    const daily2026: Record<number, number> = {}
+
+    filtered2025.forEach(row => {
+      if (!daily2025[row.d]) daily2025[row.d] = 0
+      daily2025[row.d] += row.s
+    })
+
+    filtered2026.forEach(row => {
+      if (!daily2026[row.d]) daily2026[row.d] = 0
+      daily2026[row.d] += row.s
+    })
+
+    // Get all days from 1 to 31
+    const allDays = Array.from({ length: 31 }, (_, i) => i + 1)
+
+    // Compute cumulative totals
+    let cum2025 = 0
+    let cum2026 = 0
+    const cumulative2025: Record<number, number> = {}
+    const cumulative2026: Record<number, number> = {}
+
+    allDays.forEach(day => {
+      cum2025 += daily2025[day] || 0
+      cum2026 += daily2026[day] || 0
+      cumulative2025[day] = cum2025
+      cumulative2026[day] = cum2026
+    })
+
+    // Find last actual day with 2026 data
+    const lastActualDay = Object.keys(cumulative2026).filter(d => cumulative2026[parseInt(d)] > 0).pop()
+    const lastDay = lastActualDay ? parseInt(lastActualDay) : 0
+
+    // Calculate ratio for forecast
+    const ratio = lastDay > 0 && cumulative2025[lastDay] > 0 ? cumulative2026[lastDay] / cumulative2025[lastDay] : 1
+
+    // Build chart data with forecast
+    const result: MtdChartData[] = allDays.map(day => {
+      const spend2026Val = cumulative2026[day] > 0 ? cumulative2026[day] : null
+      let forecast2026Val: number | null = null
+
+      // For days after actual data, forecast by scaling 2025 daily increments
+      if (day > lastDay && cumulative2025[day] !== undefined) {
+        forecast2026Val = cumulative2025[day] * ratio
+      } else if (day <= lastDay && spend2026Val !== null) {
+        forecast2026Val = spend2026Val
+      }
+
+      return {
+        day,
+        spend2026: spend2026Val,
+        spend2025: cumulative2025[day] || 0,
+        forecast2026: forecast2026Val,
+      }
+    })
+
+    return result
+  }, [raw2025, raw2026, selectedNuts, selectedCats])
+
+  const lastActualDay = chartData.filter(d => d.spend2026 !== null).length
 
   return (
     <div className="space-y-2">
       <h3 className="text-sm font-semibold text-slate-300">MTD Cumulative Allocation Spend — March</h3>
       <div className="rounded-lg border border-slate-700 bg-slate-800 p-4" style={{ height: '350px' }}>
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data} margin={{ top: 20, right: 30, left: 10, bottom: 5 }}>
+          <LineChart data={chartData} margin={{ top: 20, right: 30, left: 10, bottom: 5 }}>
             <XAxis
               dataKey="day"
               stroke="#94a3b8"
@@ -223,7 +301,7 @@ const MtdSpendChart: React.FC<{ data: MtdDailySpendPoint[] }> = ({ data }) => {
           </LineChart>
         </ResponsiveContainer>
       </div>
-      <p className="text-xs text-slate-500">Forecast projects 2026 from current MTD using March 2025 daily pattern</p>
+      <p className="text-xs text-slate-500">Forecast projects 2026 from current MTD using March 2025 daily pattern, filtered by region and category</p>
     </div>
   )
 }
@@ -238,7 +316,7 @@ const DAYS_COLORS: Record<string, string> = {
   '4d+': '#a855f7',   // purple
 }
 
-const SpendView: React.FC<SpendViewProps> = ({ nutsDataByCountry, categoryDataByCountry, spendByDaysByCountry, agentSpendByCountry, mtdDailySpendData, selectedCountry, onCountryChange }) => {
+const SpendView: React.FC<SpendViewProps> = ({ nutsDataByCountry, categoryDataByCountry, spendByDaysByCountry, agentSpendByCountry, mtdRaw2025, mtdRaw2026, selectedCountry, onCountryChange }) => {
   const nutsData = nutsDataByCountry[selectedCountry] || []
   const categoryData = categoryDataByCountry[selectedCountry] || []
 
@@ -449,7 +527,7 @@ const SpendView: React.FC<SpendViewProps> = ({ nutsDataByCountry, categoryDataBy
       </div>
 
       {/* === MTD Cumulative Allocation Spend Chart === */}
-      {selectedCountry === 'uk' && <MtdSpendChart data={mtdDailySpendData} />}
+      {selectedCountry === 'uk' && <MtdSpendChart raw2025={mtdRaw2025} raw2026={mtdRaw2026} selectedNuts={selectedNuts} selectedCats={selectedCats} />}
 
       {/* === Spend Amount Chart === */}
       <SpendAmountChart data={chartData} />
