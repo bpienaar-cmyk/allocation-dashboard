@@ -22344,7 +22344,8 @@ export const spendByDaysByCountry: Record<string, SpendByDaysRow[]> = {
  * MTD Daily Cumulative Allocation Spend — March 2026 vs March 2025 + Forecast
  * spend2026 = cumulative actual spend for March 2026 (null after last actual day)
  * spend2025 = cumulative actual spend for March 2025 (full month)
- * forecast2026 = projected 2026 total based on 2025 daily pattern (starts at last actual day)
+ * forecast2026 = projected 2026 total using 2025 daily pattern scaled by the
+ *   2026/2025 pace ratio (2.22x at day 17) — starts at last actual day
  */
 export const mtdDailySpendData: MtdDailySpendPoint[] = [
   { day: 1, spend2026: 3060.09, spend2025: 1269.66, forecast2026: null },
@@ -22364,18 +22365,18 @@ export const mtdDailySpendData: MtdDailySpendPoint[] = [
   { day: 15, spend2026: 45076.71, spend2025: 21351.85, forecast2026: null },
   { day: 16, spend2026: 48297.96, spend2025: 21932.85, forecast2026: null },
   { day: 17, spend2026: 51481.81, spend2025: 23176.85, forecast2026: 51481.81 },
-  { day: 18, spend2026: null, spend2025: 24737.45, forecast2026: 53042.41 },
-  { day: 19, spend2026: null, spend2025: 26480.45, forecast2026: 54785.41 },
-  { day: 20, spend2026: null, spend2025: 29306.12, forecast2026: 57611.08 },
-  { day: 21, spend2026: null, spend2025: 32937.3, forecast2026: 61242.26 },
-  { day: 22, spend2026: null, spend2025: 34478.84, forecast2026: 62783.8 },
-  { day: 23, spend2026: null, spend2025: 35669.84, forecast2026: 63974.8 },
-  { day: 24, spend2026: null, spend2025: 38980.84, forecast2026: 67285.8 },
-  { day: 25, spend2026: null, spend2025: 43036.57, forecast2026: 71341.53 },
-  { day: 26, spend2026: null, spend2025: 50705.13, forecast2026: 79010.09 },
-  { day: 27, spend2026: null, spend2025: 61711.37, forecast2026: 90016.33 },
-  { day: 28, spend2026: null, spend2025: 73091.11, forecast2026: 101396.07 },
-  { day: 29, spend2026: null, spend2025: 79924.94, forecast2026: 108229.9 },
-  { day: 30, spend2026: null, spend2025: 86278.03, forecast2026: 114582.99 },
-  { day: 31, spend2026: null, spend2025: 99816.91, forecast2026: 128121.87 },
+  { day: 18, spend2026: null, spend2025: 24737.45, forecast2026: 54948.31 },
+  { day: 19, spend2026: null, spend2025: 26480.45, forecast2026: 58819.96 },
+  { day: 20, spend2026: null, spend2025: 29306.12, forecast2026: 65096.51 },
+  { day: 21, spend2026: null, spend2025: 32937.3, forecast2026: 73162.31 },
+  { day: 22, spend2026: null, spend2025: 34478.84, forecast2026: 76586.47 },
+  { day: 23, spend2026: null, spend2025: 35669.84, forecast2026: 79231.99 },
+  { day: 24, spend2026: null, spend2025: 38980.84, forecast2026: 86586.58 },
+  { day: 25, spend2026: null, spend2025: 43036.57, forecast2026: 95595.41 },
+  { day: 26, spend2026: null, spend2025: 50705.13, forecast2026: 112629.28 },
+  { day: 27, spend2026: null, spend2025: 61711.37, forecast2026: 137077.0 },
+  { day: 28, spend2026: null, spend2025: 73091.11, forecast2026: 162354.36 },
+  { day: 29, spend2026: null, spend2025: 79924.94, forecast2026: 177534.07 },
+  { day: 30, spend2026: null, spend2025: 86278.03, forecast2026: 191645.94 },
+  { day: 31, spend2026: null, spend2025: 99816.91, forecast2026: 221719.31 },
 ]
