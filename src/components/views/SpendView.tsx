@@ -7,8 +7,9 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
+  ReferenceLine,
 } from 'recharts'
-import { SpendNutsRow, SpendCategoryRow, SpendByDaysRow, AgentSpendRow, Country } from '../../types'
+import { SpendNutsRow, SpendCategoryRow, SpendByDaysRow, AgentSpendRow, MtdDailySpendPoint, Country } from '../../types'
 import { fmtN } from '../../utils/formatting'
 import AgentBreakdownModal from '../common/AgentBreakdownModal'
 
@@ -17,6 +18,7 @@ interface SpendViewProps {
   categoryDataByCountry: Record<string, SpendCategoryRow[]>
   spendByDaysByCountry: Record<string, SpendByDaysRow[]>
   agentSpendByCountry: Record<string, AgentSpendRow[]>
+  mtdDailySpendData: MtdDailySpendPoint[]
   selectedCountry: Country
   onCountryChange: (c: Country) => void
 }
@@ -146,6 +148,86 @@ const SpendTtvPctChart: React.FC<{ data: ChartRow[] }> = ({ data }) => (
   </div>
 )
 
+// === MTD Cumulative Allocation Spend Chart ===
+const MtdSpendChart: React.FC<{ data: MtdDailySpendPoint[] }> = ({ data }) => {
+  const lastActualDay = data.filter(d => d.spend2026 !== null).length
+
+  return (
+    <div className="space-y-2">
+      <h3 className="text-sm font-semibold text-slate-300">MTD Cumulative Allocation Spend — March</h3>
+      <div className="rounded-lg border border-slate-700 bg-slate-800 p-4" style={{ height: '350px' }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={data} margin={{ top: 20, right: 30, left: 10, bottom: 5 }}>
+            <XAxis
+              dataKey="day"
+              stroke="#94a3b8"
+              tick={{ fill: '#e2e8f0', fontSize: 12 }}
+              tickFormatter={(val: number) => `${val}`}
+              label={{ value: 'Day of Month', position: 'insideBottom', offset: -2, fill: '#94a3b8', fontSize: 11 }}
+            />
+            <YAxis
+              stroke="#94a3b8"
+              tick={{ fill: '#e2e8f0', fontSize: 12 }}
+              tickFormatter={(val: number) => fmtCurrency(val)}
+              domain={[0, (max: number) => Math.ceil(max * 1.1)]}
+            />
+            <Tooltip
+              {...tooltipStyle}
+              labelFormatter={(label: any) => `Day ${label}`}
+              formatter={(value: any, name: any) => {
+                if (value === null || value === undefined) return ['-', name]
+                return [`£${fmtN(value)}`, name]
+              }}
+            />
+            <Legend wrapperStyle={{ color: '#cbd5e1' }} />
+            <ReferenceLine
+              x={lastActualDay}
+              stroke="#475569"
+              strokeDasharray="4 4"
+              label={{ value: 'Today', position: 'top', fill: '#94a3b8', fontSize: 10 }}
+            />
+            {/* March 2025 actual */}
+            <Line
+              type="monotone"
+              dataKey="spend2025"
+              stroke="#64748b"
+              dot={{ fill: '#64748b', r: 2 }}
+              activeDot={{ r: 4 }}
+              strokeWidth={2}
+              name="March 2025"
+              connectNulls
+            />
+            {/* March 2026 actual */}
+            <Line
+              type="monotone"
+              dataKey="spend2026"
+              stroke="#3b82f6"
+              dot={{ fill: '#3b82f6', r: 3 }}
+              activeDot={{ r: 5 }}
+              strokeWidth={2.5}
+              name="March 2026 (Actual)"
+              connectNulls
+            />
+            {/* Forecast 2026 (dashed) */}
+            <Line
+              type="monotone"
+              dataKey="forecast2026"
+              stroke="#f59e0b"
+              strokeDasharray="6 3"
+              dot={{ fill: '#f59e0b', r: 2 }}
+              activeDot={{ r: 4 }}
+              strokeWidth={2}
+              name="2026 Forecast (based on 2025)"
+              connectNulls
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+      <p className="text-xs text-slate-500">Forecast projects 2026 from current MTD using March 2025 daily pattern</p>
+    </div>
+  )
+}
+
 // === Days-before-pickup line graph ===
 const DAYS_BUCKETS = ['OTD', '1d', '2d', '3d', '4d+'] as const
 const DAYS_COLORS: Record<string, string> = {
@@ -156,7 +238,7 @@ const DAYS_COLORS: Record<string, string> = {
   '4d+': '#a855f7',   // purple
 }
 
-const SpendView: React.FC<SpendViewProps> = ({ nutsDataByCountry, categoryDataByCountry, spendByDaysByCountry, agentSpendByCountry, selectedCountry, onCountryChange }) => {
+const SpendView: React.FC<SpendViewProps> = ({ nutsDataByCountry, categoryDataByCountry, spendByDaysByCountry, agentSpendByCountry, mtdDailySpendData, selectedCountry, onCountryChange }) => {
   const nutsData = nutsDataByCountry[selectedCountry] || []
   const categoryData = categoryDataByCountry[selectedCountry] || []
 
@@ -365,6 +447,9 @@ const SpendView: React.FC<SpendViewProps> = ({ nutsDataByCountry, categoryDataBy
           </div>
         </div>
       </div>
+
+      {/* === MTD Cumulative Allocation Spend Chart === */}
+      {selectedCountry === 'uk' && <MtdSpendChart data={mtdDailySpendData} />}
 
       {/* === Spend Amount Chart === */}
       <SpendAmountChart data={chartData} />

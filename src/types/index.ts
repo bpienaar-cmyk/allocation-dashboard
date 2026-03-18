@@ -190,3 +190,10 @@ export interface AgentSpendRow {
   spend: number;
   jobs: number;
 }
+
+export interface MtdDailySpendPoint {
+  day: number;
+  spend2026: number | null;
+  spend2025: number;
+  forecast2026: number | null;
+}
