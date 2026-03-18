@@ -436,16 +436,11 @@ const MonthlyCancellationCountChart: React.FC<{
   selectedNuts: Set<string>
   selectedCats: Set<string>
   selectedReasons: Set<string>
-}> = ({ data, selectedNuts, selectedCats, selectedReasons }) => {
+}> = ({ data }) => {
   const chartData = useMemo(() => {
-    // Filter by NUTS, Category, Reason
-    const filtered = data.filter(
-      r => selectedNuts.has(r.n) && selectedCats.has(r.c) && selectedReasons.has(r.r)
-    )
-
-    // Group by month
+    // Monthly trend data is pre-aggregated totals — no dimension filtering needed
     const monthMap: Record<string, number> = {}
-    filtered.forEach(r => {
+    data.forEach(r => {
       if (!monthMap[r.m]) monthMap[r.m] = 0
       monthMap[r.m] += r.cnt
     })
@@ -455,7 +450,7 @@ const MonthlyCancellationCountChart: React.FC<{
       month,
       count: monthMap[month],
     }))
-  }, [data, selectedNuts, selectedCats, selectedReasons])
+  }, [data])
 
   return (
     <div className="space-y-2">
@@ -504,26 +499,18 @@ const MonthlyCancellationRateChart: React.FC<{
   selectedNuts: Set<string>
   selectedCats: Set<string>
   selectedReasons: Set<string>
-}> = ({ cancellationData, completedPaidData, selectedNuts, selectedCats, selectedReasons }) => {
+}> = ({ cancellationData, completedPaidData }) => {
   const chartData = useMemo(() => {
-    // Filter cancellation data by NUTS, Category, Reason
-    const filteredCanc = cancellationData.filter(
-      r => selectedNuts.has(r.n) && selectedCats.has(r.c) && selectedReasons.has(r.r)
-    )
-
-    // Filter completed paid data by NUTS and Category (NOT reason)
-    const filteredPaid = completedPaidData.filter(r => selectedNuts.has(r.n) && selectedCats.has(r.c))
-
-    // Group by month
+    // Monthly trend data is pre-aggregated totals — no dimension filtering needed
     const cancMonthMap: Record<string, number> = {}
     const paidMonthMap: Record<string, number> = {}
 
-    filteredCanc.forEach(r => {
+    cancellationData.forEach(r => {
       if (!cancMonthMap[r.m]) cancMonthMap[r.m] = 0
       cancMonthMap[r.m] += r.cnt
     })
 
-    filteredPaid.forEach(r => {
+    completedPaidData.forEach(r => {
       if (!paidMonthMap[r.m]) paidMonthMap[r.m] = 0
       paidMonthMap[r.m] += r.cnt
     })
@@ -540,7 +527,7 @@ const MonthlyCancellationRateChart: React.FC<{
         rate: parseFloat(rate.toFixed(2)),
       }
     })
-  }, [cancellationData, completedPaidData, selectedNuts, selectedCats, selectedReasons])
+  }, [cancellationData, completedPaidData])
 
   return (
     <div className="space-y-2">

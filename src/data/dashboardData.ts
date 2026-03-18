@@ -24657,7 +24657,7 @@ export const monthlyCompletedPaidTrendsByCountry: Record<string, MonthlyComplete
     { m: '2025-12', n: '', c: '', cnt: 22773 },
     { m: '2026-01', n: '', c: '', cnt: 22991 },
     { m: '2026-02', n: '', c: '', cnt: 23540 },
-    { m: '2026-03', n: '', c: '', cnt: 14525 },
+    { m: '2026-03', n: '', c: '', cnt: 14705 },
   ],
   spain: [
     { m: '2025-01', n: '', c: '', cnt: 113 },
@@ -24674,12 +24674,12 @@ export const monthlyCompletedPaidTrendsByCountry: Record<string, MonthlyComplete
     { m: '2025-12', n: '', c: '', cnt: 1036 },
     { m: '2026-01', n: '', c: '', cnt: 994 },
     { m: '2026-02', n: '', c: '', cnt: 1124 },
-    { m: '2026-03', n: '', c: '', cnt: 560 },
+    { m: '2026-03', n: '', c: '', cnt: 562 },
   ],
   france: [
     { m: '2025-12', n: '', c: '', cnt: 7 },
     { m: '2026-01', n: '', c: '', cnt: 81 },
     { m: '2026-02', n: '', c: '', cnt: 253 },
-    { m: '2026-03', n: '', c: '', cnt: 144 },
+    { m: '2026-03', n: '', c: '', cnt: 147 },
   ],
 }
