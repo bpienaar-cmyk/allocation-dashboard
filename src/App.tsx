@@ -9,10 +9,10 @@ import TrendsView from './components/views/TrendsView'
 import CategoryView from './components/views/CategoryView'
 import ReservationsView from './components/views/ReservationsView'
 import SpendView from './components/views/SpendView'
-import DeallocationView from './components/views/DeallocationView'
+import CancellationsView from './components/views/CancellationsView'
 import { useAllocationData } from './hooks/useAllocationData'
 import { getDefaultDateRange } from './utils/dateHelpers'
-import { trendsByCategoryAndCountry, categoryBreakdownByCountry, activeBookingsByCountry, partialMonthComparisonByCountry, mtdRaw2025, mtdRaw2026 } from './data/dashboardData'
+import { trendsByCategoryAndCountry, categoryBreakdownByCountry, activeBookingsByCountry, partialMonthComparisonByCountry, mtdRaw2025, mtdRaw2026, cancellationRaw2025, cancellationRaw2026, completedPaidRaw2025, completedPaidRaw2026, monthlyCancellationTrends, monthlyCompletedPaidTrends } from './data/dashboardData'
 import { TabId, Country } from './types'
 
 const App: React.FC = () => {
@@ -76,7 +76,18 @@ const App: React.FC = () => {
                     onCountryChange={setSelectedCountry}
                   />
                 )}
-                {activeTab === 'deallocations' && deallocations && <DeallocationView data={deallocations} />}
+                {activeTab === 'cancellations' && (
+                  <CancellationsView
+                    cancellationRaw2025={cancellationRaw2025}
+                    cancellationRaw2026={cancellationRaw2026}
+                    completedPaidRaw2025={completedPaidRaw2025}
+                    completedPaidRaw2026={completedPaidRaw2026}
+                    monthlyCancellationTrends={monthlyCancellationTrends}
+                    monthlyCompletedPaidTrends={monthlyCompletedPaidTrends}
+                    selectedCountry={selectedCountry}
+                    onCountryChange={setSelectedCountry}
+                  />
+                )}
               </div>
             )}
           </div>

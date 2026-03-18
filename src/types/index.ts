@@ -115,7 +115,7 @@ export interface CountryOverview {
   dailyPY: DailyRaw[];
 }
 
-export type TabId = 'overview' | 'trends' | 'category' | 'reservations' | 'spend' | 'deallocations';
+export type TabId = 'overview' | 'trends' | 'category' | 'reservations' | 'spend' | 'cancellations';
 
 export interface SpendNutsRow {
   month: string;
@@ -197,4 +197,34 @@ export interface MtdSpendRawRow {
   c: string;
   s: number;
   t: number;
+}
+
+export interface CancellationRawRow {
+  d: number;  // day of month
+  n: string;  // NUTS region
+  c: string;  // category
+  r: string;  // cancel reason code
+  cnt: number; // count
+}
+
+export interface CompletedPaidRawRow {
+  d: number;
+  n: string;
+  c: string;
+  cnt: number;
+}
+
+export interface MonthlyCancellationRow {
+  m: string;  // YYYY-MM
+  n: string;
+  c: string;
+  r: string;
+  cnt: number;
+}
+
+export interface MonthlyCompletedPaidRow {
+  m: string;
+  n: string;
+  c: string;
+  cnt: number;
 }

@@ -24,7 +24,6 @@ import {
   categoriesData,
   regionsData,
   otdMetricsData,
-  deallocationsData,
   dailyOverviewByCountry,
   furnRoutingByCountry,
   tpCancelsByCountry,
@@ -64,6 +63,11 @@ export interface UseAllocationDataResult {
   refetch: () => Promise<void>;
 }
 
+// Keep deallocations in interface for backward compatibility but it's no longer set
+interface UseAllocationDataResultLegacy extends UseAllocationDataResult {
+  deallocations: DeallocationData | null;
+}
+
 /**
  * Custom hook to fetch all allocation dashboard data
  * Fetches all data in parallel and manages loading/error states
@@ -79,7 +83,6 @@ export function useAllocationData(dateRange: DateRange): UseAllocationDataResult
   const [iresReservations, setIresReservations] = useState<IResReservationRow[] | null>(null);
   const [iresTrend, setIresTrend] = useState<IResTrendRow[] | null>(null);
   const [otdMetrics, setOtdMetrics] = useState<OtdMetrics | null>(null);
-  const [deallocations, setDeallocations] = useState<DeallocationData | null>(null);
   const [dailyOvrvwByCountry, setDailyOvrvwByCountry] = useState<Record<string, { cy: DailyOverviewRow[], py: DailyOverviewRow[] }> | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -100,7 +103,6 @@ export function useAllocationData(dateRange: DateRange): UseAllocationDataResult
       setIresReservations(iresReservationData);
       setIresTrend(iresTrendData);
       setOtdMetrics(otdMetricsData);
-      setDeallocations(deallocationsData);
       setDailyOvrvwByCountry(dailyOverviewByCountry);
     } catch (err) {
       const error = err instanceof Error ? err : new Error('Unknown error occurred');
@@ -126,7 +128,7 @@ export function useAllocationData(dateRange: DateRange): UseAllocationDataResult
     iresReservations,
     iresTrendData: iresTrend,
     otdMetrics,
-    deallocations,
+    deallocations: null,
     dailyOverviewByCountry: dailyOvrvwByCountry,
     furnRoutingByCountry,
     tpCancelsByCountry,
