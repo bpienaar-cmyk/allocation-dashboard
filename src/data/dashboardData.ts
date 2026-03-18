@@ -24233,7 +24233,8 @@ export const REASON_CODE_LABELS: Record<string, string> = {
 }
 
 
-export const cancellationRaw2025: CancellationRawRow[] = [
+export const cancellationRaw2025ByCountry: Record<string, CancellationRawRow[]> = {
+  uk: [
   { d: 1, n: 'London', c: 'Furniture', r: 'tp_couldnt_make_timeslot', cnt: 1 },
   { d: 1, n: 'London', c: 'Furniture', r: 'tp_unable_to_complete_job', cnt: 1 },
   { d: 1, n: 'West Midlands (England)', c: 'Furniture', r: 'tp_couldnt_make_timeslot', cnt: 1 },
@@ -24377,9 +24378,17 @@ export const cancellationRaw2025: CancellationRawRow[] = [
   { d: 31, n: 'South West (England)', c: 'Furniture', r: 'tp_couldnt_make_timeslot', cnt: 1 },
   { d: 31, n: 'South West (England)', c: 'Home Removal', r: 'av_couldnt_source_a_tp', cnt: 1 },
   { d: 31, n: 'Yorkshire and The Humber', c: 'Furniture', r: 'av_couldnt_source_a_tp', cnt: 1 },
-  { d: 31, n: 'Yorkshire and The Humber', c: 'Home Removal', r: 'tp_couldnt_make_timeslot', cnt: 1 },]
+  { d: 31, n: 'Yorkshire and The Humber', c: 'Home Removal', r: 'tp_couldnt_make_timeslot', cnt: 1 },
+  ],
+  spain: [
+    { d: 1, n: 'Sur', c: 'Home Removal', r: 'av_couldnt_source_a_tp', cnt: 1 },
+    { d: 3, n: 'Este', c: 'Home Removal', r: 'av_couldnt_source_a_tp', cnt: 1 },
+  ],
+  france: [],
+}
 
-export const cancellationRaw2026: CancellationRawRow[] = [
+export const cancellationRaw2026ByCountry: Record<string, CancellationRawRow[]> = {
+  uk: [
   { d: 1, n: 'East of England', c: 'Furniture', r: 'tp_conduct_issues', cnt: 1 },
   { d: 1, n: 'London', c: 'Furniture', r: 'av_couldnt_source_a_tp', cnt: 1 },
   { d: 1, n: 'London', c: 'Furniture', r: 'tp_couldnt_make_timeslot', cnt: 1 },
@@ -24485,9 +24494,23 @@ export const cancellationRaw2026: CancellationRawRow[] = [
   { d: 17, n: 'South West (England)', c: 'Car', r: 'av_couldnt_source_a_tp', cnt: 3 },
   { d: 17, n: 'South West (England)', c: 'Home Removal', r: 'tp_unable_to_complete_job', cnt: 1 },
   { d: 18, n: 'Wales', c: 'Car', r: 'av_couldnt_source_a_tp', cnt: 1 },
-  { d: 18, n: 'West Midlands (England)', c: 'Furniture', r: 'tp_unable_to_complete_job', cnt: 1 },]
+  { d: 18, n: 'West Midlands (England)', c: 'Furniture', r: 'tp_unable_to_complete_job', cnt: 1 },
+  ],
+  spain: [
+    { d: 8, n: 'Sur', c: 'Home Removal', r: 'av_couldnt_source_a_tp', cnt: 1 },
+    { d: 12, n: 'Este', c: 'Home Removal', r: 'tps_van_didnt_have_enough_space', cnt: 1 },
+    { d: 14, n: 'Noroeste', c: 'Home Removal', r: 'tps_van_didnt_have_enough_space', cnt: 1 },
+    { d: 15, n: 'Comunidad de Madrid', c: 'Home Removal', r: 'tps_van_didnt_have_enough_space', cnt: 1 },
+  ],
+  france: [
+    { d: 5, n: 'Ile-de-France', c: 'Furniture', r: 'av_couldnt_source_a_tp', cnt: 1 },
+    { d: 5, n: 'Ile-de-France', c: 'Furniture', r: 'tp_unable_to_meet_colllection_time', cnt: 1 },
+    { d: 15, n: 'Ile-de-France', c: 'Home Removal', r: 'av_couldnt_source_a_tp', cnt: 2 },
+  ],
+}
 
-export const completedPaidRaw2025: CompletedPaidRawRow[] = [
+export const completedPaidRaw2025ByCountry: Record<string, CompletedPaidRawRow[]> = {
+  uk: [
   { d: 1, n: '', c: '', cnt: 1144 },
   { d: 2, n: '', c: '', cnt: 725 },
   { d: 3, n: '', c: '', cnt: 939 },
@@ -24518,9 +24541,26 @@ export const completedPaidRaw2025: CompletedPaidRawRow[] = [
   { d: 28, n: '', c: '', cnt: 950 },
   { d: 29, n: '', c: '', cnt: 994 },
   { d: 30, n: '', c: '', cnt: 740 },
-  { d: 31, n: '', c: '', cnt: 998 },]
+  { d: 31, n: '', c: '', cnt: 998 },
+  ],
+  spain: [
+    { d: 1, n: '', c: '', cnt: 25 }, { d: 2, n: '', c: '', cnt: 12 }, { d: 3, n: '', c: '', cnt: 16 },
+    { d: 4, n: '', c: '', cnt: 12 }, { d: 5, n: '', c: '', cnt: 11 }, { d: 6, n: '', c: '', cnt: 8 },
+    { d: 7, n: '', c: '', cnt: 17 }, { d: 8, n: '', c: '', cnt: 21 }, { d: 9, n: '', c: '', cnt: 7 },
+    { d: 10, n: '', c: '', cnt: 12 }, { d: 11, n: '', c: '', cnt: 11 }, { d: 12, n: '', c: '', cnt: 12 },
+    { d: 13, n: '', c: '', cnt: 14 }, { d: 14, n: '', c: '', cnt: 23 }, { d: 15, n: '', c: '', cnt: 14 },
+    { d: 16, n: '', c: '', cnt: 4 }, { d: 17, n: '', c: '', cnt: 13 }, { d: 18, n: '', c: '', cnt: 11 },
+    { d: 19, n: '', c: '', cnt: 21 }, { d: 20, n: '', c: '', cnt: 13 }, { d: 21, n: '', c: '', cnt: 20 },
+    { d: 22, n: '', c: '', cnt: 25 }, { d: 23, n: '', c: '', cnt: 5 }, { d: 24, n: '', c: '', cnt: 20 },
+    { d: 25, n: '', c: '', cnt: 20 }, { d: 26, n: '', c: '', cnt: 14 }, { d: 27, n: '', c: '', cnt: 28 },
+    { d: 28, n: '', c: '', cnt: 43 }, { d: 29, n: '', c: '', cnt: 36 }, { d: 30, n: '', c: '', cnt: 28 },
+    { d: 31, n: '', c: '', cnt: 27 },
+  ],
+  france: [],
+}
 
-export const completedPaidRaw2026: CompletedPaidRawRow[] = [
+export const completedPaidRaw2026ByCountry: Record<string, CompletedPaidRawRow[]> = {
+  uk: [
   { d: 1, n: '', c: '', cnt: 858 },
   { d: 2, n: '', c: '', cnt: 1128 },
   { d: 3, n: '', c: '', cnt: 851 },
@@ -24538,6 +24578,25 @@ export const completedPaidRaw2026: CompletedPaidRawRow[] = [
   { d: 15, n: '', c: '', cnt: 487 },
   { d: 16, n: '', c: '', cnt: 1012 },
   { d: 17, n: '', c: '', cnt: 777 },
-  { d: 18, n: '', c: '', cnt: 3 },]
-export const monthlyCancellationTrends: MonthlyCancellationRow[] = []
-export const monthlyCompletedPaidTrends: MonthlyCompletedPaidRow[] = []
+  { d: 18, n: '', c: '', cnt: 3 },
+  ],
+  spain: [
+    { d: 1, n: '', c: '', cnt: 40 }, { d: 2, n: '', c: '', cnt: 37 }, { d: 3, n: '', c: '', cnt: 31 },
+    { d: 4, n: '', c: '', cnt: 18 }, { d: 5, n: '', c: '', cnt: 44 }, { d: 6, n: '', c: '', cnt: 35 },
+    { d: 7, n: '', c: '', cnt: 41 }, { d: 8, n: '', c: '', cnt: 16 }, { d: 9, n: '', c: '', cnt: 33 },
+    { d: 10, n: '', c: '', cnt: 31 }, { d: 11, n: '', c: '', cnt: 26 }, { d: 12, n: '', c: '', cnt: 37 },
+    { d: 13, n: '', c: '', cnt: 48 }, { d: 14, n: '', c: '', cnt: 40 }, { d: 15, n: '', c: '', cnt: 23 },
+    { d: 16, n: '', c: '', cnt: 26 }, { d: 17, n: '', c: '', cnt: 34 },
+  ],
+  france: [
+    { d: 1, n: '', c: '', cnt: 16 }, { d: 2, n: '', c: '', cnt: 4 }, { d: 3, n: '', c: '', cnt: 4 },
+    { d: 4, n: '', c: '', cnt: 7 }, { d: 5, n: '', c: '', cnt: 10 }, { d: 6, n: '', c: '', cnt: 8 },
+    { d: 7, n: '', c: '', cnt: 17 }, { d: 8, n: '', c: '', cnt: 7 }, { d: 9, n: '', c: '', cnt: 8 },
+    { d: 10, n: '', c: '', cnt: 3 }, { d: 11, n: '', c: '', cnt: 9 }, { d: 12, n: '', c: '', cnt: 4 },
+    { d: 13, n: '', c: '', cnt: 12 }, { d: 14, n: '', c: '', cnt: 14 }, { d: 15, n: '', c: '', cnt: 6 },
+    { d: 16, n: '', c: '', cnt: 9 }, { d: 17, n: '', c: '', cnt: 6 },
+  ],
+}
+
+export const monthlyCancellationTrendsByCountry: Record<string, MonthlyCancellationRow[]> = { uk: [], spain: [], france: [] }
+export const monthlyCompletedPaidTrendsByCountry: Record<string, MonthlyCompletedPaidRow[]> = { uk: [], spain: [], france: [] }

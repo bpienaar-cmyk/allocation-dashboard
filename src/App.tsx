@@ -12,7 +12,7 @@ import SpendView from './components/views/SpendView'
 import CancellationsView from './components/views/CancellationsView'
 import { useAllocationData } from './hooks/useAllocationData'
 import { getDefaultDateRange } from './utils/dateHelpers'
-import { trendsByCategoryAndCountry, categoryBreakdownByCountry, activeBookingsByCountry, partialMonthComparisonByCountry, mtdRaw2025, mtdRaw2026, cancellationRaw2025, cancellationRaw2026, completedPaidRaw2025, completedPaidRaw2026, monthlyCancellationTrends, monthlyCompletedPaidTrends } from './data/dashboardData'
+import { trendsByCategoryAndCountry, categoryBreakdownByCountry, activeBookingsByCountry, partialMonthComparisonByCountry, mtdRaw2025, mtdRaw2026, cancellationRaw2025ByCountry, cancellationRaw2026ByCountry, completedPaidRaw2025ByCountry, completedPaidRaw2026ByCountry, monthlyCancellationTrendsByCountry, monthlyCompletedPaidTrendsByCountry } from './data/dashboardData'
 import { TabId, Country } from './types'
 
 const App: React.FC = () => {
@@ -78,12 +78,12 @@ const App: React.FC = () => {
                 )}
                 {activeTab === 'cancellations' && (
                   <CancellationsView
-                    cancellationRaw2025={cancellationRaw2025}
-                    cancellationRaw2026={cancellationRaw2026}
-                    completedPaidRaw2025={completedPaidRaw2025}
-                    completedPaidRaw2026={completedPaidRaw2026}
-                    monthlyCancellationTrends={monthlyCancellationTrends}
-                    monthlyCompletedPaidTrends={monthlyCompletedPaidTrends}
+                    cancellationRaw2025ByCountry={cancellationRaw2025ByCountry}
+                    cancellationRaw2026ByCountry={cancellationRaw2026ByCountry}
+                    completedPaidRaw2025ByCountry={completedPaidRaw2025ByCountry}
+                    completedPaidRaw2026ByCountry={completedPaidRaw2026ByCountry}
+                    monthlyCancellationTrendsByCountry={monthlyCancellationTrendsByCountry}
+                    monthlyCompletedPaidTrendsByCountry={monthlyCompletedPaidTrendsByCountry}
                     selectedCountry={selectedCountry}
                     onCountryChange={setSelectedCountry}
                   />

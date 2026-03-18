@@ -13,12 +13,12 @@ import { CancellationRawRow, CompletedPaidRawRow, MonthlyCancellationRow, Monthl
 import { REASON_CODE_LABELS } from '../../data/dashboardData'
 
 interface CancellationsViewProps {
-  cancellationRaw2025: CancellationRawRow[]
-  cancellationRaw2026: CancellationRawRow[]
-  completedPaidRaw2025: CompletedPaidRawRow[]
-  completedPaidRaw2026: CompletedPaidRawRow[]
-  monthlyCancellationTrends: MonthlyCancellationRow[]
-  monthlyCompletedPaidTrends: MonthlyCompletedPaidRow[]
+  cancellationRaw2025ByCountry: Record<string, CancellationRawRow[]>
+  cancellationRaw2026ByCountry: Record<string, CancellationRawRow[]>
+  completedPaidRaw2025ByCountry: Record<string, CompletedPaidRawRow[]>
+  completedPaidRaw2026ByCountry: Record<string, CompletedPaidRawRow[]>
+  monthlyCancellationTrendsByCountry: Record<string, MonthlyCancellationRow[]>
+  monthlyCompletedPaidTrendsByCountry: Record<string, MonthlyCompletedPaidRow[]>
   selectedCountry: Country
   onCountryChange: (c: Country) => void
 }
@@ -583,29 +583,35 @@ const MonthlyCancellationRateChart: React.FC<{
 
 // === Main Component ===
 const CancellationsView: React.FC<CancellationsViewProps> = ({
-  cancellationRaw2025,
-  cancellationRaw2026,
-  completedPaidRaw2025,
-  completedPaidRaw2026,
-  monthlyCancellationTrends,
-  monthlyCompletedPaidTrends,
+  cancellationRaw2025ByCountry,
+  cancellationRaw2026ByCountry,
+  completedPaidRaw2025ByCountry,
+  completedPaidRaw2026ByCountry,
+  monthlyCancellationTrendsByCountry,
+  monthlyCompletedPaidTrendsByCountry,
   selectedCountry,
   onCountryChange,
 }) => {
+  // Derive arrays from country-keyed records
+  const cancRaw2025 = cancellationRaw2025ByCountry[selectedCountry] || []
+  const cancRaw2026 = cancellationRaw2026ByCountry[selectedCountry] || []
+  const paidRaw2025 = completedPaidRaw2025ByCountry[selectedCountry] || []
+  const paidRaw2026 = completedPaidRaw2026ByCountry[selectedCountry] || []
+
   // Extract unique NUTS regions from 2026 data
   const allNutsRegions = useMemo(() => {
-    return Array.from(new Set(cancellationRaw2026.map(r => r.n))).filter(r => r !== '').sort()
-  }, [cancellationRaw2026]) as string[]
+    return Array.from(new Set(cancRaw2026.map(r => r.n))).filter(r => r !== '').sort()
+  }, [cancRaw2026]) as string[]
 
   // Extract unique categories from 2026 data
   const allCategories = useMemo(() => {
-    return Array.from(new Set(cancellationRaw2026.map(r => r.c))).sort()
-  }, [cancellationRaw2026]) as string[]
+    return Array.from(new Set(cancRaw2026.map(r => r.c))).sort()
+  }, [cancRaw2026]) as string[]
 
   // Extract unique reason codes from 2026 data
   const allReasons = useMemo(() => {
-    return Array.from(new Set(cancellationRaw2026.map(r => r.r))).sort()
-  }, [cancellationRaw2026]) as string[]
+    return Array.from(new Set(cancRaw2026.map(r => r.r))).sort()
+  }, [cancRaw2026]) as string[]
 
   // NUTS filter
   const [selectedNuts, setSelectedNuts] = useState<Set<string>>(new Set(allNutsRegions))
@@ -726,33 +732,29 @@ const CancellationsView: React.FC<CancellationsViewProps> = ({
         </div>
       </div>
 
-      {/* === MTD Cumulative Cancellations Chart (UK only) === */}
-      {selectedCountry === 'uk' && (
-        <MtdCumulativeCancellationChart
-          raw2025={cancellationRaw2025}
-          raw2026={cancellationRaw2026}
-          selectedNuts={selectedNuts}
-          selectedCats={selectedCats}
-          selectedReasons={selectedReasons}
-        />
-      )}
+      {/* === MTD Cumulative Cancellations Chart === */}
+      <MtdCumulativeCancellationChart
+        raw2025={cancRaw2025}
+        raw2026={cancRaw2026}
+        selectedNuts={selectedNuts}
+        selectedCats={selectedCats}
+        selectedReasons={selectedReasons}
+      />
 
-      {/* === MTD Cancellation Rate Chart (UK only) === */}
-      {selectedCountry === 'uk' && (
-        <MtdCancellationRateChart
-          cancRaw2025={cancellationRaw2025}
-          cancRaw2026={cancellationRaw2026}
-          paidRaw2025={completedPaidRaw2025}
-          paidRaw2026={completedPaidRaw2026}
-          selectedNuts={selectedNuts}
-          selectedCats={selectedCats}
-          selectedReasons={selectedReasons}
-        />
-      )}
+      {/* === MTD Cancellation Rate Chart === */}
+      <MtdCancellationRateChart
+        cancRaw2025={cancRaw2025}
+        cancRaw2026={cancRaw2026}
+        paidRaw2025={paidRaw2025}
+        paidRaw2026={paidRaw2026}
+        selectedNuts={selectedNuts}
+        selectedCats={selectedCats}
+        selectedReasons={selectedReasons}
+      />
 
       {/* === Monthly Cancellation Count Chart === */}
       <MonthlyCancellationCountChart
-        data={monthlyCancellationTrends}
+        data={monthlyCancellationTrendsByCountry[selectedCountry] || []}
         selectedNuts={selectedNuts}
         selectedCats={selectedCats}
         selectedReasons={selectedReasons}
@@ -760,8 +762,8 @@ const CancellationsView: React.FC<CancellationsViewProps> = ({
 
       {/* === Monthly Cancellation Rate Chart === */}
       <MonthlyCancellationRateChart
-        cancellationData={monthlyCancellationTrends}
-        completedPaidData={monthlyCompletedPaidTrends}
+        cancellationData={monthlyCancellationTrendsByCountry[selectedCountry] || []}
+        completedPaidData={monthlyCompletedPaidTrendsByCountry[selectedCountry] || []}
         selectedNuts={selectedNuts}
         selectedCats={selectedCats}
         selectedReasons={selectedReasons}
