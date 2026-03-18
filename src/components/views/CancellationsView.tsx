@@ -313,10 +313,8 @@ const MtdCancellationRateChart: React.FC<{
     const cancRate2026: Record<number, number> = {}
 
     allDays.forEach(day => {
-      const totalCompleted2025 = cumulativeCanc2025[day] + cumulativePaid2025[day]
-      const totalCompleted2026 = cumulativeCanc2026[day] + cumulativePaid2026[day]
-      cancRate2025[day] = totalCompleted2025 > 0 ? (cumulativeCanc2025[day] / totalCompleted2025) * 100 : 0
-      cancRate2026[day] = totalCompleted2026 > 0 ? (cumulativeCanc2026[day] / totalCompleted2026) * 100 : 0
+      cancRate2025[day] = cumulativePaid2025[day] > 0 ? (cumulativeCanc2025[day] / cumulativePaid2025[day]) * 100 : 0
+      cancRate2026[day] = cumulativePaid2026[day] > 0 ? (cumulativeCanc2026[day] / cumulativePaid2026[day]) * 100 : 0
     })
 
     // Find last actual day with 2026 data
@@ -422,7 +420,7 @@ const MtdCancellationRateChart: React.FC<{
           </LineChart>
         </ResponsiveContainer>
       </div>
-      <p className="text-xs text-slate-500">Cancellations as % of (cancellations + completed paid) — cumulative MTD</p>
+      <p className="text-xs text-slate-500">Cancellations as % of completed paid bookings — cumulative MTD</p>
     </div>
   )
 }
@@ -535,8 +533,7 @@ const MonthlyCancellationRateChart: React.FC<{
     return allMonths.map(month => {
       const canc = cancMonthMap[month] || 0
       const paid = paidMonthMap[month] || 0
-      const total = canc + paid
-      const rate = total > 0 ? (canc / total) * 100 : 0
+      const rate = paid > 0 ? (canc / paid) * 100 : 0
 
       return {
         month,
