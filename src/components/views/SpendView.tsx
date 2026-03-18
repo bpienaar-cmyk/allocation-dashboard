@@ -198,23 +198,24 @@ const MtdSpendChart: React.FC<{
       cumulative2026[day] = cum2026
     })
 
-    // Find last actual day with 2026 data
-    const lastActualDay = Object.keys(cumulative2026).filter(d => cumulative2026[parseInt(d)] > 0).pop()
-    const lastDay = lastActualDay ? parseInt(lastActualDay) : 0
+    // Find last actual day with 2026 daily data (not cumulative — cumulative stays positive)
+    const days2026WithData = Object.keys(daily2026).map(Number).sort((a, b) => a - b)
+    const lastDay = days2026WithData.length > 0 ? days2026WithData[days2026WithData.length - 1] : 0
 
     // Calculate ratio for forecast
     const ratio = lastDay > 0 && cumulative2025[lastDay] > 0 ? cumulative2026[lastDay] / cumulative2025[lastDay] : 1
 
     // Build chart data with forecast
     const result: MtdChartData[] = allDays.map(day => {
-      const spend2026Val = cumulative2026[day] > 0 ? cumulative2026[day] : null
+      const spend2026Val = day <= lastDay ? (cumulative2026[day] || 0) : null
       let forecast2026Val: number | null = null
 
-      // For days after actual data, forecast by scaling 2025 daily increments
-      if (day > lastDay && cumulative2025[day] !== undefined) {
-        forecast2026Val = cumulative2025[day] * ratio
-      } else if (day <= lastDay && spend2026Val !== null) {
-        forecast2026Val = spend2026Val
+      if (day > lastDay && cumulative2025[day] > 0) {
+        // Forecast: scale 2025 cumulative by ratio
+        forecast2026Val = Math.round(cumulative2025[day] * ratio * 100) / 100
+      } else if (day === lastDay) {
+        // Bridge point: forecast starts at last actual value
+        forecast2026Val = cumulative2026[day] || 0
       }
 
       return {
