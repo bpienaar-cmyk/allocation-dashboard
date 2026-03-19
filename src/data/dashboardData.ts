@@ -10118,31 +10118,16 @@ export const tpCancelsByCountry: Record<string, Record<string, number>> = {
   },
 };
 
-// Batch 3: Spend Data (Q14-Q18) - Initialized with placeholder data
-export const iresReservationData: any[] = [];
-export const iresTrendData: any[] = [];
-export const spendByNutsData: any[] = [];
-export const spendByCategoryData: any[] = [];
-export const spendByNutsByCountry: Record<string, any[]> = {
-  uk: [],
-  spain: [],
-  france: [],
-};
-export const spendByCategoryByCountry: Record<string, any[]> = {
-  uk: [],
-  spain: [],
-  france: [],
-};
-export const spendByDaysByCountry: Record<string, any[]> = {
-  uk: [],
-  spain: [],
-  france: [],
-};
-export const agentSpendByCountry: Record<string, any[]> = {
-  uk: [],
-  spain: [],
-  france: [],
-};
+// Batch 3 stub exports (to be filled with Q14-Q18 data)
+export const iresReservationData = [];
+export const iresTrendData = [];
+export const spendByNutsData = [];
+export const spendByCategoryData = [];
+export const spendByNutsByCountry = {};
+export const spendByCategoryByCountry = {};
+export const spendByDaysByCountry = {};
+export const agentSpendByCountry = {};
+
 /**
  * MTD granular daily spend by NUTS × Category — March 2025 & 2026
  * d=day, n=nutsRegion, c=category, s=spend (positive spend only)
