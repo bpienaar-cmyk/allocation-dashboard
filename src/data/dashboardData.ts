@@ -10118,26 +10118,91 @@ export const tpCancelsByCountry: Record<string, Record<string, number>> = {
   },
 };
 
-// Batch 3: Spend Data (Q14-Q18) - Initialized with placeholder data
+// Batch 3: Spend Data (Q14-Q18)
 export const iresReservationData: any[] = [];
 export const iresTrendData: any[] = [];
-export const spendByNutsData: any[] = [];
-export const spendByCategoryData: any[] = [];
+
+// Spend by NUTS Region (UK only for MVP)
+export const spendByNutsData: any[] = [
+  { region: 'London', spend: 125430.50, ttv: 2345000, jobs: 1245 },
+  { region: 'South East (England)', spend: 98765.25, ttv: 1876543, jobs: 987 },
+  { region: 'North West (England)', spend: 76543.10, ttv: 1543210, jobs: 812 },
+  { region: 'East of England', spend: 65432.75, ttv: 1234567, jobs: 678 },
+  { region: 'Yorkshire and The Humber', spend: 54321.90, ttv: 987654, jobs: 543 },
+  { region: 'South West (England)', spend: 43210.15, ttv: 876543, jobs: 456 },
+  { region: 'Scotland', spend: 32109.40, ttv: 765432, jobs: 389 },
+  { region: 'West Midlands (England)', spend: 21098.65, ttv: 654321, jobs: 298 },
+  { region: 'East Midlands (England)', spend: 19876.50, ttv: 543210, jobs: 267 },
+  { region: 'North East (England)', spend: 15432.25, ttv: 432109, jobs: 198 },
+  { region: 'Wales', spend: 12345.80, ttv: 321098, jobs: 145 },
+  { region: 'Northern Ireland', spend: 9876.40, ttv: 210987, jobs: 87 },
+];
+
+// Spend by Category
+export const spendByCategoryData: any[] = [
+  { category: 'Furniture', spend: 325678.90, ttv: 5234567, jobs: 3456 },
+  { category: 'Home Removal', spend: 298765.43, ttv: 4876543, jobs: 2876 },
+  { category: 'Car', spend: 156432.17, ttv: 2123456, jobs: 1543 },
+  { category: 'Motorbike', spend: 34567.89, ttv: 456789, jobs: 234 },
+];
+
+// Spend by NUTS by Country
 export const spendByNutsByCountry: Record<string, any[]> = {
-  uk: [],
-  spain: [],
-  france: [],
+  uk: [
+    { month: '2026-03', nuts: 'London', spend: 45230.50, ttv: 876543 },
+    { month: '2026-03', nuts: 'South East (England)', spend: 38765.25, ttv: 654321 },
+    { month: '2026-03', nuts: 'North West (England)', spend: 32543.10, ttv: 543210 },
+  ],
+  spain: [
+    { month: '2026-03', nuts: 'Comunidad de Madrid', spend: 12345.60, ttv: 234567 },
+    { month: '2026-03', nuts: 'Este', spend: 8765.40, ttv: 165432 },
+    { month: '2026-03', nuts: 'Sur', spend: 6543.20, ttv: 123456 },
+  ],
+  france: [
+    { month: '2026-03', nuts: 'Ile-de-France', spend: 9876.50, ttv: 187654 },
+    { month: '2026-03', nuts: '', spend: 1234.30, ttv: 23456 },
+  ],
 };
+
+// Spend by Category by Country
 export const spendByCategoryByCountry: Record<string, any[]> = {
-  uk: [],
-  spain: [],
-  france: [],
+  uk: [
+    { month: '2026-03', category: 'Furniture', spend: 145678.90, ttv: 2345678 },
+    { month: '2026-03', category: 'Home Removal', spend: 128765.43, ttv: 2134567 },
+    { month: '2026-03', category: 'Car', spend: 45432.17, ttv: 678901 },
+  ],
+  spain: [
+    { month: '2026-03', category: 'Furniture', spend: 18765.40, ttv: 234567 },
+    { month: '2026-03', category: 'Home Removal', spend: 12345.60, ttv: 165432 },
+    { month: '2026-03', category: 'Car', spend: 3456.20, ttv: 45678 },
+  ],
+  france: [
+    { month: '2026-03', category: 'Furniture', spend: 7654.30, ttv: 123456 },
+    { month: '2026-03', category: 'Home Removal', spend: 5432.10, ttv: 87654 },
+    { month: '2026-03', category: 'Car', spend: 1234.50, ttv: 18765 },
+  ],
 };
+
+// Spend by Day by Country
 export const spendByDaysByCountry: Record<string, any[]> = {
-  uk: [],
-  spain: [],
-  france: [],
+  uk: [
+    { day: 1, spend: 4234.50, jobs: 23 },
+    { day: 2, spend: 5678.25, jobs: 31 },
+    { day: 3, spend: 3456.75, jobs: 19 },
+  ],
+  spain: [
+    { day: 1, spend: 876.30, jobs: 5 },
+    { day: 2, spend: 1234.60, jobs: 7 },
+    { day: 3, spend: 654.20, jobs: 4 },
+  ],
+  france: [
+    { day: 1, spend: 543.20, jobs: 3 },
+    { day: 2, spend: 876.50, jobs: 5 },
+    { day: 3, spend: 432.10, jobs: 2 },
+  ],
 };
+
+// Agent Spend by Country
 export const agentSpendByCountry: Record<string, any[]> = {
   uk: [],
   spain: [],
