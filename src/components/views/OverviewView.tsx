@@ -260,9 +260,10 @@ function aggregateDaily(
     agg.avFee += row.avFee
     agg.allocSpend += row.allocSpend
     agg.otdCancels += row.otdCancels
-    // Use corrected TP cancels from lookup if available
+    // Use corrected TP cancels from lookup (only TP-related reason codes)
+    // If lookup exists, use it (0 for missing keys = no TP cancels that day/category)
     const tpKey = `${row.day}|${row.category}`
-    agg.tpCancels += (tpCancelsLookup && tpKey in tpCancelsLookup) ? tpCancelsLookup[tpKey] : row.tpCancels
+    agg.tpCancels += tpCancelsLookup ? (tpCancelsLookup[tpKey] || 0) : row.tpCancels
     agg.cantSourceCount += row.cantSourceCount
     agg.deallocations += row.deallocations
     agg.otdDeallocations += row.otdDeallocations
@@ -350,7 +351,7 @@ function convertToDailyRaw(
     byDay[dayNum].allocSpend += row.allocSpend
     byDay[dayNum].cantSource += row.cantSourceCount
     const tpKey = `${row.day}|${row.category}`
-    byDay[dayNum].tpCancels += (tpCancelsLookup && tpKey in tpCancelsLookup) ? tpCancelsLookup[tpKey] : row.tpCancels
+    byDay[dayNum].tpCancels += tpCancelsLookup ? (tpCancelsLookup[tpKey] || 0) : row.tpCancels
     byDay[dayNum].otdDealloCount += row.otdDeallocations
 
     // Populate furn routing from lookup (only once per day)
