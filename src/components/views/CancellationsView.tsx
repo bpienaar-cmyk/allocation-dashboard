@@ -606,9 +606,10 @@ const CancellationsView: React.FC<CancellationsViewProps> = ({
     return Array.from(new Set(cancRaw2026.map(r => r.c))).sort()
   }, [cancRaw2026]) as string[]
 
-  // Extract unique reason codes from 2026 data
+  // Extract unique reason codes from 2026 data — only show AV couldn't source + TP-related codes
   const allReasons = useMemo(() => {
-    return Array.from(new Set(cancRaw2026.map(r => r.r))).sort()
+    const unique = Array.from(new Set(cancRaw2026.map(r => r.r))).sort()
+    return unique.filter(r => r === 'av_couldnt_source_a_tp' || (r.toLowerCase().includes('tp') && r !== 'av_couldnt_source_a_tp'))
   }, [cancRaw2026]) as string[]
 
   // NUTS filter
