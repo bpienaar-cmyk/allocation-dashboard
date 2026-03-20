@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react'
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import { Country, CountryOverview, DailyRaw, DailyOverviewRow, OverviewData } from '../../types'
 import { fmtGBP, fmtN, fmtP } from '../../utils/formatting'
+import { DATA_LAST_UPDATED } from '../../data/dashboardData'
 
 const COUNTRY_LABELS: Record<Country, string> = {
   uk: 'UK (V4 + AVB)',
@@ -387,7 +388,14 @@ const OverviewView: React.FC<OverviewViewProps> = ({
   tpCancelsByCountry,
 }) => {
   const [selectedMetric, setSelectedMetric] = useState<MetricKey | null>(null)
-  const [dateRange, setDateRange] = useState({ start: '2026-03-01', end: '2026-03-20' })
+  const [dateRange, setDateRange] = useState(() => {
+    // Derive date range from DATA_LAST_UPDATED so it auto-adjusts on each refresh
+    const updated = new Date(DATA_LAST_UPDATED)
+    const year = updated.getUTCFullYear()
+    const month = String(updated.getUTCMonth() + 1).padStart(2, '0')
+    const day = String(updated.getUTCDate()).padStart(2, '0')
+    return { start: `${year}-${month}-01`, end: `${year}-${month}-${day}` }
+  })
   const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>('All')
 
   const countryData = overviewByCountry[selectedCountry]
@@ -405,7 +413,9 @@ const OverviewView: React.FC<OverviewViewProps> = ({
     // Use daily data for all countries if available
     if (countryDailyData && countryDailyData.cy && countryDailyData.cy.length > 0) {
       const cyData = aggregateDaily(countryDailyData.cy, dateRange.start, dateRange.end, selectedCategory === 'All' ? undefined : selectedCategory, cyRouting, cyTpCancels)
-      const pyData = aggregateDaily(countryDailyData.py, dateRange.start.replace('2026', '2025'), dateRange.end.replace('2026', '2025'), selectedCategory === 'All' ? undefined : selectedCategory, pyRouting, pyTpCancels)
+      const cyYear = dateRange.start.substring(0, 4)
+      const pyYear = String(Number(cyYear) - 1)
+      const pyData = aggregateDaily(countryDailyData.py, dateRange.start.replace(cyYear, pyYear), dateRange.end.replace(cyYear, pyYear), selectedCategory === 'All' ? undefined : selectedCategory, pyRouting, pyTpCancels)
       return { data: cyData, priorYear: pyData }
     }
     // Fallback to existing aggregated data
