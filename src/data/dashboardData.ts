@@ -1786,12 +1786,34 @@ export const partialMonthComparisonByCountry: Record<Country, PartialMonthCompar
     cutoffDay: 20,
     currentMonth: '2026-03-01',
     mom: {
+      '': { 'Furniture': 1 },
       'East Midlands (England)': { 'Car': 105, 'Furniture': 795, 'Home Removal': 111, 'Motorbike': 11, 'Piano': 5 },
-      'East of England': { 'Car': 223, 'Furniture': 1199, 'Home Removal': 230 },
+      'East of England': { 'Car': 223, 'Furniture': 1199, 'Home Removal': 230, 'Motorbike': 15, 'Piano': 9 },
+      'London': { 'Car': 117, 'Furniture': 3669, 'Home Removal': 226, 'Motorbike': 18, 'Piano': 9 },
+      'North East (England)': { 'Car': 24, 'Furniture': 322, 'Home Removal': 77, 'Motorbike': 8, 'Piano': 2 },
+      'North West (England)': { 'Car': 119, 'Furniture': 1240, 'Home Removal': 182, 'Motorbike': 12, 'Piano': 10 },
+      'Northern Ireland': { 'Furniture': 34, 'Home Removal': 11 },
+      'Scotland': { 'Car': 69, 'Furniture': 748, 'Home Removal': 106, 'Motorbike': 11, 'Piano': 8 },
+      'South East (England)': { 'Car': 313, 'Furniture': 1892, 'Home Removal': 284, 'Motorbike': 28, 'Piano': 14 },
+      'South West (England)': { 'Car': 137, 'Furniture': 917, 'Home Removal': 209, 'Motorbike': 25, 'Piano': 8 },
+      'Wales': { 'Car': 37, 'Furniture': 252, 'Home Removal': 51, 'Motorbike': 5, 'Piano': 2 },
+      'West Midlands (England)': { 'Car': 133, 'Furniture': 943, 'Home Removal': 169, 'Motorbike': 6, 'Piano': 6 },
+      'Yorkshire and The Humber': { 'Car': 80, 'Furniture': 875, 'Home Removal': 134, 'Motorbike': 11, 'Piano': 5 },
     },
     yoy: {
+      '': { 'Home Removal': 2 },
       'East Midlands (England)': { 'Car': 116, 'Furniture': 701, 'Home Removal': 160, 'Motorbike': 8, 'Piano': 8 },
-      'East of England': { 'Car': 221, 'Furniture': 1197, 'Home Removal': 204 },
+      'East of England': { 'Car': 221, 'Furniture': 1197, 'Home Removal': 204, 'Motorbike': 11, 'Piano': 13 },
+      'London': { 'Car': 177, 'Furniture': 3631, 'Home Removal': 299, 'Motorbike': 11, 'Piano': 10 },
+      'North East (England)': { 'Car': 27, 'Furniture': 311, 'Home Removal': 56, 'Motorbike': 4, 'Piano': 1 },
+      'North West (England)': { 'Car': 181, 'Furniture': 1158, 'Home Removal': 220, 'Motorbike': 10, 'Piano': 7 },
+      'Northern Ireland': { 'Furniture': 18, 'Home Removal': 6 },
+      'Scotland': { 'Car': 79, 'Furniture': 721, 'Home Removal': 71, 'Motorbike': 2, 'Piano': 1 },
+      'South East (England)': { 'Car': 262, 'Furniture': 2084, 'Home Removal': 341, 'Motorbike': 17, 'Piano': 20 },
+      'South West (England)': { 'Car': 178, 'Furniture': 994, 'Home Removal': 227, 'Motorbike': 16, 'Piano': 14 },
+      'Wales': { 'Car': 40, 'Furniture': 226, 'Home Removal': 55, 'Motorbike': 1, 'Piano': 3 },
+      'West Midlands (England)': { 'Car': 272, 'Furniture': 832, 'Home Removal': 149, 'Motorbike': 10, 'Piano': 6 },
+      'Yorkshire and The Humber': { 'Car': 51, 'Furniture': 851, 'Home Removal': 137, 'Motorbike': 5, 'Piano': 5 },
     },
   },
   spain: {
@@ -1800,12 +1822,18 @@ export const partialMonthComparisonByCountry: Record<Country, PartialMonthCompar
     mom: {
       'Centro (ES)': { 'Furniture': 23, 'Home Removal': 14 },
       'Comunidad de Madrid': { 'Furniture': 124, 'Home Removal': 101 },
-      'Este': { 'Furniture': 130 },
+      'Este': { 'Furniture': 130, 'Home Removal': 88 },
+      'Noreste': { 'Furniture': 22, 'Home Removal': 12 },
+      'Noroeste': { 'Furniture': 9, 'Home Removal': 11 },
+      'Sur': { 'Furniture': 53, 'Home Removal': 70 },
     },
     yoy: {
       'Centro (ES)': { 'Home Removal': 27 },
       'Comunidad de Madrid': { 'Furniture': 2, 'Home Removal': 79 },
       'Este': { 'Furniture': 2, 'Home Removal': 79 },
+      'Noreste': { 'Home Removal': 16 },
+      'Noroeste': { 'Home Removal': 16 },
+      'Sur': { 'Home Removal': 56 },
     },
   },
   france: {
@@ -1818,6 +1846,7 @@ export const partialMonthComparisonByCountry: Record<Country, PartialMonthCompar
     },
   },
 };
+
 
 /** Daily overview data by day and category for UK */
 export const dailyOverview: DailyOverviewRow[] = [
