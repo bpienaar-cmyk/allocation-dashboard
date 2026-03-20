@@ -387,7 +387,7 @@ const OverviewView: React.FC<OverviewViewProps> = ({
   tpCancelsByCountry,
 }) => {
   const [selectedMetric, setSelectedMetric] = useState<MetricKey | null>(null)
-  const [dateRange, setDateRange] = useState({ start: '2026-03-01', end: '2026-03-17' })
+  const [dateRange, setDateRange] = useState({ start: '2026-03-01', end: '2026-03-20' })
   const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>('All')
 
   const countryData = overviewByCountry[selectedCountry]
