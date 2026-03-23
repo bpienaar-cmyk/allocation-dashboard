@@ -124,19 +124,47 @@ const MtdCumulativeCancellationChart: React.FC<{
     const days2026WithData = Object.keys(daily2026).map(Number).sort((a, b) => a - b)
     const lastDay = days2026WithData.length > 0 ? days2026WithData[days2026WithData.length - 1] : 0
 
-    // Calculate ratio for forecast
-    const ratio = lastDay > 0 && cumulative2025[lastDay] > 0 ? cumulative2026[lastDay] / cumulative2025[lastDay] : 1
+    // Forecast: use 2025 to project total, then smooth the daily distribution
+    // Step 1: Project 2026 total from 2025's completion proportion
+    const total2025 = cumulative2025[31] || 0
+    const proportion2025AtLastDay = total2025 > 0 ? cumulative2025[lastDay] / total2025 : 0
+    const projected2026Total = proportion2025AtLastDay > 0
+      ? Math.round(cumulative2026[lastDay] / proportion2025AtLastDay)
+      : cumulative2026[lastDay]
+    const remaining2026 = projected2026Total - (cumulative2026[lastDay] || 0)
 
-    // Build chart data with forecast
+    // Step 2: Smooth the 2025 daily increments using a 5-day rolling average
+    // to remove end-of-month spikes while preserving the general acceleration pattern
+    const smoothedDaily2025: Record<number, number> = {}
+    const WINDOW = 5
+    for (let day = lastDay + 1; day <= 31; day++) {
+      let sum = 0; let count = 0
+      for (let w = -Math.floor(WINDOW / 2); w <= Math.floor(WINDOW / 2); w++) {
+        const d = day + w
+        if (d >= 1 && d <= 31) { sum += daily2025[d] || 0; count++ }
+      }
+      smoothedDaily2025[day] = count > 0 ? sum / count : 0
+    }
+
+    // Step 3: Build cumulative smoothed weights for remaining days
+    let totalSmoothedWeight = 0
+    for (let day = lastDay + 1; day <= 31; day++) totalSmoothedWeight += smoothedDaily2025[day]
+    // If 2025 had no remaining data, fall back to linear distribution
+    const useLinear = totalSmoothedWeight === 0
+
+    // Build chart data
     const result: MtdCancellationChartData[] = allDays.map(day => {
       const count2026Val = day <= lastDay ? (cumulative2026[day] || 0) : null
       let forecast2026Val: number | null = null
 
-      if (day > lastDay && cumulative2025[day] > 0) {
-        // Forecast: scale 2025 cumulative by ratio
-        forecast2026Val = Math.round(cumulative2025[day] * ratio)
+      if (day > lastDay) {
+        let cumulativeWeight = 0
+        for (let d = lastDay + 1; d <= day; d++) cumulativeWeight += smoothedDaily2025[d] || 0
+        const proportion = useLinear
+          ? (day - lastDay) / (31 - lastDay)
+          : totalSmoothedWeight > 0 ? cumulativeWeight / totalSmoothedWeight : 0
+        forecast2026Val = Math.round((cumulative2026[lastDay] || 0) + remaining2026 * proportion)
       } else if (day === lastDay) {
-        // Bridge point: forecast starts at last actual value
         forecast2026Val = cumulative2026[day] || 0
       }
 
@@ -321,19 +349,49 @@ const MtdCancellationRateChart: React.FC<{
     const days2026WithData = Object.keys(cancDaily2026).map(Number).sort((a, b) => a - b)
     const lastDay = days2026WithData.length > 0 ? days2026WithData[days2026WithData.length - 1] : 0
 
-    // Calculate ratio for forecast
-    const ratio = lastDay > 0 && cancRate2025[lastDay] > 0 ? cancRate2026[lastDay] / cancRate2025[lastDay] : 1
+    // Forecast: project cancellations & paid separately using smoothed 2025 pattern, then compute rate
+    // Project totals from 2025 proportional completion
+    const totalCanc2025 = cumulativeCanc2025[31] || 0
+    const totalPaid2025 = cumulativePaid2025[31] || 0
+    const propCanc2025 = totalCanc2025 > 0 ? cumulativeCanc2025[lastDay] / totalCanc2025 : 0
+    const propPaid2025 = totalPaid2025 > 0 ? cumulativePaid2025[lastDay] / totalPaid2025 : 0
+    const projCanc2026 = propCanc2025 > 0 ? Math.round(cumulativeCanc2026[lastDay] / propCanc2025) : cumulativeCanc2026[lastDay]
+    const projPaid2026 = propPaid2025 > 0 ? Math.round(cumulativePaid2026[lastDay] / propPaid2025) : cumulativePaid2026[lastDay]
+    const remCanc = projCanc2026 - (cumulativeCanc2026[lastDay] || 0)
+    const remPaid = projPaid2026 - (cumulativePaid2026[lastDay] || 0)
 
-    // Build chart data with forecast
+    // Smooth 2025 daily increments for cancellations and paid (5-day rolling average)
+    const RATE_WINDOW = 5
+    const smoothCanc: Record<number, number> = {}
+    const smoothPaid: Record<number, number> = {}
+    for (let day = lastDay + 1; day <= 31; day++) {
+      let sc = 0, sp = 0, ct = 0
+      for (let w = -Math.floor(RATE_WINDOW / 2); w <= Math.floor(RATE_WINDOW / 2); w++) {
+        const d = day + w
+        if (d >= 1 && d <= 31) { sc += cancDaily2025[d] || 0; sp += paidDaily2025[d] || 0; ct++ }
+      }
+      smoothCanc[day] = ct > 0 ? sc / ct : 0
+      smoothPaid[day] = ct > 0 ? sp / ct : 0
+    }
+
+    let totalSmoothCanc = 0, totalSmoothPaid = 0
+    for (let d = lastDay + 1; d <= 31; d++) { totalSmoothCanc += smoothCanc[d]; totalSmoothPaid += smoothPaid[d] }
+
+    // Build chart data with smoothed forecast rate
     const result: MtdCancellationRateChartData[] = allDays.map(day => {
       const rate2026Val = day <= lastDay ? cancRate2026[day] : null
       let forecastRate2026Val: number | null = null
 
-      if (day > lastDay && cancRate2025[day] > 0) {
-        // Forecast: scale 2025 rate by ratio
-        forecastRate2026Val = parseFloat((cancRate2025[day] * ratio).toFixed(2))
+      if (day > lastDay) {
+        // Accumulate smoothed weights up to this day
+        let cumSmoothCanc = 0, cumSmoothPaid = 0
+        for (let d = lastDay + 1; d <= day; d++) { cumSmoothCanc += smoothCanc[d] || 0; cumSmoothPaid += smoothPaid[d] || 0 }
+        const propC = totalSmoothCanc > 0 ? cumSmoothCanc / totalSmoothCanc : (day - lastDay) / (31 - lastDay)
+        const propP = totalSmoothPaid > 0 ? cumSmoothPaid / totalSmoothPaid : (day - lastDay) / (31 - lastDay)
+        const forecastCanc = (cumulativeCanc2026[lastDay] || 0) + remCanc * propC
+        const forecastPaid = (cumulativePaid2026[lastDay] || 0) + remPaid * propP
+        forecastRate2026Val = forecastPaid > 0 ? parseFloat(((forecastCanc / forecastPaid) * 100).toFixed(2)) : 0
       } else if (day === lastDay) {
-        // Bridge point: forecast starts at last actual value
         forecastRate2026Val = cancRate2026[day]
       }
 
