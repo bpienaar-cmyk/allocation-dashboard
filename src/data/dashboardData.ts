@@ -341,7 +341,7 @@ export const trendsByCategoryAndCountry: Record<Country, Record<CategoryType, Tr
       { month: '2025-12-01', jobs: 1818, ttv: 459574.68, avFee: 100344.78, marginPct: 21.83, allocSpend: 16812.67, spendTtvPct: 3.66, otdCancels: 80, tpCancels: 16, cantSourceCount: 11, otdDeallocations: 140, adminAllocD1Otd: 0, totalRecords: 2141 },
       { month: '2026-01-01', jobs: 1670, ttv: 429187.98, avFee: 100389.19, marginPct: 23.39, allocSpend: 10783.4, spendTtvPct: 2.51, otdCancels: 78, tpCancels: 9, cantSourceCount: 18, otdDeallocations: 133, adminAllocD1Otd: 0, totalRecords: 1910 },
       { month: '2026-02-01', jobs: 1856, ttv: 462217.84, avFee: 99332.35, marginPct: 21.49, allocSpend: 21718.89, spendTtvPct: 4.7, otdCancels: 81, tpCancels: 10, cantSourceCount: 30, otdDeallocations: 124, adminAllocD1Otd: 0, totalRecords: 2124 },
-      { month: '2026-03-01', jobs: 1800, ttv: 438030.55, avFee: 74800.79, marginPct: 17.08, allocSpend: 38276.52, spendTtvPct: 8.74, otdCancels: 96, tpCancels: 12, cantSourceCount: 47, otdDeallocations: 120, adminAllocD1Otd: 0, totalRecords: 2687 },
+      { month: '2026-03-01', jobs: 1823, ttv: 442494.55, avFee: 75372.79, marginPct: 17.03, allocSpend: 38457.52, spendTtvPct: 8.69, otdCancels: 97, tpCancels: 12, cantSourceCount: 47, otdDeallocations: 123, adminAllocD1Otd: 0, totalRecords: 2704 },
     ],
     motorbike: [
       { month: '2025-01-01', jobs: 144, ttv: 27697, avFee: 5681, marginPct: 20.51, allocSpend: 288, spendTtvPct: 1.04, otdCancels: 5, tpCancels: 0, cantSourceCount: 0, otdDeallocations: 4, adminAllocD1Otd: 0, totalRecords: 159 },
@@ -358,7 +358,7 @@ export const trendsByCategoryAndCountry: Record<Country, Record<CategoryType, Tr
       { month: '2025-12-01', jobs: 117, ttv: 25001.12, avFee: 6249.72, marginPct: 25, allocSpend: 694.8, spendTtvPct: 2.78, otdCancels: 11, tpCancels: 7, cantSourceCount: 5, otdDeallocations: 12, adminAllocD1Otd: 0, totalRecords: 151 },
       { month: '2026-01-01', jobs: 205, ttv: 38853.2, avFee: 9098.2, marginPct: 23.42, allocSpend: 1008, spendTtvPct: 2.59, otdCancels: 6, tpCancels: 1, cantSourceCount: 1, otdDeallocations: 16, adminAllocD1Otd: 0, totalRecords: 225 },
       { month: '2026-02-01', jobs: 196, ttv: 37841.2, avFee: 8705.2, marginPct: 23, allocSpend: 936, spendTtvPct: 2.47, otdCancels: 4, tpCancels: 0, cantSourceCount: 1, otdDeallocations: 3, adminAllocD1Otd: 0, totalRecords: 207 },
-      { month: '2026-03-01', jobs: 130, ttv: 25521.4, avFee: 5434.9, marginPct: 21.3, allocSpend: 663, spendTtvPct: 2.6, otdCancels: 1, tpCancels: 0, cantSourceCount: 0, otdDeallocations: 2, adminAllocD1Otd: 0, totalRecords: 166 },
+      { month: '2026-03-01', jobs: 130, ttv: 25521.40, avFee: 5434.90, marginPct: 21.30, allocSpend: 663, spendTtvPct: 2.60, otdCancels: 1, tpCancels: 0, cantSourceCount: 0, otdDeallocations: 2, adminAllocD1Otd: 0, totalRecords: 169 },
     ],
     piano: [
       { month: '2025-01-01', jobs: 111, ttv: 35779.99, avFee: 15686.6, marginPct: 43.84, allocSpend: 1526, spendTtvPct: 4.26, otdCancels: 0, tpCancels: 0, cantSourceCount: 0, otdDeallocations: 4, adminAllocD1Otd: 0, totalRecords: 121 },
@@ -375,7 +375,7 @@ export const trendsByCategoryAndCountry: Record<Country, Record<CategoryType, Tr
       { month: '2025-12-01', jobs: 115, ttv: 38878.2, avFee: 14053.5, marginPct: 36.15, allocSpend: 6991.8, spendTtvPct: 17.98, otdCancels: 8, tpCancels: 1, cantSourceCount: 4, otdDeallocations: 15, adminAllocD1Otd: 0, totalRecords: 133 },
       { month: '2026-01-01', jobs: 100, ttv: 35175.76, avFee: 16442.56, marginPct: 46.74, allocSpend: 1511, spendTtvPct: 4.3, otdCancels: 0, tpCancels: 1, cantSourceCount: 0, otdDeallocations: 4, adminAllocD1Otd: 0, totalRecords: 111 },
       { month: '2026-02-01', jobs: 110, ttv: 36608.2, avFee: 15382.3, marginPct: 42.02, allocSpend: 2527.2, spendTtvPct: 6.9, otdCancels: 6, tpCancels: 4, cantSourceCount: 2, otdDeallocations: 5, adminAllocD1Otd: 0, totalRecords: 120 },
-      { month: '2026-03-01', jobs: 87, ttv: 28834, avFee: 12710, marginPct: 44.08, allocSpend: 1943, spendTtvPct: 6.74, otdCancels: 2, tpCancels: 0, cantSourceCount: 2, otdDeallocations: 3, adminAllocD1Otd: 0, totalRecords: 114 },
+      { month: '2026-03-01', jobs: 87, ttv: 28834.00, avFee: 12710.00, marginPct: 44.08, allocSpend: 1943, spendTtvPct: 6.74, otdCancels: 2, tpCancels: 0, cantSourceCount: 2, otdDeallocations: 3, adminAllocD1Otd: 0, totalRecords: 114 },
     ],
     journey: [],
   },
@@ -395,7 +395,7 @@ export const trendsByCategoryAndCountry: Record<Country, Record<CategoryType, Tr
       { month: '2025-12-01', jobs: 583, ttv: 168394.03, avFee: 58836.06, marginPct: 34.94, allocSpend: 8265.26, spendTtvPct: 4.91, otdCancels: 16, tpCancels: 7, cantSourceCount: 7, otdDeallocations: 32, adminAllocD1Otd: 0, totalRecords: 718 },
       { month: '2026-01-01', jobs: 548, ttv: 143069.59, avFee: 47080.82, marginPct: 32.91, allocSpend: 7860.89, spendTtvPct: 5.49, otdCancels: 9, tpCancels: 0, cantSourceCount: 0, otdDeallocations: 25, adminAllocD1Otd: 0, totalRecords: 673 },
       { month: '2026-02-01', jobs: 588, ttv: 157374.78, avFee: 51167.98, marginPct: 32.51, allocSpend: 8181.91, spendTtvPct: 5.2, otdCancels: 11, tpCancels: 7, cantSourceCount: 1, otdDeallocations: 28, adminAllocD1Otd: 0, totalRecords: 740 },
-      { month: '2026-03-01', jobs: 388, ttv: 105299.87, avFee: 36407.75, marginPct: 34.58, allocSpend: 5582.56, spendTtvPct: 5.3, otdCancels: 2, tpCancels: 0, cantSourceCount: 0, otdDeallocations: 16, adminAllocD1Otd: 0, totalRecords: 681 },
+      { month: '2026-03-01', jobs: 390, ttv: 106463.70, avFee: 36981.58, marginPct: 34.74, allocSpend: 5684.89, spendTtvPct: 5.34, otdCancels: 2, tpCancels: 0, cantSourceCount: 1, otdDeallocations: 16, adminAllocD1Otd: 0, totalRecords: 692 },
     ],
     homeRemoval: [
       { month: '2025-01-01', jobs: 113, ttv: 57936.35, avFee: 17181.88, marginPct: 29.66, allocSpend: 647.65, spendTtvPct: 1.12, otdCancels: 12, tpCancels: 2, cantSourceCount: 0, otdDeallocations: 4, adminAllocD1Otd: 0, totalRecords: 1182 },
@@ -412,7 +412,7 @@ export const trendsByCategoryAndCountry: Record<Country, Record<CategoryType, Tr
       { month: '2025-12-01', jobs: 453, ttv: 378143.09, avFee: 159763.99, marginPct: 42.25, allocSpend: 9404.78, spendTtvPct: 2.49, otdCancels: 15, tpCancels: 2, cantSourceCount: 4, otdDeallocations: 18, adminAllocD1Otd: 0, totalRecords: 1223 },
       { month: '2026-01-01', jobs: 446, ttv: 322450.48, avFee: 138810.2, marginPct: 43.05, allocSpend: 8421.06, spendTtvPct: 2.61, otdCancels: 18, tpCancels: 8, cantSourceCount: 0, otdDeallocations: 20, adminAllocD1Otd: 0, totalRecords: 1136 },
       { month: '2026-02-01', jobs: 537, ttv: 389107.5, avFee: 163873.74, marginPct: 42.12, allocSpend: 11994.52, spendTtvPct: 3.08, otdCancels: 14, tpCancels: 5, cantSourceCount: 2, otdDeallocations: 21, adminAllocD1Otd: 0, totalRecords: 1146 },
-      { month: '2026-03-01', jobs: 364, ttv: 260305.26, avFee: 117611.65, marginPct: 45.18, allocSpend: 4693.58, spendTtvPct: 1.8, otdCancels: 8, tpCancels: 5, cantSourceCount: 1, otdDeallocations: 11, adminAllocD1Otd: 0, totalRecords: 1181 },
+      { month: '2026-03-01', jobs: 367, ttv: 260988.26, avFee: 117956.65, marginPct: 45.20, allocSpend: 4737.24, spendTtvPct: 1.82, otdCancels: 9, tpCancels: 5, cantSourceCount: 1, otdDeallocations: 13, adminAllocD1Otd: 0, totalRecords: 1182 },
     ],
     car: [
       { month: '2025-01-01', jobs: 0, ttv: 0, avFee: 0, marginPct: 0, allocSpend: 0, spendTtvPct: 0, otdCancels: 0, tpCancels: 0, cantSourceCount: 0, otdDeallocations: 0, adminAllocD1Otd: 0, totalRecords: 10 },
@@ -478,7 +478,7 @@ export const trendsByCategoryAndCountry: Record<Country, Record<CategoryType, Tr
       { month: '2025-12-01', jobs: 2, ttv: 282, avFee: 62, marginPct: 21.99, allocSpend: 0, spendTtvPct: 0, otdCancels: 16, tpCancels: 0, cantSourceCount: 0, otdDeallocations: 0, adminAllocD1Otd: 0, totalRecords: 389 },
       { month: '2026-01-01', jobs: 59, ttv: 13998, avFee: 1895, marginPct: 13.54, allocSpend: 2101.33, spendTtvPct: 15.01, otdCancels: 5, tpCancels: 0, cantSourceCount: 0, otdDeallocations: 0, adminAllocD1Otd: 0, totalRecords: 298 },
       { month: '2026-02-01', jobs: 158, ttv: 38938, avFee: 3389.05, marginPct: 8.7, allocSpend: 3466.67, spendTtvPct: 8.9, otdCancels: 6, tpCancels: 0, cantSourceCount: 2, otdDeallocations: 3, adminAllocD1Otd: 0, totalRecords: 311 },
-      { month: '2026-03-01', jobs: 119, ttv: 33556, avFee: 8487.22, marginPct: 25.29, allocSpend: 1041, spendTtvPct: 3.1, otdCancels: 10, tpCancels: 1, cantSourceCount: 1, otdDeallocations: 8, adminAllocD1Otd: 0, totalRecords: 344 },
+      { month: '2026-03-01', jobs: 120, ttv: 33804.00, avFee: 8655.22, marginPct: 25.60, allocSpend: 1167, spendTtvPct: 3.45, otdCancels: 11, tpCancels: 1, cantSourceCount: 2, otdDeallocations: 8, adminAllocD1Otd: 0, totalRecords: 349 },
     ],
     homeRemoval: [
       { month: '2025-01-01', jobs: 0, ttv: 0, avFee: 0, marginPct: 0, allocSpend: 0, spendTtvPct: 0, otdCancels: 12, tpCancels: 0, cantSourceCount: 0, otdDeallocations: 0, adminAllocD1Otd: 0, totalRecords: 408 },
@@ -495,7 +495,7 @@ export const trendsByCategoryAndCountry: Record<Country, Record<CategoryType, Tr
       { month: '2025-12-01', jobs: 5, ttv: 3822, avFee: 1913, marginPct: 50.05, allocSpend: 0, spendTtvPct: 0, otdCancels: 32, tpCancels: 0, cantSourceCount: 1, otdDeallocations: 0, adminAllocD1Otd: 0, totalRecords: 1057 },
       { month: '2026-01-01', jobs: 22, ttv: 12882, avFee: 4469, marginPct: 34.69, allocSpend: 827.67, spendTtvPct: 6.42, otdCancels: 11, tpCancels: 1, cantSourceCount: 0, otdDeallocations: 2, adminAllocD1Otd: 0, totalRecords: 1029 },
       { month: '2026-02-01', jobs: 95, ttv: 54974, avFee: 21650.34, marginPct: 39.38, allocSpend: 1510.17, spendTtvPct: 2.75, otdCancels: 16, tpCancels: 3, cantSourceCount: 1, otdDeallocations: 2, adminAllocD1Otd: 0, totalRecords: 1162 },
-      { month: '2026-03-01', jobs: 75, ttv: 50123, avFee: 19778.76, marginPct: 39.46, allocSpend: 3580, spendTtvPct: 7.14, otdCancels: 14, tpCancels: 0, cantSourceCount: 2, otdDeallocations: 3, adminAllocD1Otd: 0, totalRecords: 1226 },
+      { month: '2026-03-01', jobs: 75, ttv: 50123.00, avFee: 19778.76, marginPct: 39.46, allocSpend: 3580, spendTtvPct: 7.14, otdCancels: 14, tpCancels: 0, cantSourceCount: 2, otdDeallocations: 3, adminAllocD1Otd: 0, totalRecords: 1228 },
     ],
     car: [
       { month: '2025-01-01', jobs: 0, ttv: 0, avFee: 0, marginPct: 0, allocSpend: 0, spendTtvPct: 0, otdCancels: 0, tpCancels: 0, cantSourceCount: 0, otdDeallocations: 0, adminAllocD1Otd: 0, totalRecords: 8 },
