@@ -180,22 +180,28 @@ const CategoryView: React.FC<CategoryViewProps> = ({
     return { categories: totals, total: grandTotal, totalMom: grandMom, totalYoy: grandYoy }
   }, [completedTableData])
 
-  // ─── Active Bookings table ───
+  // ─── Active Bookings table (rolling 2-week window from today) ───
   const activeTableData = useMemo(() => {
-    const monthPrefix = `${selectedYear}-${String(selectedMonth + 1).padStart(2, '0')}`
+    // Build 14-day range starting from today
+    const today = new Date()
+    const days: string[] = []
+    for (let i = 0; i < 15; i++) {
+      const d = new Date(today)
+      d.setDate(today.getDate() + i)
+      const yyyy = d.getFullYear()
+      const mm = String(d.getMonth() + 1).padStart(2, '0')
+      const dd = String(d.getDate()).padStart(2, '0')
+      days.push(`${yyyy}-${mm}-${dd}`)
+    }
+    const startDay = days[0]
+    const endDay = days[days.length - 1]
+
     const filtered = allActive.filter(r => {
-      if (!r.day.startsWith(monthPrefix)) return false
+      if (r.day < startDay || r.day > endDay) return false
       if (selectedCategory !== 'All' && r.category !== selectedCategory) return false
       if (selectedStatus !== 'All' && r.status !== selectedStatus) return false
       return true
     })
-
-    // Get all days in the month
-    const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate()
-    const days: string[] = []
-    for (let d = 1; d <= daysInMonth; d++) {
-      days.push(`${monthPrefix}-${String(d).padStart(2, '0')}`)
-    }
 
     // Build lookup: nuts1 -> day -> count
     const activeLookup: Record<string, Record<string, number>> = {}
@@ -211,8 +217,8 @@ const CategoryView: React.FC<CategoryViewProps> = ({
       return { nuts1, dayMap, total }
     }).sort((a, b) => b.total - a.total)
 
-    return { days, rows }
-  }, [allActive, selectedYear, selectedMonth, selectedCategory, selectedStatus])
+    return { days, rows, startDay, endDay }
+  }, [allActive, selectedCategory, selectedStatus])
 
   // ─── Render ───
   return (
@@ -365,7 +371,7 @@ const CategoryView: React.FC<CategoryViewProps> = ({
 
       {/* ═══ ACTIVE BOOKINGS TABLE ═══ */}
       <h2 className="text-lg font-semibold text-white mt-8">
-        Bookings — {MONTH_LABELS[selectedMonth]} {selectedYear} — {COUNTRY_LABELS[selectedCountry]}
+        Bookings — {activeTableData.startDay} to {activeTableData.endDay} — {COUNTRY_LABELS[selectedCountry]}
         {selectedStatus !== 'All' && <span className="text-blue-400 ml-1">({selectedStatus})</span>}
         {selectedCategory !== 'All' && <span className="text-blue-400 ml-1">— {selectedCategory}</span>}
       </h2>
@@ -409,8 +415,10 @@ const CategoryView: React.FC<CategoryViewProps> = ({
               <tr>
                 <th className="px-3 py-2 text-left font-semibold sticky left-0 bg-slate-700 z-10 min-w-[180px]">Region</th>
                 {activeTableData.days.map(day => {
-                  const d = parseInt(day.split('-')[2])
-                  return <th key={day} className="px-2 py-2 text-center font-semibold min-w-[40px]">{d}</th>
+                  const parts = day.split('-')
+                  const d = parseInt(parts[2])
+                  const m = parseInt(parts[1])
+                  return <th key={day} className="px-2 py-2 text-center font-semibold min-w-[40px]" title={day}>{d}/{m}</th>
                 })}
                 <th className="px-3 py-2 text-center font-semibold">Total</th>
               </tr>
