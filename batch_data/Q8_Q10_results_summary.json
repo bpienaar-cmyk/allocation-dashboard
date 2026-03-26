@@ -1,0 +1,71 @@
+{
+  "status": "Batch 2-5 Data Extraction - IN PROGRESS",
+  "date": "2026-03-26",
+  "batch_1_status": "COMPLETE - Applied and build successful",
+  "extracted_queries": {
+    "Q8_trendsByCategoryAndCountry": {
+      "status": "extracted",
+      "rows": 75,
+      "description": "Monthly trends by category for UK (14 months)",
+      "data_points": "5 categories × 14 months + partial March",
+      "date_range": "2025-01-01 to 2026-03-26",
+      "countries": ["uk"],
+      "sample_row": {
+        "month": "2025-01-01",
+        "category": "Furniture",
+        "jobs": 18580,
+        "ttv": 2645196.0,
+        "avFee": 1297909.6,
+        "allocSpend": 17093.26
+      }
+    },
+    "Q9_categoryBreakdownByCountry": {
+      "status": "extracted",
+      "rows": 200,
+      "description": "Category breakdown by NUTS1 region (14 months)",
+      "data_points": "~850+ rows when complete for all months",
+      "date_range": "2025-01-01 to 2026-03-26",
+      "countries": ["uk"],
+      "sample_row": {
+        "month": "2025-01-01",
+        "category": "Furniture",
+        "nuts1": "London",
+        "jobs": 5409,
+        "ttv": 765848.0,
+        "avFee": 399877.0,
+        "allocSpend": 2560.45
+      }
+    },
+    "Q10_activeBookingsByCountry": {
+      "status": "extracted",
+      "rows": 300,
+      "description": "Active bookings for next 14 days by region/category/status",
+      "date_range": "2026-03-26 to 2026-04-09 (14 days)",
+      "countries": ["uk"],
+      "sample_row": {
+        "day": "2026-03-26",
+        "nuts1": "London",
+        "category": "Furniture",
+        "status": "Allocated",
+        "activeCount": 226
+      },
+      "status_values": ["Active", "Allocated", "Pending"]
+    }
+  },
+  "next_steps": [
+    "Extract Q11-Q14 (Daily Overview, Furn Routing, TP Cancels, Partial Month)",
+    "Extract Q15-Q18 (Spend Analysis)",
+    "Extract Q19-Q23 (Raw Data & Trends)",
+    "Extract Q24-Q25 (iRes Data)",
+    "Apply all data to dashboardData.ts with find-and-replace",
+    "Run npm run build for validation",
+    "git commit and push to main"
+  ],
+  "notes": [
+    "Batch 1 successfully applied to overviewByCountry",
+    "Allocation spend field uses: ALLOCATION_SPEND_TP_AMOUNT_CHANGE",
+    "Job count uses: COUNT(*) on all records in standard categories",
+    "Margin percentage needs to be calculated from AV Fee / TTV",
+    "Build continues to pass: npm run build ✓"
+  ]
+}

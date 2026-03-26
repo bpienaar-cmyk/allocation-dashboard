@@ -1,0 +1,54 @@
+{
+  "uk_cy": {"jobs":21794,"ttv":5216420.92,"avgTtv":239.35,"avFee":2554117.34,"marginPct":49.0,"allocSpend":93117.59,"spendTtvPct":1.8,"otdCancels":415,"cantSourceCount":80,"tpCancels":108,"deallocations":1858,"otdDeallocations":1662,"otdAllocSpend":37334.84,"noSpendJobs":933,"otdAllocatedJobs":1808,"furnRouted":13132,"furnTotal":16953},
+  "uk_py": {"jobs":22366,"ttv":5589299.64,"avgTtv":249.90,"avFee":2471369.23,"marginPct":44.2,"allocSpend":53532.73,"spendTtvPct":1.0,"otdCancels":295,"cantSourceCount":33,"tpCancels":76,"deallocations":1481,"otdDeallocations":1337,"otdAllocSpend":25236.67,"noSpendJobs":934,"otdAllocatedJobs":1640,"furnRouted":14017,"furnTotal":17097},
+  "spain_cy": {"jobs":878,"ttv":434945.67,"avgTtv":495.38,"avFee":181933.57,"marginPct":41.8,"allocSpend":13482.82,"spendTtvPct":3.1,"otdCancels":15,"cantSourceCount":2,"tpCancels":6,"deallocations":37,"otdDeallocations":33,"otdAllocSpend":1727.31,"noSpendJobs":21,"otdAllocatedJobs":43,"furnRouted":167,"furnTotal":456},
+  "spain_py": {"jobs":381,"ttv":214869.49,"avgTtv":563.96,"avFee":51620.24,"marginPct":24.0,"allocSpend":9669.27,"spendTtvPct":4.5,"otdCancels":11,"cantSourceCount":2,"tpCancels":0,"deallocations":8,"otdDeallocations":8,"otdAllocSpend":1403.13,"noSpendJobs":6,"otdAllocatedJobs":12,"furnRouted":0,"furnTotal":6},
+  "france_cy": {"jobs":228,"ttv":98098.00,"avgTtv":430.25,"avFee":31980.98,"marginPct":32.6,"allocSpend":5189.0,"spendTtvPct":5.3,"otdCancels":31,"cantSourceCount":5,"tpCancels":1,"deallocations":11,"otdDeallocations":11,"otdAllocSpend":234.0,"noSpendJobs":3,"otdAllocatedJobs":6,"furnRouted":65,"furnTotal":144},
+  "france_py": {"jobs":0,"ttv":0,"avgTtv":0,"avFee":0,"marginPct":0,"allocSpend":0,"spendTtvPct":0,"otdCancels":18,"cantSourceCount":0,"tpCancels":0,"deallocations":0,"otdDeallocations":0,"otdAllocSpend":0,"noSpendJobs":0,"otdAllocatedJobs":0,"furnRouted":0,"furnTotal":0},
+  "uk_daily_cy": [
+    [1,857,163197.48,84975.32,3198.09,7,5,77,590,761],[2,1128,275930.96,135171.44,4028.45,0,6,114,704,871],[3,851,175788.82,78286.88,4345.21,2,5,79,522,666],[4,815,183139.64,83710.45,3259.08,3,3,69,485,629],[5,937,226558.16,107876.29,3619.18,5,1,65,559,710],[6,999,307152.42,157980.49,5411.14,6,5,76,556,706],[7,943,223614.65,125925.82,1593.54,3,3,47,626,777],[8,528,100678.94,52519.53,1366.98,1,3,51,363,475],[9,937,208122.02,97155.03,3536.73,3,3,74,589,725],[10,783,163275.27,74122.75,3878.17,4,2,65,497,605],[11,761,173934.54,80214.76,2586.74,3,4,59,447,596],[12,934,231408.37,110955.11,3041.79,3,3,68,514,694],[13,914,277078.99,139437.69,3751.55,3,12,97,450,635],[14,858,226869.89,125272.25,1681.68,2,6,50,518,673],[15,487,87548.60,46234.79,1354.06,3,1,39,345,453],[16,1031,241455.19,112554.44,3516.25,3,6,63,613,769],[17,817,180260.72,80096.48,3480.05,5,4,81,473,622],[18,892,193397.70,86851.35,4160.10,8,7,65,529,685],[19,951,212724.05,96241.14,3969.85,3,5,65,546,719],[20,964,302478.64,152444.58,5805.84,2,6,68,511,675],[21,802,223665.30,123615.17,2482.0,1,2,73,503,640],[22,541,110275.40,59436.45,1347.71,1,3,80,363,487],[23,1055,249006.10,117619.64,6279.0,1,6,107,647,806],[24,860,209849.32,95456.64,3944.56,5,5,71,494,677],[25,1028,253399.25,123310.23,6408.96,2,2,74,613,798],[26,121,15610.50,6652.62,5070.88,1,0,81,75,99]
+  ],
+  "uk_daily_py": [
+    [1,1144,278440.42,139619.60,1269.66,0,5,73,783,919],[2,725,112637.60,51885.49,746.89,1,8,73,540,677],[3,939,208692.66,87837.81,1864.33,1,2,64,574,711],[4,719,145212.24,58701.14,1419.08,0,2,43,464,556],[5,754,166768.95,68348.51,1637.0,1,5,53,464,575],[6,804,183610.03,74881.44,1491.0,1,1,62,507,618],[7,1021,279541.00,125612.74,2079.0,0,5,55,593,723],[8,833,197366.82,96628.01,739.0,1,1,31,563,676],[9,632,112693.91,50881.56,562.0,2,0,32,492,578],[10,810,187564.04,75674.88,1453.0,0,4,59,500,593],[11,688,149134.10,56785.65,2122.60,0,1,42,411,520],[12,797,196411.17,81841.78,1809.0,2,0,48,486,590],[13,799,182171.68,73380.74,1588.09,0,3,57,514,624],[14,1041,302833.34,136218.50,3092.0,0,8,106,588,726],[15,895,212306.09,100634.32,1011.20,2,3,80,572,715],[16,550,97984.80,44871.98,581.0,0,3,25,406,503],[17,855,200431.35,83508.32,1303.0,2,2,49,545,641],[18,725,180074.20,73287.23,1597.60,1,0,45,440,533],[19,762,202141.31,81972.39,1743.0,1,1,49,458,564],[20,945,263247.63,115050.99,2901.67,3,1,67,535,682],[21,1130,347146.21,165096.01,3937.18,1,5,70,651,783],[22,938,250001.65,122843.50,1545.54,0,2,63,606,726],[23,666,126160.00,58741.41,1191.0,0,1,36,485,593],[24,1042,276396.19,116800.21,3635.0,5,5,45,630,741],[25,1026,312439.51,138185.53,4196.73,2,3,85,605,753],[26,1126,417892.74,192079.49,8017.16,7,5,69,605,777]
+  ],
+  "categories": [
+    {"category":"Furniture","jobs":55563,"ttv":8427969.85,"marginPct":47.7,"allocSpend":106781.53,"spendTtvPct":1.3},
+    {"category":"Home Removal","jobs":8096,"ttv":6940017.40,"marginPct":58.5,"allocSpend":40094.06,"spendTtvPct":0.6},
+    {"category":"Car","jobs":5753,"ttv":1436800.37,"marginPct":20.2,"allocSpend":82333.21,"spendTtvPct":5.7},
+    {"category":"Motorbike","jobs":552,"ttv":105674.80,"marginPct":22.9,"allocSpend":2670.80,"spendTtvPct":2.5},
+    {"category":"Piano","jobs":311,"ttv":104978.96,"marginPct":44.6,"allocSpend":6062.20,"spendTtvPct":5.8}
+  ],
+  "regions": [
+    {"region":"London","jobs":18042,"ttv":3646895.12,"marginPct":55.3,"allocSpend":29375.76,"spendTtvPct":0.8},
+    {"region":"South East (England)","jobs":11110,"ttv":2759727.18,"marginPct":49.0,"allocSpend":37482.54,"spendTtvPct":1.4},
+    {"region":"East of England","jobs":7062,"ttv":1912494.82,"marginPct":48.5,"allocSpend":21497.04,"spendTtvPct":1.1},
+    {"region":"North West (England)","jobs":6656,"ttv":1544337.09,"marginPct":49.1,"allocSpend":18402.30,"spendTtvPct":1.2},
+    {"region":"South West (England)","jobs":5601,"ttv":1726540.24,"marginPct":48.2,"allocSpend":33764.86,"spendTtvPct":2.0},
+    {"region":"West Midlands (England)","jobs":5315,"ttv":1216397.59,"marginPct":47.9,"allocSpend":13217.07,"spendTtvPct":1.1},
+    {"region":"Yorkshire and The Humber","jobs":4669,"ttv":1026426.52,"marginPct":47.9,"allocSpend":12708.50,"spendTtvPct":1.2},
+    {"region":"East Midlands (England)","jobs":4368,"ttv":1074380.43,"marginPct":47.0,"allocSpend":12782.00,"spendTtvPct":1.2},
+    {"region":"Scotland","jobs":3981,"ttv":1122166.46,"marginPct":46.8,"allocSpend":29590.55,"spendTtvPct":2.6},
+    {"region":"North East (England)","jobs":1817,"ttv":466264.98,"marginPct":47.1,"allocSpend":7134.87,"spendTtvPct":1.5},
+    {"region":"Wales","jobs":1513,"ttv":482330.95,"marginPct":45.9,"allocSpend":13369.12,"spendTtvPct":2.8},
+    {"region":"Northern Ireland","jobs":130,"ttv":35117.00,"marginPct":29.2,"allocSpend":8588.20,"spendTtvPct":24.5}
+  ],
+  "otd_metrics": {"otdJobsWithDeallos":5618,"otdAllocSpend":112809.91,"otdAllocatedJobs":6217,"noSpendJobs":3296,"noSpendPct":53.0},
+  "deallocations": {"deallocations":6236,"otdDeallocations":5618,"otdDealloPct":6.4,"otdDealloCount":6236,"otdJobsWithDeallos":5618,"otdAllocSpend":60695.09},
+  "trends_uk": [
+    {"month":"2025-01-01","jobs":20526,"ttv":4836257.29,"avFee":2172410.51,"marginPct":44.9,"allocSpend":33111.39,"spendTtvPct":0.7,"otdCancels":263,"tpCancels":63,"cantSourceCount":27,"otdDeallocations":1696,"totalRecords":22692},
+    {"month":"2025-02-01","jobs":22406,"ttv":5270743.95,"avFee":2338847.87,"marginPct":44.4,"allocSpend":37150.08,"spendTtvPct":0.7,"otdCancels":347,"tpCancels":115,"cantSourceCount":38,"otdDeallocations":1759,"totalRecords":24907},
+    {"month":"2025-03-01","jobs":27120,"ttv":7588922.80,"avFee":3504784.82,"marginPct":46.2,"allocSpend":104814.18,"spendTtvPct":1.4,"otdCancels":386,"tpCancels":115,"cantSourceCount":65,"otdDeallocations":1853,"totalRecords":30448},
+    {"month":"2025-04-01","jobs":24830,"ttv":5504136.86,"avFee":2400781.37,"marginPct":43.6,"allocSpend":43898.45,"spendTtvPct":0.8,"otdCancels":356,"tpCancels":97,"cantSourceCount":48,"otdDeallocations":1945,"totalRecords":27400},
+    {"month":"2025-05-01","jobs":25467,"ttv":5606110.26,"avFee":2473224.36,"marginPct":44.1,"allocSpend":44547.47,"spendTtvPct":0.8,"otdCancels":367,"tpCancels":108,"cantSourceCount":47,"otdDeallocations":1994,"totalRecords":28097},
+    {"month":"2025-06-01","jobs":27895,"ttv":6239141.65,"avFee":2764382.22,"marginPct":44.3,"allocSpend":65566.02,"spendTtvPct":1.1,"otdCancels":511,"tpCancels":130,"cantSourceCount":62,"otdDeallocations":2245,"totalRecords":30963},
+    {"month":"2025-07-01","jobs":32364,"ttv":7997055.48,"avFee":3614260.46,"marginPct":45.2,"allocSpend":101015.41,"spendTtvPct":1.3,"otdCancels":562,"tpCancels":172,"cantSourceCount":70,"otdDeallocations":2469,"totalRecords":35825},
+    {"month":"2025-08-01","jobs":33863,"ttv":8989927.37,"avFee":4455897.68,"marginPct":49.6,"allocSpend":185496.37,"spendTtvPct":2.1,"otdCancels":661,"tpCancels":223,"cantSourceCount":124,"otdDeallocations":2708,"totalRecords":37972},
+    {"month":"2025-09-01","jobs":33449,"ttv":8129085.13,"avFee":3881616.80,"marginPct":47.7,"allocSpend":115880.34,"spendTtvPct":1.4,"otdCancels":713,"tpCancels":209,"cantSourceCount":73,"otdDeallocations":3070,"totalRecords":37611},
+    {"month":"2025-10-01","jobs":29285,"ttv":7518681.62,"avFee":3649981.29,"marginPct":48.5,"allocSpend":71757.11,"spendTtvPct":1.0,"otdCancels":552,"tpCancels":204,"cantSourceCount":65,"otdDeallocations":2547,"totalRecords":32765},
+    {"month":"2025-11-01","jobs":26464,"ttv":6972349.12,"avFee":3456112.14,"marginPct":49.6,"allocSpend":86526.33,"spendTtvPct":1.2,"otdCancels":494,"tpCancels":182,"cantSourceCount":72,"otdDeallocations":2494,"totalRecords":29607},
+    {"month":"2025-12-01","jobs":22772,"ttv":6360818.21,"avFee":3157554.02,"marginPct":49.6,"allocSpend":146309.94,"spendTtvPct":2.3,"otdCancels":496,"tpCancels":187,"cantSourceCount":95,"otdDeallocations":2239,"totalRecords":25796},
+    {"month":"2026-01-01","jobs":22991,"ttv":5598623.40,"avFee":2791115.24,"marginPct":49.9,"allocSpend":56324.01,"spendTtvPct":1.0,"otdCancels":413,"tpCancels":124,"cantSourceCount":59,"otdDeallocations":2033,"totalRecords":25772},
+    {"month":"2026-02-01","jobs":23540,"ttv":5776498.07,"avFee":2882699.55,"marginPct":49.9,"allocSpend":71008.84,"spendTtvPct":1.2,"otdCancels":454,"tpCancels":166,"cantSourceCount":75,"otdDeallocations":2121,"totalRecords":26357},
+    {"month":"2026-03-01","jobs":21794,"ttv":5216420.92,"avFee":2554117.34,"marginPct":49.0,"allocSpend":93117.59,"spendTtvPct":1.8,"otdCancels":415,"tpCancels":108,"cantSourceCount":80,"otdDeallocations":1858,"totalRecords":25506}
+  ]
+}
