@@ -1,0 +1,29 @@
+name: Build and Deploy
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Install dependencies
+        run: npm install
+      
+      - name: Build
+        run: npm run build
+      
+      - name: Commit dist
+        run: |
+          git config user.email "b.pienaar@anyvan.com"
+          git config user.name "Barry Pienaar"
+          git add dist/
+          git diff --staged --quiet || git commit -m "Rebuild dist with month toggle feature"
+          git push origin main
