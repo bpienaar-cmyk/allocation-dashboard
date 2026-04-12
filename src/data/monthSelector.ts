@@ -101,5 +101,5 @@ export function getMTDData(month: MonthKey): MonthlyMTDData {
 }
 
 export function getDefaultMonth(): MonthKey {
-  return '2026-04';
+  return '2026-03';
 }

@@ -25,7 +25,7 @@ import {
   MonthlyCompletedPaidRow,
 } from '../types/index';
 
-export const DATA_LAST_UPDATED = '2026-03-31T23:59:59.000000Z';
+export const DATA_LAST_UPDATED = '2026-03-31T12:00:00.000Z';
 
 /**
  * Overview data by country — MTD March 2026 vs MTD March 2025
