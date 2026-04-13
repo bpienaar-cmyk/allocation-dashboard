@@ -41,7 +41,7 @@ interface TrendsViewProps {
   onCountryChange: (country: Country) => void
 }
 
-type MetricType = 'jobs' | 'ttv' | 'allocSpend' | 'spendTtvPct' | 'spendVariancePct' | 'marginPct' | 'otdDealloPct' | 'adminAllocD1OtdPct' | 'adminAllocPct'
+type MetricType = 'jobs' | 'ttv' | 'allocSpend' | 'spendTtvPct' | 'spendVariancePct' | 'marginPct' | 'furnRoutedPct' | 'otdDealloPct' | 'adminAllocD1OtdPct' | 'adminAllocPct'
 
 interface YoYRow {
   monthLabel: string
@@ -68,6 +68,7 @@ const TrendsView: React.FC<TrendsViewProps> = ({ trendsByCountry, trendsByCatego
     marginPct: { label: 'Margin %', key: 'marginPct', isPercentage: true, isCurrency: false },
     otdDealloPct: { label: 'OTD Deallocation %', key: 'otdDeallocations', isPercentage: true, isCurrency: false, compute: (p) => p.jobs > 0 ? (p.otdDeallocations / p.jobs) * 100 : 0 },
     adminAllocD1OtdPct: { label: 'Admin Allocation D-1 & OTD', key: 'adminAllocD1Otd', isPercentage: false, isCurrency: false },
+    furnRoutedPct: { label: 'Furn Routed %', key: 'furnRouted', isPercentage: true, isCurrency: false, compute: (p) => (p.furnTotal ?? 0) > 0 ? ((p.furnRouted ?? 0) / (p.furnTotal ?? 0)) * 100 : 0 },
     adminAllocPct: { label: 'Admin Allocations %', key: 'adminAllocPct', isPercentage: true, isCurrency: false },
   }
 
@@ -192,6 +193,7 @@ const TrendsView: React.FC<TrendsViewProps> = ({ trendsByCountry, trendsByCatego
             <option value="spendTtvPct">Spend/TTV %</option>
             <option value="spendVariancePct">Spend Variance % (vs Original TP Fee)</option>
             <option value="marginPct">Margin %</option>
+            <option value="furnRoutedPct">Furn Routed %</option>
             <option value="otdDealloPct">OTD Deallocation %</option>
             <option value="adminAllocD1OtdPct">Admin Allocation D-1 & OTD</option>
             <option value="adminAllocPct">Admin Allocations %</option>

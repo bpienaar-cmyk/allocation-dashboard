@@ -36,6 +36,8 @@ export interface TrendPoint {
   adminAllocD1Otd: number;
   adminAllocPct: number;
   totalRecords: number;
+  furnRouted?: number;
+  furnTotal?: number;
 }
 
 export interface CategoryRow {
