@@ -2471,9 +2471,36 @@ export const furnRoutingByCountry: Record<string, Record<string, { routed: numbe
     '2025-03-25':{routed:605,total:753},
     '2025-03-26':{routed:605,total:777}
   },
-  spain_cy: {},
-  spain_py: {},
-  france_cy: {},
+  spain_cy: {
+    '2026-03-01':{routed:8,total:23},'2026-03-02':{routed:5,total:19},'2026-03-03':{routed:0,total:22},
+    '2026-03-04':{routed:0,total:9},'2026-03-05':{routed:3,total:32},'2026-03-06':{routed:8,total:15},
+    '2026-03-07':{routed:9,total:18},'2026-03-08':{routed:3,total:6},'2026-03-09':{routed:7,total:13},
+    '2026-03-10':{routed:13,total:23},'2026-03-11':{routed:4,total:17},'2026-03-12':{routed:2,total:19},
+    '2026-03-13':{routed:4,total:19},'2026-03-14':{routed:11,total:14},'2026-03-15':{routed:8,total:16},
+    '2026-03-16':{routed:2,total:12},'2026-03-17':{routed:19,total:30},'2026-03-18':{routed:3,total:12},
+    '2026-03-19':{routed:12,total:25},'2026-03-20':{routed:9,total:26},'2026-03-21':{routed:8,total:16},
+    '2026-03-22':{routed:0,total:9},'2026-03-23':{routed:5,total:15},'2026-03-24':{routed:17,total:31},
+    '2026-03-25':{routed:12,total:21},'2026-03-26':{routed:29,total:51},'2026-03-27':{routed:16,total:33},
+    '2026-03-28':{routed:14,total:23},'2026-03-29':{routed:5,total:9},'2026-03-30':{routed:15,total:33},
+    '2026-03-31':{routed:32,total:50}
+  },
+  spain_py: {
+    '2025-03-19':{routed:0,total:3},'2025-03-20':{routed:0,total:1},
+    '2025-03-21':{routed:0,total:1},'2025-03-26':{routed:0,total:1}
+  },
+  france_cy: {
+    '2026-03-01':{routed:9,total:11},'2026-03-02':{routed:2,total:3},'2026-03-03':{routed:0,total:3},
+    '2026-03-04':{routed:0,total:6},'2026-03-05':{routed:5,total:9},'2026-03-06':{routed:3,total:4},
+    '2026-03-07':{routed:2,total:9},'2026-03-08':{routed:0,total:6},'2026-03-09':{routed:2,total:3},
+    '2026-03-10':{routed:1,total:1},'2026-03-11':{routed:1,total:8},'2026-03-12':{routed:1,total:3},
+    '2026-03-13':{routed:3,total:5},'2026-03-14':{routed:9,total:10},'2026-03-15':{routed:0,total:5},
+    '2026-03-16':{routed:6,total:8},'2026-03-17':{routed:2,total:6},'2026-03-18':{routed:0,total:1},
+    '2026-03-19':{routed:2,total:5},'2026-03-20':{routed:1,total:3},'2026-03-21':{routed:10,total:11},
+    '2026-03-22':{routed:2,total:4},'2026-03-23':{routed:5,total:8},'2026-03-24':{routed:0,total:8},
+    '2026-03-25':{routed:0,total:6},'2026-03-26':{routed:3,total:9},'2026-03-27':{routed:0,total:6},
+    '2026-03-28':{routed:3,total:5},'2026-03-29':{routed:5,total:8},'2026-03-30':{routed:5,total:12},
+    '2026-03-31':{routed:8,total:13}
+  },
   france_py: {}
 };
 export const tpCancelsByCountry: Record<string, Record<string, number>> = {
@@ -2530,9 +2557,36 @@ export const tpCancelsByCountry: Record<string, Record<string, number>> = {
     '2026-03-31|Furniture':6
   },
   uk_py: {},
-  spain_cy: {},
-  spain_py: {},
-  france_cy: {},
+  spain_cy: {
+    '2026-03-01':{routed:8,total:23},'2026-03-02':{routed:5,total:19},'2026-03-03':{routed:0,total:22},
+    '2026-03-04':{routed:0,total:9},'2026-03-05':{routed:3,total:32},'2026-03-06':{routed:8,total:15},
+    '2026-03-07':{routed:9,total:18},'2026-03-08':{routed:3,total:6},'2026-03-09':{routed:7,total:13},
+    '2026-03-10':{routed:13,total:23},'2026-03-11':{routed:4,total:17},'2026-03-12':{routed:2,total:19},
+    '2026-03-13':{routed:4,total:19},'2026-03-14':{routed:11,total:14},'2026-03-15':{routed:8,total:16},
+    '2026-03-16':{routed:2,total:12},'2026-03-17':{routed:19,total:30},'2026-03-18':{routed:3,total:12},
+    '2026-03-19':{routed:12,total:25},'2026-03-20':{routed:9,total:26},'2026-03-21':{routed:8,total:16},
+    '2026-03-22':{routed:0,total:9},'2026-03-23':{routed:5,total:15},'2026-03-24':{routed:17,total:31},
+    '2026-03-25':{routed:12,total:21},'2026-03-26':{routed:29,total:51},'2026-03-27':{routed:16,total:33},
+    '2026-03-28':{routed:14,total:23},'2026-03-29':{routed:5,total:9},'2026-03-30':{routed:15,total:33},
+    '2026-03-31':{routed:32,total:50}
+  },
+  spain_py: {
+    '2025-03-19':{routed:0,total:3},'2025-03-20':{routed:0,total:1},
+    '2025-03-21':{routed:0,total:1},'2025-03-26':{routed:0,total:1}
+  },
+  france_cy: {
+    '2026-03-01':{routed:9,total:11},'2026-03-02':{routed:2,total:3},'2026-03-03':{routed:0,total:3},
+    '2026-03-04':{routed:0,total:6},'2026-03-05':{routed:5,total:9},'2026-03-06':{routed:3,total:4},
+    '2026-03-07':{routed:2,total:9},'2026-03-08':{routed:0,total:6},'2026-03-09':{routed:2,total:3},
+    '2026-03-10':{routed:1,total:1},'2026-03-11':{routed:1,total:8},'2026-03-12':{routed:1,total:3},
+    '2026-03-13':{routed:3,total:5},'2026-03-14':{routed:9,total:10},'2026-03-15':{routed:0,total:5},
+    '2026-03-16':{routed:6,total:8},'2026-03-17':{routed:2,total:6},'2026-03-18':{routed:0,total:1},
+    '2026-03-19':{routed:2,total:5},'2026-03-20':{routed:1,total:3},'2026-03-21':{routed:10,total:11},
+    '2026-03-22':{routed:2,total:4},'2026-03-23':{routed:5,total:8},'2026-03-24':{routed:0,total:8},
+    '2026-03-25':{routed:0,total:6},'2026-03-26':{routed:3,total:9},'2026-03-27':{routed:0,total:6},
+    '2026-03-28':{routed:3,total:5},'2026-03-29':{routed:5,total:8},'2026-03-30':{routed:5,total:12},
+    '2026-03-31':{routed:8,total:13}
+  },
   france_py: {}
 };
 export const iresReservationData: IResReservationRow[] = [

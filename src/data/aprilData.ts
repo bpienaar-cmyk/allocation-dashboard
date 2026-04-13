@@ -138,8 +138,20 @@ export const dailyOverviewByCountryApr: Record<string, { cy: DailyOverviewRow[];
 /* ── Furn routing lookup ── */
 export const furnRoutingByCountryApr: Record<string, Record<string, { routed: number; total: number }>> = {
   uk: { '2026-04-01|Furniture': { routed: 0, total: 1 } },
-  spain: {},
-  france: {},
+  spain: {
+    '2026-04-01':{routed:18,total:38},'2026-04-02':{routed:11,total:20},'2026-04-03':{routed:1,total:7},
+    '2026-04-04':{routed:4,total:10},'2026-04-05':{routed:6,total:6},'2026-04-06':{routed:5,total:7},
+    '2026-04-07':{routed:12,total:16},'2026-04-08':{routed:1,total:8},'2026-04-09':{routed:17,total:21},
+    '2026-04-10':{routed:2,total:10},'2026-04-11':{routed:9,total:14},'2026-04-12':{routed:6,total:9},
+    '2026-04-13':{routed:2,total:4}
+  },
+  france: {
+    '2026-04-01':{routed:3,total:10},'2026-04-02':{routed:5,total:8},'2026-04-03':{routed:2,total:5},
+    '2026-04-04':{routed:5,total:9},'2026-04-05':{routed:4,total:4},'2026-04-06':{routed:6,total:6},
+    '2026-04-07':{routed:6,total:7},'2026-04-08':{routed:4,total:4},'2026-04-09':{routed:0,total:4},
+    '2026-04-10':{routed:6,total:6},'2026-04-11':{routed:6,total:13},'2026-04-12':{routed:3,total:5},
+    '2026-04-13':{routed:1,total:2}
+  },
 };
 
 /* ── TP cancels lookup ── */
