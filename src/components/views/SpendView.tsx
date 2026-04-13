@@ -202,17 +202,46 @@ const MtdSpendChart: React.FC<{
     const days2026WithData = Object.keys(daily2026).map(Number).sort((a, b) => a - b)
     const lastDay = days2026WithData.length > 0 ? days2026WithData[days2026WithData.length - 1] : 0
 
-    // Calculate ratio for forecast
-    const ratio = lastDay > 0 && cumulative2025[lastDay] > 0 ? cumulative2026[lastDay] / cumulative2025[lastDay] : 1
+    // Forecast: use 2025 to project total, then smooth the daily distribution
+    // Step 1: Project 2026 total from 2025's proportional completion at lastDay
+    const total2025 = cumulative2025[31] || 0
+    const proportion2025AtLastDay = total2025 > 0 ? cumulative2025[lastDay] / total2025 : 0
+    const projected2026Total = proportion2025AtLastDay > 0
+      ? Math.round(cumulative2026[lastDay] / proportion2025AtLastDay)
+      : cumulative2026[lastDay]
+    const remaining2026 = projected2026Total - (cumulative2026[lastDay] || 0)
 
-    // Build chart data with forecast
+    // Step 2: Smooth the 2025 daily increments using a 5-day rolling average
+    // to remove end-of-month spikes while preserving the general acceleration pattern
+    const smoothedDaily2025: Record<number, number> = {}
+    const WINDOW = 5
+    for (let day = lastDay + 1; day <= 31; day++) {
+      let sum = 0; let count = 0
+      for (let w = -Math.floor(WINDOW / 2); w <= Math.floor(WINDOW / 2); w++) {
+        const d = day + w
+        if (d >= 1 && d <= 31) { sum += daily2025[d] || 0; count++ }
+      }
+      smoothedDaily2025[day] = count > 0 ? sum / count : 0
+    }
+
+    // Step 3: Build cumulative smoothed weights for remaining days
+    let totalSmoothedWeight = 0
+    for (let day = lastDay + 1; day <= 31; day++) totalSmoothedWeight += smoothedDaily2025[day]
+    // If 2025 had no remaining data, fall back to linear distribution
+    const useLinear = totalSmoothedWeight === 0
+
+    // Build chart data with smoothed forecast
     const result: MtdChartData[] = allDays.map(day => {
       const spend2026Val = day <= lastDay ? (cumulative2026[day] || 0) : null
       let forecast2026Val: number | null = null
 
-      if (day > lastDay && cumulative2025[day] > 0) {
-        // Forecast: scale 2025 cumulative by ratio
-        forecast2026Val = Math.round(cumulative2025[day] * ratio * 100) / 100
+      if (day > lastDay) {
+        let cumulativeWeight = 0
+        for (let d = lastDay + 1; d <= day; d++) cumulativeWeight += smoothedDaily2025[d] || 0
+        const proportion = useLinear
+          ? (day - lastDay) / (31 - lastDay)
+          : totalSmoothedWeight > 0 ? cumulativeWeight / totalSmoothedWeight : 0
+        forecast2026Val = Math.round((cumulative2026[lastDay] || 0) + remaining2026 * proportion)
       } else if (day === lastDay) {
         // Bridge point: forecast starts at last actual value
         forecast2026Val = cumulative2026[day] || 0
@@ -302,7 +331,7 @@ const MtdSpendChart: React.FC<{
           </LineChart>
         </ResponsiveContainer>
       </div>
-      <p className="text-xs text-slate-500">Forecast projects 2026 from current MTD using March 2025 daily pattern, filtered by region and category</p>
+      <p className="text-xs text-slate-500">Forecast projects 2026 month-end total from 2025's proportional completion, then distributes remaining spend using a smoothed 2025 daily pattern</p>
     </div>
   )
 }
@@ -379,17 +408,61 @@ const MtdSpendTtvChart: React.FC<{
     const days2026WithData = Object.keys(daily2026).map(Number).sort((a, b) => a - b)
     const lastDay = days2026WithData.length > 0 ? days2026WithData[days2026WithData.length - 1] : 0
 
-    // Calculate ratio for forecast
-    const ratio = lastDay > 0 && spendTtvPct2025[lastDay] > 0 ? spendTtvPct2026[lastDay] / spendTtvPct2025[lastDay] : 1
+    // Forecast: project spend and TTV separately using smoothed 2025 daily pattern, then compute ratio
+    // Step 1: Project 2026 totals from 2025's proportional completion at lastDay
+    const totalSpend2025 = cumulative2025[31] || 0
+    const totalTtv2025 = cumulativeTtv2025[31] || 0
+    const propSpend2025 = totalSpend2025 > 0 ? cumulative2025[lastDay] / totalSpend2025 : 0
+    const propTtv2025 = totalTtv2025 > 0 ? cumulativeTtv2025[lastDay] / totalTtv2025 : 0
+    const projectedSpend2026 = propSpend2025 > 0 ? cumulative2026[lastDay] / propSpend2025 : cumulative2026[lastDay]
+    const projectedTtv2026 = propTtv2025 > 0 ? cumulativeTtv2026[lastDay] / propTtv2025 : cumulativeTtv2026[lastDay]
+    const remainingSpend2026 = projectedSpend2026 - (cumulative2026[lastDay] || 0)
+    const remainingTtv2026 = projectedTtv2026 - (cumulativeTtv2026[lastDay] || 0)
 
-    // Build chart data with forecast
+    // Step 2: Smooth the 2025 daily increments for spend and TTV
+    const smoothedDailySpend2025: Record<number, number> = {}
+    const smoothedDailyTtv2025: Record<number, number> = {}
+    const WINDOW = 5
+    for (let day = lastDay + 1; day <= 31; day++) {
+      let sumS = 0, sumT = 0, count = 0
+      for (let w = -Math.floor(WINDOW / 2); w <= Math.floor(WINDOW / 2); w++) {
+        const d = day + w
+        if (d >= 1 && d <= 31) {
+          sumS += daily2025[d]?.s || 0
+          sumT += daily2025[d]?.t || 0
+          count++
+        }
+      }
+      smoothedDailySpend2025[day] = count > 0 ? sumS / count : 0
+      smoothedDailyTtv2025[day] = count > 0 ? sumT / count : 0
+    }
+
+    // Step 3: Build cumulative smoothed weights
+    let totalWeightSpend = 0, totalWeightTtv = 0
+    for (let day = lastDay + 1; day <= 31; day++) {
+      totalWeightSpend += smoothedDailySpend2025[day]
+      totalWeightTtv += smoothedDailyTtv2025[day]
+    }
+    const useLinearSpend = totalWeightSpend === 0
+    const useLinearTtv = totalWeightTtv === 0
+
+    // Build chart data with smoothed forecast
     const result: MtdTtvChartData[] = allDays.map(day => {
       const pct2026Val = day <= lastDay ? spendTtvPct2026[day] : null
       let forecastPct2026Val: number | null = null
 
-      if (day > lastDay && spendTtvPct2025[day] > 0) {
-        // Forecast: scale 2025 percentage by ratio
-        forecastPct2026Val = parseFloat((spendTtvPct2025[day] * ratio).toFixed(2))
+      if (day > lastDay) {
+        // Accumulate smoothed weights up to this day
+        let cumWeightS = 0, cumWeightT = 0
+        for (let d = lastDay + 1; d <= day; d++) {
+          cumWeightS += smoothedDailySpend2025[d] || 0
+          cumWeightT += smoothedDailyTtv2025[d] || 0
+        }
+        const propS = useLinearSpend ? (day - lastDay) / (31 - lastDay) : totalWeightSpend > 0 ? cumWeightS / totalWeightSpend : 0
+        const propT = useLinearTtv ? (day - lastDay) / (31 - lastDay) : totalWeightTtv > 0 ? cumWeightT / totalWeightTtv : 0
+        const forecastSpend = (cumulative2026[lastDay] || 0) + remainingSpend2026 * propS
+        const forecastTtv = (cumulativeTtv2026[lastDay] || 0) + remainingTtv2026 * propT
+        forecastPct2026Val = forecastTtv > 0 ? parseFloat(((forecastSpend / forecastTtv) * 100).toFixed(2)) : 0
       } else if (day === lastDay) {
         // Bridge point: forecast starts at last actual value
         forecastPct2026Val = spendTtvPct2026[day]
