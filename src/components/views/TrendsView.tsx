@@ -41,7 +41,7 @@ interface TrendsViewProps {
   onCountryChange: (country: Country) => void
 }
 
-type MetricType = 'jobs' | 'ttv' | 'allocSpend' | 'spendTtvPct' | 'marginPct' | 'otdDealloPct' | 'adminAllocD1OtdPct'
+type MetricType = 'jobs' | 'ttv' | 'allocSpend' | 'spendTtvPct' | 'spendVariancePct' | 'marginPct' | 'otdDealloPct' | 'adminAllocD1OtdPct'
 
 interface YoYRow {
   monthLabel: string
@@ -64,6 +64,7 @@ const TrendsView: React.FC<TrendsViewProps> = ({ trendsByCountry, trendsByCatego
     ttv: { label: 'Total TTV', key: 'ttv', isPercentage: false, isCurrency: true },
     allocSpend: { label: 'Allocation Spend', key: 'allocSpend', isPercentage: false, isCurrency: true },
     spendTtvPct: { label: 'Spend/TTV %', key: 'spendTtvPct', isPercentage: true, isCurrency: false },
+    spendVariancePct: { label: 'Spend Variance % (vs Original TP Fee)', key: 'spendVariancePct', isPercentage: true, isCurrency: false },
     marginPct: { label: 'Margin %', key: 'marginPct', isPercentage: true, isCurrency: false },
     otdDealloPct: { label: 'OTD Deallocation %', key: 'otdDeallocations', isPercentage: true, isCurrency: false, compute: (p) => p.jobs > 0 ? (p.otdDeallocations / p.jobs) * 100 : 0 },
     adminAllocD1OtdPct: { label: 'Admin Allocation D-1 & OTD', key: 'adminAllocD1Otd', isPercentage: false, isCurrency: false },
@@ -188,6 +189,7 @@ const TrendsView: React.FC<TrendsViewProps> = ({ trendsByCountry, trendsByCatego
             <option value="ttv">Total TTV</option>
             <option value="allocSpend">Allocation Spend</option>
             <option value="spendTtvPct">Spend/TTV %</option>
+            <option value="spendVariancePct">Spend Variance % (vs Original TP Fee)</option>
             <option value="marginPct">Margin %</option>
             <option value="otdDealloPct">OTD Deallocation %</option>
             <option value="adminAllocD1OtdPct">Admin Allocation D-1 & OTD</option>
