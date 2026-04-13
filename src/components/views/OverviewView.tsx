@@ -12,6 +12,7 @@ const COUNTRY_LABELS: Record<Country, string> = {
 
 type MetricKey = 'jobs' | 'ttv' | 'furnRoutedPct' | 'avFee' | 'marginPct' | 'allocSpend' | 'spendTtvPct' | 'cantSourceRate' | 'otdDealloPct' | 'tpCancelRate'
 
+
 interface MetricDef {
   title: string
   key: MetricKey
@@ -22,6 +23,8 @@ interface MetricDef {
   dailyValue: (d: DailyRaw) => number
   /** Is this a rate/pct that should use cumulative calculation? */
   isCumRate?: boolean
+  /** Only show this metric for UK */
+  ukOnly?: boolean
 }
 
 type CategoryFilter = 'All' | 'Furniture' | 'Home Removal' | 'Car' | 'Motorbike' | 'Piano'
@@ -370,7 +373,7 @@ function convertToDailyRaw(
 const METRICS: MetricDef[] = [
   { title: 'Completed Jobs', key: 'jobs', fmt: fmtN, type: 'yoy', dailyValue: d => d.jobs },
   { title: 'Total TTV', key: 'ttv', fmt: fmtGBP, type: 'yoy', dailyValue: d => d.ttv },
-  { title: 'Furn Routed %', key: 'furnRoutedPct', fmt: fmtP, type: 'pp', dailyValue: () => 0, isCumRate: true },
+  { title: 'Furn Routed %', key: 'furnRoutedPct', fmt: fmtP, type: 'pp', dailyValue: () => 0, isCumRate: true, ukOnly: true },
   { title: 'AV Fee', key: 'avFee', fmt: fmtGBP, type: 'yoy', dailyValue: d => d.avFee },
   { title: 'Margin %', key: 'marginPct', fmt: fmtP, type: 'pp', dailyValue: () => 0, isCumRate: true },
   { title: 'Allocation Spend', key: 'allocSpend', fmt: fmtGBP, type: 'yoy', invert: true, dailyValue: d => d.allocSpend },
@@ -547,7 +550,7 @@ const OverviewView: React.FC<OverviewViewProps> = ({
       )}
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-        {METRICS.map((m) => {
+        {METRICS.filter(m => !m.ukOnly || selectedCountry === 'uk').map((m) => {
           const currentVal = data[m.key as keyof typeof data] as number
           const priorVal = priorYear[m.key as keyof typeof priorYear] as number
           const change = m.type === 'pp' ? ppChange(currentVal, priorVal) : yoyChange(currentVal, priorVal)
