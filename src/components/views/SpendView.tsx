@@ -11,6 +11,17 @@ import {
 } from 'recharts'
 import { SpendNutsRow, SpendCategoryRow, SpendByDaysRow, AgentSpendRow, MtdSpendRawRow, Country } from '../../types'
 import { fmtN } from '../../utils/formatting'
+import { DATA_LAST_UPDATED } from '../../data/dashboardData'
+
+const MTD_MONTH_NAME = (() => {
+  const d = new Date(DATA_LAST_UPDATED)
+  return d.toLocaleString('en-GB', { month: 'long', timeZone: 'UTC' })
+})()
+
+const MTD_DAYS_IN_MONTH = (() => {
+  const d = new Date(DATA_LAST_UPDATED)
+  return new Date(d.getUTCFullYear(), d.getUTCMonth() + 1, 0).getDate()
+})()
 import AgentBreakdownModal from '../common/AgentBreakdownModal'
 
 interface SpendViewProps {
@@ -183,7 +194,7 @@ const MtdSpendChart: React.FC<{
     })
 
     // Get all days from 1 to 31
-    const allDays = Array.from({ length: 31 }, (_, i) => i + 1)
+    const allDays = Array.from({ length: MTD_DAYS_IN_MONTH }, (_, i) => i + 1)
 
     // Compute cumulative totals
     let cum2025 = 0
@@ -204,7 +215,7 @@ const MtdSpendChart: React.FC<{
 
     // Forecast: use 2025 to project total, then smooth the daily distribution
     // Step 1: Project 2026 total from 2025's proportional completion at lastDay
-    const total2025 = cumulative2025[31] || 0
+    const total2025 = cumulative2025[MTD_DAYS_IN_MONTH] || 0
     const proportion2025AtLastDay = total2025 > 0 ? cumulative2025[lastDay] / total2025 : 0
     const projected2026Total = proportion2025AtLastDay > 0
       ? Math.round(cumulative2026[lastDay] / proportion2025AtLastDay)
@@ -215,18 +226,18 @@ const MtdSpendChart: React.FC<{
     // to remove end-of-month spikes while preserving the general acceleration pattern
     const smoothedDaily2025: Record<number, number> = {}
     const WINDOW = 5
-    for (let day = lastDay + 1; day <= 31; day++) {
+    for (let day = lastDay + 1; day <= MTD_DAYS_IN_MONTH; day++) {
       let sum = 0; let count = 0
       for (let w = -Math.floor(WINDOW / 2); w <= Math.floor(WINDOW / 2); w++) {
         const d = day + w
-        if (d >= 1 && d <= 31) { sum += daily2025[d] || 0; count++ }
+        if (d >= 1 && d <= MTD_DAYS_IN_MONTH) { sum += daily2025[d] || 0; count++ }
       }
       smoothedDaily2025[day] = count > 0 ? sum / count : 0
     }
 
     // Step 3: Build cumulative smoothed weights for remaining days
     let totalSmoothedWeight = 0
-    for (let day = lastDay + 1; day <= 31; day++) totalSmoothedWeight += smoothedDaily2025[day]
+    for (let day = lastDay + 1; day <= MTD_DAYS_IN_MONTH; day++) totalSmoothedWeight += smoothedDaily2025[day]
     // If 2025 had no remaining data, fall back to linear distribution
     const useLinear = totalSmoothedWeight === 0
 
@@ -262,7 +273,7 @@ const MtdSpendChart: React.FC<{
 
   return (
     <div className="space-y-2">
-      <h3 className="text-sm font-semibold text-slate-300">MTD Cumulative Allocation Spend — March</h3>
+      <h3 className="text-sm font-semibold text-slate-300">MTD Cumulative Allocation Spend — {MTD_MONTH_NAME}</h3>
       <div className="rounded-lg border border-slate-700 bg-slate-800 p-4" style={{ height: '350px' }}>
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={chartData} margin={{ top: 20, right: 30, left: 10, bottom: 5 }}>
@@ -302,7 +313,7 @@ const MtdSpendChart: React.FC<{
               dot={{ fill: '#64748b', r: 2 }}
               activeDot={{ r: 4 }}
               strokeWidth={2}
-              name="March 2025"
+              name={`${MTD_MONTH_NAME} 2025`}
               connectNulls
             />
             {/* March 2026 actual */}
@@ -313,7 +324,7 @@ const MtdSpendChart: React.FC<{
               dot={{ fill: '#3b82f6', r: 3 }}
               activeDot={{ r: 5 }}
               strokeWidth={2.5}
-              name="March 2026 (Actual)"
+              name={`${MTD_MONTH_NAME} 2026 (Actual)`}
               connectNulls
             />
             {/* Forecast 2026 (dashed) */}
@@ -372,7 +383,7 @@ const MtdSpendTtvChart: React.FC<{
     })
 
     // Get all days from 1 to 31
-    const allDays = Array.from({ length: 31 }, (_, i) => i + 1)
+    const allDays = Array.from({ length: MTD_DAYS_IN_MONTH }, (_, i) => i + 1)
 
     // Compute cumulative totals
     let cum2025 = 0
@@ -410,8 +421,8 @@ const MtdSpendTtvChart: React.FC<{
 
     // Forecast: project spend and TTV separately using smoothed 2025 daily pattern, then compute ratio
     // Step 1: Project 2026 totals from 2025's proportional completion at lastDay
-    const totalSpend2025 = cumulative2025[31] || 0
-    const totalTtv2025 = cumulativeTtv2025[31] || 0
+    const totalSpend2025 = cumulative2025[MTD_DAYS_IN_MONTH] || 0
+    const totalTtv2025 = cumulativeTtv2025[MTD_DAYS_IN_MONTH] || 0
     const propSpend2025 = totalSpend2025 > 0 ? cumulative2025[lastDay] / totalSpend2025 : 0
     const propTtv2025 = totalTtv2025 > 0 ? cumulativeTtv2025[lastDay] / totalTtv2025 : 0
     const projectedSpend2026 = propSpend2025 > 0 ? cumulative2026[lastDay] / propSpend2025 : cumulative2026[lastDay]
@@ -423,11 +434,11 @@ const MtdSpendTtvChart: React.FC<{
     const smoothedDailySpend2025: Record<number, number> = {}
     const smoothedDailyTtv2025: Record<number, number> = {}
     const WINDOW = 5
-    for (let day = lastDay + 1; day <= 31; day++) {
+    for (let day = lastDay + 1; day <= MTD_DAYS_IN_MONTH; day++) {
       let sumS = 0, sumT = 0, count = 0
       for (let w = -Math.floor(WINDOW / 2); w <= Math.floor(WINDOW / 2); w++) {
         const d = day + w
-        if (d >= 1 && d <= 31) {
+        if (d >= 1 && d <= MTD_DAYS_IN_MONTH) {
           sumS += daily2025[d]?.s || 0
           sumT += daily2025[d]?.t || 0
           count++
@@ -439,7 +450,7 @@ const MtdSpendTtvChart: React.FC<{
 
     // Step 3: Build cumulative smoothed weights
     let totalWeightSpend = 0, totalWeightTtv = 0
-    for (let day = lastDay + 1; day <= 31; day++) {
+    for (let day = lastDay + 1; day <= MTD_DAYS_IN_MONTH; day++) {
       totalWeightSpend += smoothedDailySpend2025[day]
       totalWeightTtv += smoothedDailyTtv2025[day]
     }
@@ -483,7 +494,7 @@ const MtdSpendTtvChart: React.FC<{
 
   return (
     <div className="space-y-2">
-      <h3 className="text-sm font-semibold text-slate-300">MTD Cumulative Spend / TTV % — March</h3>
+      <h3 className="text-sm font-semibold text-slate-300">MTD Cumulative Spend / TTV % — {MTD_MONTH_NAME}</h3>
       <div className="rounded-lg border border-slate-700 bg-slate-800 p-4" style={{ height: '350px' }}>
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={chartData} margin={{ top: 20, right: 30, left: 10, bottom: 5 }}>
@@ -522,7 +533,7 @@ const MtdSpendTtvChart: React.FC<{
               dot={{ fill: '#64748b', r: 2 }}
               activeDot={{ r: 4 }}
               strokeWidth={2}
-              name="March 2025"
+              name={`${MTD_MONTH_NAME} 2025`}
               connectNulls
             />
             {/* March 2026 actual */}
@@ -533,7 +544,7 @@ const MtdSpendTtvChart: React.FC<{
               dot={{ fill: '#f59e0b', r: 3 }}
               activeDot={{ r: 5 }}
               strokeWidth={2.5}
-              name="March 2026 (Actual)"
+              name={`${MTD_MONTH_NAME} 2026 (Actual)`}
               connectNulls
             />
             {/* Forecast 2026 (dashed) */}
