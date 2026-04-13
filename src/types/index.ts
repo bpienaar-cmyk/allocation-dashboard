@@ -34,6 +34,7 @@ export interface TrendPoint {
   cantSourceCount: number;
   otdDeallocations: number;
   adminAllocD1Otd: number;
+  adminAllocPct: number;
   totalRecords: number;
 }
 

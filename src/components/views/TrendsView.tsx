@@ -41,7 +41,7 @@ interface TrendsViewProps {
   onCountryChange: (country: Country) => void
 }
 
-type MetricType = 'jobs' | 'ttv' | 'allocSpend' | 'spendTtvPct' | 'spendVariancePct' | 'marginPct' | 'otdDealloPct' | 'adminAllocD1OtdPct'
+type MetricType = 'jobs' | 'ttv' | 'allocSpend' | 'spendTtvPct' | 'spendVariancePct' | 'marginPct' | 'otdDealloPct' | 'adminAllocD1OtdPct' | 'adminAllocPct'
 
 interface YoYRow {
   monthLabel: string
@@ -68,6 +68,7 @@ const TrendsView: React.FC<TrendsViewProps> = ({ trendsByCountry, trendsByCatego
     marginPct: { label: 'Margin %', key: 'marginPct', isPercentage: true, isCurrency: false },
     otdDealloPct: { label: 'OTD Deallocation %', key: 'otdDeallocations', isPercentage: true, isCurrency: false, compute: (p) => p.jobs > 0 ? (p.otdDeallocations / p.jobs) * 100 : 0 },
     adminAllocD1OtdPct: { label: 'Admin Allocation D-1 & OTD', key: 'adminAllocD1Otd', isPercentage: false, isCurrency: false },
+    adminAllocPct: { label: 'Admin Allocations %', key: 'adminAllocPct', isPercentage: true, isCurrency: false },
   }
 
   const config = metricConfig[metric]
@@ -193,6 +194,7 @@ const TrendsView: React.FC<TrendsViewProps> = ({ trendsByCountry, trendsByCatego
             <option value="marginPct">Margin %</option>
             <option value="otdDealloPct">OTD Deallocation %</option>
             <option value="adminAllocD1OtdPct">Admin Allocation D-1 & OTD</option>
+            <option value="adminAllocPct">Admin Allocations %</option>
           </select>
         </div>
       </div>
