@@ -8,6 +8,7 @@ import {
   Legend,
   ResponsiveContainer,
   ReferenceLine,
+  LabelList,
 } from 'recharts'
 import { CancellationRawRow, CompletedPaidRawRow, MonthlyCancellationRow, MonthlyCompletedPaidRow, Country } from '../../types'
 import { REASON_CODE_LABELS } from '../../data/dashboardData'
@@ -64,6 +65,32 @@ const formatMonthLabel = (month: string) => {
 const tooltipStyle = {
   contentStyle: { backgroundColor: '#1e293b', border: '1px solid #475569', borderRadius: '6px' },
   labelStyle: { color: '#e2e8f0' },
+}
+
+// Custom label for MTD charts: only render label every 5 days and on the last actual day
+const renderEvery5DayLabel = (props: any) => {
+  const { x, y, value, index } = props
+  if (value === null || value === undefined) return null
+  // index is 0-based, day is index+1
+  const day = index + 1
+  if (day % 5 !== 0) return null
+  return (
+    <text x={x} y={y - 8} textAnchor="middle" fill="#93c5fd" fontSize={9} fontWeight={500}>
+      {value}
+    </text>
+  )
+}
+
+const renderEvery5DayRateLabel = (props: any) => {
+  const { x, y, value, index } = props
+  if (value === null || value === undefined) return null
+  const day = index + 1
+  if (day % 5 !== 0) return null
+  return (
+    <text x={x} y={y - 8} textAnchor="middle" fill="#fcd34d" fontSize={9} fontWeight={500}>
+      {`${Number(value).toFixed(2)}%`}
+    </text>
+  )
 }
 
 // === MTD Cumulative Cancellation Chart ===
@@ -235,7 +262,9 @@ const MtdCumulativeCancellationChart: React.FC<{
               strokeWidth={2.5}
               name="March 2026 (Actual)"
               connectNulls
-            />
+            >
+              <LabelList dataKey="count2026" content={renderEvery5DayLabel} />
+            </Line>
             {/* Forecast 2026 (dashed) */}
             <Line
               type="monotone"
@@ -462,7 +491,9 @@ const MtdCancellationRateChart: React.FC<{
               strokeWidth={2.5}
               name="March 2026 (Actual)"
               connectNulls
-            />
+            >
+              <LabelList dataKey="rate2026" content={renderEvery5DayRateLabel} />
+            </Line>
             {/* Forecast 2026 (dashed) */}
             <Line
               type="monotone"
@@ -541,7 +572,9 @@ const MonthlyCancellationCountChart: React.FC<{
               activeDot={{ r: 6 }}
               strokeWidth={2}
               name="Cancellations"
-            />
+            >
+              <LabelList dataKey="count" position="top" style={{ fill: '#93c5fd', fontSize: 10, fontWeight: 500 }} />
+            </Line>
           </LineChart>
         </ResponsiveContainer>
       </div>
@@ -629,7 +662,9 @@ const MonthlyCancellationRateChart: React.FC<{
               activeDot={{ r: 6 }}
               strokeWidth={2}
               name="Cancellation Rate"
-            />
+            >
+              <LabelList dataKey="rate" position="top" style={{ fill: '#fcd34d', fontSize: 10, fontWeight: 500 }} formatter={(val: number) => `${val}%`} />
+            </Line>
           </LineChart>
         </ResponsiveContainer>
       </div>
