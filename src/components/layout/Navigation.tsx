@@ -13,6 +13,7 @@ const TABS: { id: TabId; label: string }[] = [
   { id: 'reservations', label: 'Reservations' },
   { id: 'spend', label: 'Spend' },
   { id: 'cancellations', label: 'Cancellations' },
+  { id: 'admin-allocation', label: 'Admin Allocation' },
 ];
 
 const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange }) => {

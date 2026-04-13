@@ -11,6 +11,7 @@ import CategoryView from './components/views/CategoryView'
 import ReservationsView from './components/views/ReservationsView'
 import SpendView from './components/views/SpendView'
 import CancellationsView from './components/views/CancellationsView'
+import AdminAllocationView from './components/views/AdminAllocationView'
 import { useAllocationData } from './hooks/useAllocationData'
 import { getDefaultDateRange } from './utils/dateHelpers'
 import { getMTDData, getDefaultMonth, MonthKey } from './data/monthSelector'
@@ -96,6 +97,12 @@ const App: React.FC = () => {
                     completedPaidRaw2026ByCountry={mtd.completedPaidRaw2026ByCountry}
                     monthlyCancellationTrendsByCountry={monthlyCancellationTrendsByCountry}
                     monthlyCompletedPaidTrendsByCountry={monthlyCompletedPaidTrendsByCountry}
+                    selectedCountry={selectedCountry}
+                    onCountryChange={setSelectedCountry}
+                  />
+                )}
+                {activeTab === 'admin-allocation' && (
+                  <AdminAllocationView
                     selectedCountry={selectedCountry}
                     onCountryChange={setSelectedCountry}
                   />
