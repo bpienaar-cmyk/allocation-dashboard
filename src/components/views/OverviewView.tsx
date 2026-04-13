@@ -373,7 +373,7 @@ function convertToDailyRaw(
 const METRICS: MetricDef[] = [
   { title: 'Completed Jobs', key: 'jobs', fmt: fmtN, type: 'yoy', dailyValue: d => d.jobs },
   { title: 'Total TTV', key: 'ttv', fmt: fmtGBP, type: 'yoy', dailyValue: d => d.ttv },
-  { title: 'Furn Routed %', key: 'furnRoutedPct', fmt: fmtP, type: 'pp', dailyValue: () => 0, isCumRate: true, ukOnly: true },
+  { title: 'Furn Routed %', key: 'furnRoutedPct', fmt: fmtP, type: 'pp', dailyValue: () => 0, isCumRate: true },
   { title: 'AV Fee', key: 'avFee', fmt: fmtGBP, type: 'yoy', dailyValue: d => d.avFee },
   { title: 'Margin %', key: 'marginPct', fmt: fmtP, type: 'pp', dailyValue: () => 0, isCumRate: true },
   { title: 'Allocation Spend', key: 'allocSpend', fmt: fmtGBP, type: 'yoy', invert: true, dailyValue: d => d.allocSpend },
