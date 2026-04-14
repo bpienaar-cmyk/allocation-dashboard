@@ -118,7 +118,7 @@ export interface CountryOverview {
   dailyPY: DailyRaw[];
 }
 
-export type TabId = 'overview' | 'trends' | 'trends-2' | 'category' | 'reservations' | 'spend' | 'cancellations' | 'admin-allocation';
+export type TabId = 'overview' | 'trends' | 'category' | 'reservations' | 'spend' | 'cancellations' | 'admin-allocation';
 
 export interface SpendNutsRow {
   month: string;

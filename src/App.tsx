@@ -7,7 +7,6 @@ import Loading from './components/common/Loading'
 import ErrorDisplay from './components/common/ErrorDisplay'
 import OverviewView from './components/views/OverviewView'
 import TrendsView from './components/views/TrendsView'
-import TrendsView2 from './components/views/TrendsView2'
 import CategoryView from './components/views/CategoryView'
 import ReservationsView from './components/views/ReservationsView'
 import SpendView from './components/views/SpendView'
@@ -60,14 +59,6 @@ const App: React.FC = () => {
                 )}
                 {activeTab === 'trends' && trendsByCountry && (
                   <TrendsView
-                    trendsByCountry={trendsByCountry}
-                    trendsByCategoryAndCountry={trendsByCategoryAndCountry}
-                    selectedCountry={selectedCountry}
-                    onCountryChange={setSelectedCountry}
-                  />
-                )}
-                {activeTab === 'trends-2' && trendsByCountry && (
-                  <TrendsView2
                     trendsByCountry={trendsByCountry}
                     trendsByCategoryAndCountry={trendsByCategoryAndCountry}
                     selectedCountry={selectedCountry}
