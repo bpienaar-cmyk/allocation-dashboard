@@ -55,6 +55,7 @@ const App: React.FC = () => {
                     dailyOverviewByCountry={mtd.dailyOverviewByCountry}
                     furnRoutingByCountry={mtd.furnRoutingByCountry}
                     tpCancelsByCountry={mtd.tpCancelsByCountry}
+                    dataLastUpdated={mtd.dataLastUpdated}
                   />
                 )}
                 {activeTab === 'trends' && trendsByCountry && (

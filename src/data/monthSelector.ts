@@ -101,5 +101,6 @@ export function getMTDData(month: MonthKey): MonthlyMTDData {
 }
 
 export function getDefaultMonth(): MonthKey {
-  return '2026-03';
+  // Default to the latest available month
+  return AVAILABLE_MONTHS[AVAILABLE_MONTHS.length - 1];
 }

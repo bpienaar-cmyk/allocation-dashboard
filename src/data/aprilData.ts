@@ -1,5 +1,5 @@
 /**
- * April 2026 MTD data — queried from Snowflake on 2026-04-01
+ * April 2026 MTD data — queried from Snowflake on 2026-04-15
  * This file contains month-specific data for the April month toggle.
  */
 import {
@@ -12,198 +12,59 @@ import {
   IResReservationRow,
 } from '../types/index';
 
-export const DATA_LAST_UPDATED_APR = '2026-04-01T10:00:00.000000Z';
+export const DATA_LAST_UPDATED_APR = '2026-04-15T12:00:00.000000Z';
 
 /* ── Overview by country ── */
 export const overviewByCountryApr: Record<Country, CountryOverview> = {
   uk: {
-    current: {
-      jobs: 2, ttv: 768.00, avgTtv: 384.00, avFee: 188.40,
-      marginPct: 24.53, allocSpend: 5141.71, spendTtvPct: 669.49,
-      otdCancels: 0, cantSourceCount: 0, cantSourceRate: 0,
-      tpCancels: 0, deallocations: 30, otdDeallocations: 30,
-      otdDealloPct: 1500, otdAllocSpend: 190, noSpendJobs: 0,
-      noSpendPct: 0, otdAllocatedJobs: 0, furnRoutedPct: 0,
-      tpCancelRate: 0,
-    },
-    priorYear: {
-      jobs: 1081, ttv: 270814.66, avgTtv: 250.52, avFee: 114103.31,
-      marginPct: 42.14, allocSpend: 5095.02, spendTtvPct: 1.88,
-      otdCancels: 14, cantSourceCount: 3, cantSourceRate: 0.28,
-      tpCancels: 6, deallocations: 93, otdDeallocations: 93,
-      otdDealloPct: 8.60, otdAllocSpend: 2730, noSpendJobs: 0,
-      noSpendPct: 0, otdAllocatedJobs: 68, furnRoutedPct: 85.98,
-      tpCancelRate: 0.55,
-    },
-    dailyCY: [
-      { day: 1, jobs: 2, ttv: 768.00, avFee: 188.40, allocSpend: 5141.71, cantSource: 0, tpCancels: 0, otdDealloCount: 30, furnRouted: 0, furnTotal: 1 },
-    ],
-    dailyPY: [
-      { day: 1, jobs: 1081, ttv: 270814.66, avFee: 114103.31, allocSpend: 5095.02, cantSource: 3, tpCancels: 6, otdDealloCount: 93, furnRouted: 705, furnTotal: 820 },
-    ],
+    current: {"jobs":12023,"ttv":2950332,"avgTtv":245.39,"avFee":1459077,"marginPct":49.45,"allocSpend":61448,"spendTtvPct":2.08,"otdCancels":0,"cantSourceCount":0,"cantSourceRate":0,"tpCancels":825,"deallocations":825,"otdDeallocations":825,"otdDealloPct":6.86,"otdAllocSpend":0,"noSpendJobs":0,"noSpendPct":0,"otdAllocatedJobs":12023,"furnRoutedPct":0,"tpCancelRate":6.86},
+    priorYear: {"jobs":13091,"ttv":3516727,"avgTtv":268.64,"avFee":1755296,"marginPct":49.91,"allocSpend":85192,"spendTtvPct":2.42,"otdCancels":0,"cantSourceCount":0,"cantSourceRate":0,"tpCancels":0,"deallocations":0,"otdDeallocations":0,"otdDealloPct":0,"otdAllocSpend":0,"noSpendJobs":0,"noSpendPct":0,"otdAllocatedJobs":13091,"furnRoutedPct":0,"tpCancelRate":0},
+    dailyCY: [{"day":1,"jobs":1331,"ttv":372586,"avFee":182367,"allocSpend":8440,"cantSource":0,"tpCancels":110,"otdDealloCount":110,"furnRouted":0,"furnTotal":1062},{"day":2,"jobs":1270,"ttv":334799,"avFee":167094,"allocSpend":6761,"cantSource":0,"tpCancels":87,"otdDealloCount":87,"furnRouted":0,"furnTotal":997},{"day":3,"jobs":840,"ttv":202452,"avFee":108488,"allocSpend":2599,"cantSource":0,"tpCancels":96,"otdDealloCount":96,"furnRouted":0,"furnTotal":699},{"day":4,"jobs":647,"ttv":166717,"avFee":90968,"allocSpend":3657,"cantSource":0,"tpCancels":27,"otdDealloCount":27,"furnRouted":0,"furnTotal":513},{"day":5,"jobs":284,"ttv":69882,"avFee":36116,"allocSpend":683,"cantSource":0,"tpCancels":16,"otdDealloCount":16,"furnRouted":0,"furnTotal":239},{"day":6,"jobs":882,"ttv":151219,"avFee":72453,"allocSpend":3156,"cantSource":0,"tpCancels":53,"otdDealloCount":53,"furnRouted":0,"furnTotal":772},{"day":7,"jobs":948,"ttv":248977,"avFee":118820,"allocSpend":4635,"cantSource":0,"tpCancels":73,"otdDealloCount":73,"furnRouted":0,"furnTotal":706},{"day":8,"jobs":955,"ttv":231295,"avFee":104778,"allocSpend":5557,"cantSource":0,"tpCancels":52,"otdDealloCount":52,"furnRouted":0,"furnTotal":734},{"day":9,"jobs":937,"ttv":234599,"avFee":112976,"allocSpend":4330,"cantSource":0,"tpCancels":63,"otdDealloCount":63,"furnRouted":0,"furnTotal":735},{"day":10,"jobs":961,"ttv":279765,"avFee":141719,"allocSpend":7487,"cantSource":0,"tpCancels":68,"otdDealloCount":68,"furnRouted":0,"furnTotal":718},{"day":11,"jobs":739,"ttv":175464,"avFee":98934,"allocSpend":2466,"cantSource":0,"tpCancels":61,"otdDealloCount":61,"furnRouted":0,"furnTotal":615},{"day":12,"jobs":490,"ttv":95679,"avFee":48606,"allocSpend":1806,"cantSource":0,"tpCancels":35,"otdDealloCount":35,"furnRouted":0,"furnTotal":444},{"day":13,"jobs":992,"ttv":224947,"avFee":102538,"allocSpend":6650,"cantSource":0,"tpCancels":66,"otdDealloCount":66,"furnRouted":0,"furnTotal":762},{"day":14,"jobs":728,"ttv":159691,"avFee":72375,"allocSpend":3223,"cantSource":0,"tpCancels":18,"otdDealloCount":18,"furnRouted":0,"furnTotal":573},{"day":15,"jobs":19,"ttv":2260,"avFee":844,"allocSpend":0,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":15}],
+    dailyPY: [{"day":1,"jobs":1081,"ttv":340520,"avFee":175358,"allocSpend":7032,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":0},{"day":2,"jobs":1058,"ttv":264188,"avFee":127883,"allocSpend":7196,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":0},{"day":3,"jobs":1006,"ttv":242670,"avFee":117625,"allocSpend":6574,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":0},{"day":4,"jobs":1046,"ttv":284455,"avFee":142035,"allocSpend":6768,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":0},{"day":5,"jobs":979,"ttv":296928,"avFee":157167,"allocSpend":5372,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":0},{"day":6,"jobs":557,"ttv":127343,"avFee":64379,"allocSpend":2958,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":0},{"day":7,"jobs":813,"ttv":230046,"avFee":111852,"allocSpend":6126,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":0},{"day":8,"jobs":795,"ttv":194772,"avFee":93152,"allocSpend":5488,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":0},{"day":9,"jobs":870,"ttv":234591,"avFee":115570,"allocSpend":5976,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":0},{"day":10,"jobs":881,"ttv":229742,"avFee":112676,"allocSpend":5820,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":0},{"day":11,"jobs":964,"ttv":284575,"avFee":145541,"allocSpend":6062,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":0},{"day":12,"jobs":809,"ttv":237262,"avFee":124243,"allocSpend":4516,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":0},{"day":13,"jobs":474,"ttv":99699,"avFee":49904,"allocSpend":2428,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":0},{"day":14,"jobs":921,"ttv":240282,"avFee":115842,"allocSpend":6506,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":0},{"day":15,"jobs":837,"ttv":209654,"avFee":102069,"allocSpend":6370,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":0}]
   },
   spain: {
-    current: {
-      jobs: 0, ttv: 0, avgTtv: 0, avFee: 0,
-      marginPct: 0, allocSpend: 2380.74, spendTtvPct: 0,
-      otdCancels: 0, cantSourceCount: 0, cantSourceRate: 0,
-      tpCancels: 0, deallocations: 1, otdDeallocations: 1,
-      otdDealloPct: 0, otdAllocSpend: 0, noSpendJobs: 0,
-      noSpendPct: 0, otdAllocatedJobs: 0, furnRoutedPct: 0,
-      tpCancelRate: 0,
-    },
-    priorYear: {
-      jobs: 34, ttv: 16125.37, avgTtv: 474.28, avFee: 3118.50,
-      marginPct: 19.34, allocSpend: 1172.88, spendTtvPct: 7.27,
-      otdCancels: 1, cantSourceCount: 0, cantSourceRate: 0,
-      tpCancels: 0, deallocations: 2, otdDeallocations: 2,
-      otdDealloPct: 5.88, otdAllocSpend: 163, noSpendJobs: 0,
-      noSpendPct: 0, otdAllocatedJobs: 2, furnRoutedPct: 0,
-      tpCancelRate: 0,
-    },
-    dailyCY: [
-      { day: 1, jobs: 0, ttv: 0, avFee: 0, allocSpend: 2380.74, cantSource: 0, tpCancels: 0, otdDealloCount: 1, furnRouted: 0, furnTotal: 0 },
-    ],
-    dailyPY: [
-      { day: 1, jobs: 34, ttv: 16125.37, avFee: 3118.50, allocSpend: 1172.88, cantSource: 0, tpCancels: 0, otdDealloCount: 2, furnRouted: 0, furnTotal: 0 },
-    ],
+    current: {"jobs":494,"ttv":121968,"avgTtv":246.9,"avFee":56136,"marginPct":46.03,"allocSpend":6253,"spendTtvPct":5.13,"otdCancels":0,"cantSourceCount":0,"cantSourceRate":0,"tpCancels":14,"deallocations":14,"otdDeallocations":14,"otdDealloPct":2.83,"otdAllocSpend":0,"noSpendJobs":0,"noSpendPct":0,"otdAllocatedJobs":494,"furnRoutedPct":0,"tpCancelRate":2.83},
+    priorYear: {"jobs":356,"ttv":82775,"avgTtv":232.51,"avFee":38247,"marginPct":46.21,"allocSpend":3920,"spendTtvPct":4.74,"otdCancels":0,"cantSourceCount":0,"cantSourceRate":0,"tpCancels":0,"deallocations":0,"otdDeallocations":0,"otdDealloPct":0,"otdAllocSpend":0,"noSpendJobs":0,"noSpendPct":0,"otdAllocatedJobs":356,"furnRoutedPct":0,"tpCancelRate":0},
+    dailyCY: [{"day":1,"jobs":84,"ttv":20840,"avFee":9412,"allocSpend":808,"cantSource":0,"tpCancels":4,"otdDealloCount":4,"furnRouted":0,"furnTotal":38},{"day":2,"jobs":36,"ttv":8810,"avFee":4052,"allocSpend":387,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":20},{"day":3,"jobs":18,"ttv":4499,"avFee":2084,"allocSpend":238,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":7},{"day":4,"jobs":24,"ttv":5943,"avFee":2746,"allocSpend":328,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":10},{"day":5,"jobs":9,"ttv":2128,"avFee":991,"allocSpend":140,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":6},{"day":6,"jobs":11,"ttv":2595,"avFee":1208,"allocSpend":160,"cantSource":0,"tpCancels":2,"otdDealloCount":2,"furnRouted":0,"furnTotal":7},{"day":7,"jobs":38,"ttv":9380,"avFee":4335,"allocSpend":496,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":16},{"day":8,"jobs":18,"ttv":4435,"avFee":2050,"allocSpend":252,"cantSource":0,"tpCancels":1,"otdDealloCount":1,"furnRouted":0,"furnTotal":8},{"day":9,"jobs":43,"ttv":10512,"avFee":4866,"allocSpend":536,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":21},{"day":10,"jobs":35,"ttv":8828,"avFee":4072,"allocSpend":480,"cantSource":0,"tpCancels":2,"otdDealloCount":2,"furnRouted":0,"furnTotal":12},{"day":11,"jobs":36,"ttv":8978,"avFee":4146,"allocSpend":508,"cantSource":0,"tpCancels":1,"otdDealloCount":1,"furnRouted":0,"furnTotal":14},{"day":12,"jobs":17,"ttv":4134,"avFee":1919,"allocSpend":236,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":9},{"day":13,"jobs":30,"ttv":7367,"avFee":3411,"allocSpend":408,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":14},{"day":14,"jobs":36,"ttv":8561,"avFee":3980,"allocSpend":504,"cantSource":0,"tpCancels":4,"otdDealloCount":4,"furnRouted":0,"furnTotal":23},{"day":15,"jobs":59,"ttv":14958,"avFee":6863,"allocSpend":772,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":0}],
+    dailyPY: [{"day":1,"jobs":34,"ttv":8142,"avFee":3699,"allocSpend":296,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":0},{"day":2,"jobs":17,"ttv":4068,"avFee":1851,"allocSpend":136,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":0},{"day":3,"jobs":22,"ttv":5134,"avFee":2372,"allocSpend":240,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":0},{"day":4,"jobs":28,"ttv":6609,"avFee":3029,"allocSpend":248,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":0},{"day":5,"jobs":22,"ttv":5118,"avFee":2364,"allocSpend":240,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":0},{"day":6,"jobs":5,"ttv":1179,"avFee":541,"allocSpend":48,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":0},{"day":7,"jobs":13,"ttv":3036,"avFee":1400,"allocSpend":136,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":0},{"day":8,"jobs":18,"ttv":4143,"avFee":1924,"allocSpend":216,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":0},{"day":9,"jobs":19,"ttv":4325,"avFee":2021,"allocSpend":248,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":0},{"day":10,"jobs":37,"ttv":8489,"avFee":3949,"allocSpend":456,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":0},{"day":11,"jobs":34,"ttv":7825,"avFee":3634,"allocSpend":408,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":0},{"day":12,"jobs":26,"ttv":5986,"avFee":2781,"allocSpend":312,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":0},{"day":13,"jobs":10,"ttv":2298,"avFee":1067,"allocSpend":120,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":0},{"day":14,"jobs":27,"ttv":6331,"avFee":2914,"allocSpend":272,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":0},{"day":15,"jobs":44,"ttv":10092,"avFee":4701,"allocSpend":544,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":0}]
   },
   france: {
-    current: {
-      jobs: 0, ttv: 0, avgTtv: 0, avFee: 0,
-      marginPct: 0, allocSpend: 296, spendTtvPct: 0,
-      otdCancels: 0, cantSourceCount: 0, cantSourceRate: 0,
-      tpCancels: 0, deallocations: 1, otdDeallocations: 1,
-      otdDealloPct: 0, otdAllocSpend: 0, noSpendJobs: 0,
-      noSpendPct: 0, otdAllocatedJobs: 0, furnRoutedPct: 0,
-      tpCancelRate: 0,
-    },
-    priorYear: {
-      jobs: 0, ttv: 0, avgTtv: 0, avFee: 0,
-      marginPct: 0, allocSpend: 0, spendTtvPct: 0,
-      otdCancels: 3, cantSourceCount: 0, cantSourceRate: 0,
-      tpCancels: 0, deallocations: 0, otdDeallocations: 0,
-      otdDealloPct: 0, otdAllocSpend: 0, noSpendJobs: 0,
-      noSpendPct: 0, otdAllocatedJobs: 0, furnRoutedPct: 0,
-      tpCancelRate: 0,
-    },
-    dailyCY: [
-      { day: 1, jobs: 0, ttv: 0, avFee: 0, allocSpend: 296, cantSource: 0, tpCancels: 0, otdDealloCount: 1, furnRouted: 0, furnTotal: 0 },
-    ],
-    dailyPY: [
-      { day: 1, jobs: 0, ttv: 0, avFee: 0, allocSpend: 0, cantSource: 0, tpCancels: 0, otdDealloCount: 0, furnRouted: 0, furnTotal: 0 },
-    ],
-  },
+    current: {"jobs":165,"ttv":94903,"avgTtv":575.17,"avFee":31858,"marginPct":33.57,"allocSpend":6052,"spendTtvPct":6.38,"otdCancels":0,"cantSourceCount":0,"cantSourceRate":0,"tpCancels":3,"deallocations":3,"otdDeallocations":3,"otdDealloPct":1.82,"otdAllocSpend":0,"noSpendJobs":0,"noSpendPct":0,"otdAllocatedJobs":165,"furnRoutedPct":0,"tpCancelRate":1.82},
+    priorYear: {"jobs":0,"ttv":0,"avgTtv":0,"avFee":0,"marginPct":0,"allocSpend":0,"spendTtvPct":0,"otdCancels":0,"cantSourceCount":0,"cantSourceRate":0,"tpCancels":0,"deallocations":0,"otdDeallocations":0,"otdDealloPct":0,"otdAllocSpend":0,"noSpendJobs":0,"noSpendPct":0,"otdAllocatedJobs":0,"furnRoutedPct":0,"tpCancelRate":0},
+    dailyCY: [{"day":1,"jobs":17,"ttv":8783,"avFee":2882,"allocSpend":596,"cantSource":0,"tpCancels":1,"otdDealloCount":1,"furnRouted":0,"furnTotal":10},{"day":2,"jobs":11,"ttv":7283,"avFee":2439,"allocSpend":395,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":7},{"day":3,"jobs":16,"ttv":8592,"avFee":2950,"allocSpend":497,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":5},{"day":4,"jobs":17,"ttv":7931,"avFee":2600,"allocSpend":580,"cantSource":0,"tpCancels":1,"otdDealloCount":1,"furnRouted":0,"furnTotal":9},{"day":5,"jobs":5,"ttv":2806,"avFee":917,"allocSpend":146,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":4},{"day":6,"jobs":7,"ttv":3271,"avFee":1064,"allocSpend":204,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":6},{"day":7,"jobs":11,"ttv":7312,"avFee":2455,"allocSpend":498,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":7},{"day":8,"jobs":11,"ttv":7631,"avFee":2619,"allocSpend":492,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":5},{"day":9,"jobs":6,"ttv":3145,"avFee":1045,"allocSpend":204,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":4},{"day":10,"jobs":14,"ttv":8833,"avFee":3015,"allocSpend":548,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":6},{"day":11,"jobs":23,"ttv":11483,"avFee":3824,"allocSpend":739,"cantSource":0,"tpCancels":1,"otdDealloCount":1,"furnRouted":0,"furnTotal":13},{"day":12,"jobs":9,"ttv":5783,"avFee":1958,"allocSpend":368,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":5},{"day":13,"jobs":8,"ttv":6400,"avFee":2199,"allocSpend":419,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":4},{"day":14,"jobs":7,"ttv":4451,"avFee":1505,"allocSpend":269,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":4},{"day":15,"jobs":3,"ttv":1199,"avFee":388,"allocSpend":97,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":2}],
+    dailyPY: [{"day":1,"jobs":0,"ttv":0,"avFee":0,"allocSpend":0,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":0},{"day":2,"jobs":0,"ttv":0,"avFee":0,"allocSpend":0,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":0},{"day":3,"jobs":0,"ttv":0,"avFee":0,"allocSpend":0,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":0},{"day":4,"jobs":0,"ttv":0,"avFee":0,"allocSpend":0,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":0},{"day":5,"jobs":0,"ttv":0,"avFee":0,"allocSpend":0,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":0},{"day":6,"jobs":0,"ttv":0,"avFee":0,"allocSpend":0,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":0},{"day":7,"jobs":0,"ttv":0,"avFee":0,"allocSpend":0,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":0},{"day":8,"jobs":0,"ttv":0,"avFee":0,"allocSpend":0,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":0},{"day":9,"jobs":0,"ttv":0,"avFee":0,"allocSpend":0,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":0},{"day":10,"jobs":0,"ttv":0,"avFee":0,"allocSpend":0,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":0},{"day":11,"jobs":0,"ttv":0,"avFee":0,"allocSpend":0,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":0},{"day":12,"jobs":0,"ttv":0,"avFee":0,"allocSpend":0,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":0},{"day":13,"jobs":0,"ttv":0,"avFee":0,"allocSpend":0,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":0},{"day":14,"jobs":0,"ttv":0,"avFee":0,"allocSpend":0,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":0},{"day":15,"jobs":0,"ttv":0,"avFee":0,"allocSpend":0,"cantSource":0,"tpCancels":0,"otdDealloCount":0,"furnRouted":0,"furnTotal":0}]
+  }
 };
 
-/* ── Daily overview by category (Q11) ── */
+/* ── Daily overview by category (placeholder — not broken down by category in this refresh) ── */
 export const dailyOverviewByCountryApr: Record<string, { cy: DailyOverviewRow[]; py: DailyOverviewRow[] }> = {
-  uk: {
-    cy: [
-      { day: '2026-04-01', category: 'Car', jobs: 1, ttv: 406.00, avFee: 46.00, allocSpend: 2849, otdCancels: 0, tpCancels: 0, cantSourceCount: 0, deallocations: 2, otdDeallocations: 2, noSpendJobs: 0, otdAllocatedJobs: 0 },
-      { day: '2026-04-01', category: 'Furniture', jobs: 1, ttv: 362.00, avFee: 142.40, allocSpend: 1201.72, otdCancels: 0, tpCancels: 0, cantSourceCount: 0, deallocations: 26, otdDeallocations: 25, noSpendJobs: 0, otdAllocatedJobs: 0 },
-      { day: '2026-04-01', category: 'Home Removal', jobs: 0, ttv: 0, avFee: 0, allocSpend: 879.99, otdCancels: 0, tpCancels: 0, cantSourceCount: 0, deallocations: 2, otdDeallocations: 2, noSpendJobs: 0, otdAllocatedJobs: 0 },
-      { day: '2026-04-01', category: 'Motorbike', jobs: 0, ttv: 0, avFee: 0, allocSpend: 83, otdCancels: 0, tpCancels: 0, cantSourceCount: 0, deallocations: 0, otdDeallocations: 0, noSpendJobs: 0, otdAllocatedJobs: 0 },
-      { day: '2026-04-01', category: 'Piano', jobs: 0, ttv: 0, avFee: 0, allocSpend: 128, otdCancels: 0, tpCancels: 0, cantSourceCount: 0, deallocations: 0, otdDeallocations: 0, noSpendJobs: 0, otdAllocatedJobs: 0 },
-    ],
-    py: [
-      { day: '2025-04-01', category: 'Car', jobs: 79, ttv: 25300.00, avFee: 5070.99, allocSpend: 769.60, otdCancels: 4, tpCancels: 0, cantSourceCount: 3, deallocations: 3, otdDeallocations: 3, noSpendJobs: 0, otdAllocatedJobs: 3 },
-      { day: '2025-04-01', category: 'Furniture', jobs: 820, ttv: 132689.35, avFee: 53370.67, allocSpend: 2103.40, otdCancels: 8, tpCancels: 4, cantSourceCount: 0, deallocations: 76, otdDeallocations: 72, noSpendJobs: 0, otdAllocatedJobs: 53 },
-      { day: '2025-04-01', category: 'Home Removal', jobs: 172, ttv: 110597.31, avFee: 54942.65, allocSpend: 2205.02, otdCancels: 2, tpCancels: 2, cantSourceCount: 0, deallocations: 14, otdDeallocations: 12, noSpendJobs: 0, otdAllocatedJobs: 12 },
-      { day: '2025-04-01', category: 'Motorbike', jobs: 7, ttv: 1280.00, avFee: 281.00, allocSpend: 17, otdCancels: 0, tpCancels: 0, cantSourceCount: 0, deallocations: 0, otdDeallocations: 0, noSpendJobs: 0, otdAllocatedJobs: 0 },
-      { day: '2025-04-01', category: 'Piano', jobs: 3, ttv: 948.00, avFee: 438.00, allocSpend: 0, otdCancels: 0, tpCancels: 0, cantSourceCount: 0, deallocations: 0, otdDeallocations: 0, noSpendJobs: 0, otdAllocatedJobs: 0 },
-    ],
-  },
-  spain: {
-    cy: [
-      { day: '2026-04-01', category: 'Furniture', jobs: 0, ttv: 0, avFee: 0, allocSpend: 933.46, otdCancels: 0, tpCancels: 0, cantSourceCount: 0, deallocations: 1, otdDeallocations: 1, noSpendJobs: 0, otdAllocatedJobs: 0 },
-      { day: '2026-04-01', category: 'Home Removal', jobs: 0, ttv: 0, avFee: 0, allocSpend: 1447.28, otdCancels: 0, tpCancels: 0, cantSourceCount: 0, deallocations: 0, otdDeallocations: 0, noSpendJobs: 0, otdAllocatedJobs: 0 },
-    ],
-    py: [
-      { day: '2025-04-01', category: 'Home Removal', jobs: 34, ttv: 16125.37, avFee: 3118.50, allocSpend: 1172.88, otdCancels: 0, tpCancels: 0, cantSourceCount: 0, deallocations: 2, otdDeallocations: 2, noSpendJobs: 0, otdAllocatedJobs: 2 },
-    ],
-  },
-  france: {
-    cy: [
-      { day: '2026-04-01', category: 'Furniture', jobs: 0, ttv: 0, avFee: 0, allocSpend: 148, otdCancels: 0, tpCancels: 0, cantSourceCount: 0, deallocations: 1, otdDeallocations: 1, noSpendJobs: 0, otdAllocatedJobs: 0 },
-      { day: '2026-04-01', category: 'Home Removal', jobs: 0, ttv: 0, avFee: 0, allocSpend: 148, otdCancels: 0, tpCancels: 0, cantSourceCount: 0, deallocations: 0, otdDeallocations: 0, noSpendJobs: 0, otdAllocatedJobs: 0 },
-    ],
-    py: [
-      { day: '2025-04-01', category: 'Furniture', jobs: 0, ttv: 0, avFee: 0, allocSpend: 0, otdCancels: 1, tpCancels: 0, cantSourceCount: 0, deallocations: 0, otdDeallocations: 0, noSpendJobs: 0, otdAllocatedJobs: 0 },
-      { day: '2025-04-01', category: 'Home Removal', jobs: 0, ttv: 0, avFee: 0, allocSpend: 0, otdCancels: 2, tpCancels: 0, cantSourceCount: 0, deallocations: 0, otdDeallocations: 0, noSpendJobs: 0, otdAllocatedJobs: 0 },
-    ],
-  },
+  uk: { cy: [], py: [] },
+  spain: { cy: [], py: [] },
+  france: { cy: [], py: [] },
 };
 
 /* ── Furn routing lookup ── */
 export const furnRoutingByCountryApr: Record<string, Record<string, { routed: number; total: number }>> = {
-  uk: { '2026-04-01|Furniture': { routed: 0, total: 1 } },
-  spain: {
-    '2026-04-01':{routed:18,total:38},'2026-04-02':{routed:11,total:20},'2026-04-03':{routed:1,total:7},
-    '2026-04-04':{routed:4,total:10},'2026-04-05':{routed:6,total:6},'2026-04-06':{routed:5,total:7},
-    '2026-04-07':{routed:12,total:16},'2026-04-08':{routed:1,total:8},'2026-04-09':{routed:17,total:21},
-    '2026-04-10':{routed:2,total:10},'2026-04-11':{routed:9,total:14},'2026-04-12':{routed:6,total:9},
-    '2026-04-13':{routed:2,total:4}
-  },
-  france: {
-    '2026-04-01':{routed:3,total:10},'2026-04-02':{routed:5,total:8},'2026-04-03':{routed:2,total:5},
-    '2026-04-04':{routed:5,total:9},'2026-04-05':{routed:4,total:4},'2026-04-06':{routed:6,total:6},
-    '2026-04-07':{routed:6,total:7},'2026-04-08':{routed:4,total:4},'2026-04-09':{routed:0,total:4},
-    '2026-04-10':{routed:6,total:6},'2026-04-11':{routed:6,total:13},'2026-04-12':{routed:3,total:5},
-    '2026-04-13':{routed:1,total:2}
-  },
+  uk: {'2026-04-01':{routed:0,total:1062},'2026-04-02':{routed:0,total:997},'2026-04-03':{routed:0,total:699},'2026-04-04':{routed:0,total:513},'2026-04-05':{routed:0,total:239},'2026-04-06':{routed:0,total:772},'2026-04-07':{routed:0,total:706},'2026-04-08':{routed:0,total:734},'2026-04-09':{routed:0,total:735},'2026-04-10':{routed:0,total:718},'2026-04-11':{routed:0,total:615},'2026-04-12':{routed:0,total:444},'2026-04-13':{routed:0,total:762},'2026-04-14':{routed:0,total:573},'2026-04-15':{routed:0,total:15}},
+  spain: {'2026-04-01':{routed:0,total:38},'2026-04-02':{routed:0,total:20},'2026-04-03':{routed:0,total:7},'2026-04-04':{routed:0,total:10},'2026-04-05':{routed:0,total:6},'2026-04-06':{routed:0,total:7},'2026-04-07':{routed:0,total:16},'2026-04-08':{routed:0,total:8},'2026-04-09':{routed:0,total:21},'2026-04-10':{routed:0,total:12},'2026-04-11':{routed:0,total:14},'2026-04-12':{routed:0,total:9},'2026-04-13':{routed:0,total:14},'2026-04-14':{routed:0,total:23}},
+  france: {'2026-04-01':{routed:0,total:10},'2026-04-02':{routed:0,total:7},'2026-04-03':{routed:0,total:5},'2026-04-04':{routed:0,total:9},'2026-04-05':{routed:0,total:4},'2026-04-06':{routed:0,total:6},'2026-04-07':{routed:0,total:7},'2026-04-08':{routed:0,total:5},'2026-04-09':{routed:0,total:4},'2026-04-10':{routed:0,total:6},'2026-04-11':{routed:0,total:13},'2026-04-12':{routed:0,total:5},'2026-04-13':{routed:0,total:4},'2026-04-14':{routed:0,total:4},'2026-04-15':{routed:0,total:2}},
 };
 
 /* ── TP cancels lookup ── */
 export const tpCancelsByCountryApr: Record<string, Record<string, number>> = {
-  uk: {},
-  spain: {},
-  france: {},
+  uk: {'2026-04-01':110,'2026-04-02':87,'2026-04-03':96,'2026-04-04':27,'2026-04-05':16,'2026-04-06':53,'2026-04-07':73,'2026-04-08':52,'2026-04-09':63,'2026-04-10':68,'2026-04-11':61,'2026-04-12':35,'2026-04-13':66,'2026-04-14':18},
+  spain: {'2026-04-01':4,'2026-04-02':2,'2026-04-06':2,'2026-04-08':1,'2026-04-10':2,'2026-04-11':1,'2026-04-14':4},
+  france: {'2026-04-01':1,'2026-04-04':1,'2026-04-11':1},
 };
 
-/* ── Spend MTD raw (Q19) — CY day 1, PY empty for now ── */
-export const mtdRaw2026Apr: MtdSpendRawRow[] = [
-  { d: 1, n: 'East Midlands (England)', c: 'Car', s: 355, t: 0 },
-  { d: 1, n: 'East Midlands (England)', c: 'Furniture', s: 27.78, t: 0 },
-  { d: 1, n: 'East of England', c: 'Car', s: 349, t: 0 },
-  { d: 1, n: 'East of England', c: 'Furniture', s: 28.69, t: 0 },
-  { d: 1, n: 'East of England', c: 'Home Removal', s: 26, t: 0 },
-  { d: 1, n: 'East of England', c: 'Piano', s: 36, t: 0 },
-  { d: 1, n: 'London', c: 'Car', s: 184, t: 0 },
-  { d: 1, n: 'London', c: 'Furniture', s: 226.6, t: 0 },
-  { d: 1, n: 'London', c: 'Motorbike', s: 33, t: 0 },
-  { d: 1, n: 'North East (England)', c: 'Car', s: 74, t: 0 },
-  { d: 1, n: 'North East (England)', c: 'Furniture', s: 25, t: 0 },
-  { d: 1, n: 'North West (England)', c: 'Car', s: 392, t: 406 },
-  { d: 1, n: 'North West (England)', c: 'Furniture', s: 142.29, t: 362 },
-  { d: 1, n: 'Northern Ireland', c: 'Furniture', s: 19, t: 0 },
-  { d: 1, n: 'Northern Ireland', c: 'Home Removal', s: 151, t: 0 },
-  { d: 1, n: 'Scotland', c: 'Car', s: 206, t: 0 },
-  { d: 1, n: 'Scotland', c: 'Furniture', s: 79.99, t: 0 },
-  { d: 1, n: 'Scotland', c: 'Home Removal', s: 332.99, t: 0 },
-  { d: 1, n: 'Scotland', c: 'Motorbike', s: 50, t: 0 },
-  { d: 1, n: 'Scotland', c: 'Piano', s: 48, t: 0 },
-  { d: 1, n: 'South East (England)', c: 'Car', s: 719, t: 0 },
-  { d: 1, n: 'South East (England)', c: 'Furniture', s: 315.4, t: 0 },
-  { d: 1, n: 'South West (England)', c: 'Car', s: 335, t: 0 },
-  { d: 1, n: 'South West (England)', c: 'Furniture', s: 190.73, t: 0 },
-  { d: 1, n: 'South West (England)', c: 'Home Removal', s: 289, t: 0 },
-  { d: 1, n: 'South West (England)', c: 'Piano', s: 44, t: 0 },
-  { d: 1, n: 'Wales', c: 'Car', s: 161, t: 0 },
-  { d: 1, n: 'Wales', c: 'Furniture', s: 36, t: 0 },
-  { d: 1, n: 'West Midlands (England)', c: 'Car', s: 74, t: 0 },
-  { d: 1, n: 'West Midlands (England)', c: 'Furniture', s: 95.24, t: 0 },
-  { d: 1, n: 'Yorkshire and The Humber', c: 'Furniture', s: 15, t: 0 },
-  { d: 1, n: 'Yorkshire and The Humber', c: 'Home Removal', s: 81, t: 0 },
-];
-
+/* ── Spend MTD raw ── */
+export const mtdRaw2026Apr: MtdSpendRawRow[] = [];
 export const mtdRaw2025Apr: MtdSpendRawRow[] = [];
 
-/* ── Cancellation & completed paid raw — populated on next refresh ── */
+/* ── Cancellation & completed paid raw ── */
 export const cancellationRaw2025ByCountryApr: Record<string, (CancellationRawRow | CompletedPaidRawRow)[]> = { uk: [], spain: [], france: [] };
 export const cancellationRaw2026ByCountryApr: Record<string, (CancellationRawRow | CompletedPaidRawRow)[]> = { uk: [], spain: [], france: [] };
 export const completedPaidRaw2025ByCountryApr: Record<string, (CancellationRawRow | CompletedPaidRawRow)[]> = { uk: [], spain: [], france: [] };
 export const completedPaidRaw2026ByCountryApr: Record<string, (CancellationRawRow | CompletedPaidRawRow)[]> = { uk: [], spain: [], france: [] };
 
-/* ── iRes reservation data — populated on next refresh ── */
-export const iresReservationDataApr: IResReservationRow[] = [];
+export const iresReservationDataApr: IResReservationRow[] = [{"day":"2026-04-01","nutsRegion":"All","status":"av_cancelled","resType":"All","people":0,"count":13},{"day":"2026-04-01","nutsRegion":"All","status":"av_cancelled_after_association","resType":"All","people":0,"count":2},{"day":"2026-04-01","nutsRegion":"All","status":"draft","resType":"All","people":0,"count":5},{"day":"2026-04-01","nutsRegion":"All","status":"journey_associated","resType":"All","people":0,"count":96},{"day":"2026-04-01","nutsRegion":"All","status":"no_match","resType":"All","people":0,"count":2},{"day":"2026-04-01","nutsRegion":"All","status":"superseded","resType":"All","people":0,"count":3},{"day":"2026-04-01","nutsRegion":"All","status":"timed_out","resType":"All","people":0,"count":3},{"day":"2026-04-01","nutsRegion":"All","status":"tp_cancelled","resType":"All","people":0,"count":13},{"day":"2026-04-01","nutsRegion":"All","status":"tp_cancelled_after_association","resType":"All","people":0,"count":1},{"day":"2026-04-01","nutsRegion":"All","status":"tp_withdrawn","resType":"All","people":0,"count":23},{"day":"2026-04-01","nutsRegion":"All","status":"unsuccessful","resType":"All","people":0,"count":28},{"day":"2026-04-02","nutsRegion":"All","status":"av_cancelled","resType":"All","people":0,"count":9},{"day":"2026-04-02","nutsRegion":"All","status":"av_cancelled_after_association","resType":"All","people":0,"count":1},{"day":"2026-04-02","nutsRegion":"All","status":"av_withdrawn","resType":"All","people":0,"count":1},{"day":"2026-04-02","nutsRegion":"All","status":"draft","resType":"All","people":0,"count":5},{"day":"2026-04-02","nutsRegion":"All","status":"journey_associated","resType":"All","people":0,"count":105},{"day":"2026-04-02","nutsRegion":"All","status":"no_match","resType":"All","people":0,"count":6},{"day":"2026-04-02","nutsRegion":"All","status":"superseded","resType":"All","people":0,"count":9},{"day":"2026-04-02","nutsRegion":"All","status":"timed_out","resType":"All","people":0,"count":5},{"day":"2026-04-02","nutsRegion":"All","status":"tp_cancelled","resType":"All","people":0,"count":12},{"day":"2026-04-02","nutsRegion":"All","status":"tp_rejected","resType":"All","people":0,"count":1},{"day":"2026-04-02","nutsRegion":"All","status":"tp_withdrawn","resType":"All","people":0,"count":26},{"day":"2026-04-02","nutsRegion":"All","status":"unsuccessful","resType":"All","people":0,"count":21},{"day":"2026-04-03","nutsRegion":"All","status":"av_cancelled","resType":"All","people":0,"count":4},{"day":"2026-04-03","nutsRegion":"All","status":"av_cancelled_after_association","resType":"All","people":0,"count":1},{"day":"2026-04-03","nutsRegion":"All","status":"draft","resType":"All","people":0,"count":10},{"day":"2026-04-03","nutsRegion":"All","status":"journey_associated","resType":"All","people":0,"count":67},{"day":"2026-04-03","nutsRegion":"All","status":"no_match","resType":"All","people":0,"count":6},{"day":"2026-04-03","nutsRegion":"All","status":"superseded","resType":"All","people":0,"count":5},{"day":"2026-04-03","nutsRegion":"All","status":"tp_cancelled","resType":"All","people":0,"count":8},{"day":"2026-04-03","nutsRegion":"All","status":"tp_withdrawn","resType":"All","people":0,"count":24},{"day":"2026-04-03","nutsRegion":"All","status":"unsuccessful","resType":"All","people":0,"count":90},{"day":"2026-04-04","nutsRegion":"All","status":"av_cancelled","resType":"All","people":0,"count":6},{"day":"2026-04-04","nutsRegion":"All","status":"draft","resType":"All","people":0,"count":9},{"day":"2026-04-04","nutsRegion":"All","status":"journey_associated","resType":"All","people":0,"count":56},{"day":"2026-04-04","nutsRegion":"All","status":"no_match","resType":"All","people":0,"count":1},{"day":"2026-04-04","nutsRegion":"All","status":"superseded","resType":"All","people":0,"count":3},{"day":"2026-04-04","nutsRegion":"All","status":"timed_out","resType":"All","people":0,"count":2},{"day":"2026-04-04","nutsRegion":"All","status":"tp_cancelled","resType":"All","people":0,"count":7},{"day":"2026-04-04","nutsRegion":"All","status":"tp_withdrawn","resType":"All","people":0,"count":21},{"day":"2026-04-04","nutsRegion":"All","status":"unsuccessful","resType":"All","people":0,"count":102},{"day":"2026-04-05","nutsRegion":"All","status":"av_cancelled","resType":"All","people":0,"count":5},{"day":"2026-04-05","nutsRegion":"All","status":"draft","resType":"All","people":0,"count":10},{"day":"2026-04-05","nutsRegion":"All","status":"journey_associated","resType":"All","people":0,"count":34},{"day":"2026-04-05","nutsRegion":"All","status":"no_match","resType":"All","people":0,"count":1},{"day":"2026-04-05","nutsRegion":"All","status":"superseded","resType":"All","people":0,"count":2},{"day":"2026-04-05","nutsRegion":"All","status":"tp_cancelled","resType":"All","people":0,"count":5},{"day":"2026-04-05","nutsRegion":"All","status":"tp_withdrawn","resType":"All","people":0,"count":23},{"day":"2026-04-05","nutsRegion":"All","status":"unsuccessful","resType":"All","people":0,"count":100},{"day":"2026-04-06","nutsRegion":"All","status":"av_cancelled","resType":"All","people":0,"count":2},{"day":"2026-04-06","nutsRegion":"All","status":"av_withdrawn","resType":"All","people":0,"count":1},{"day":"2026-04-06","nutsRegion":"All","status":"draft","resType":"All","people":0,"count":10},{"day":"2026-04-06","nutsRegion":"All","status":"journey_associated","resType":"All","people":0,"count":77},{"day":"2026-04-06","nutsRegion":"All","status":"no_match","resType":"All","people":0,"count":3},{"day":"2026-04-06","nutsRegion":"All","status":"superseded","resType":"All","people":0,"count":4},{"day":"2026-04-06","nutsRegion":"All","status":"tp_withdrawn","resType":"All","people":0,"count":22},{"day":"2026-04-06","nutsRegion":"All","status":"unsuccessful","resType":"All","people":0,"count":62},{"day":"2026-04-07","nutsRegion":"All","status":"av_cancelled","resType":"All","people":0,"count":10},{"day":"2026-04-07","nutsRegion":"All","status":"draft","resType":"All","people":0,"count":7},{"day":"2026-04-07","nutsRegion":"All","status":"journey_associated","resType":"All","people":0,"count":56},{"day":"2026-04-07","nutsRegion":"All","status":"no_match","resType":"All","people":0,"count":2},{"day":"2026-04-07","nutsRegion":"All","status":"superseded","resType":"All","people":0,"count":3},{"day":"2026-04-07","nutsRegion":"All","status":"timed_out","resType":"All","people":0,"count":1},{"day":"2026-04-07","nutsRegion":"All","status":"tp_cancelled","resType":"All","people":0,"count":7},{"day":"2026-04-07","nutsRegion":"All","status":"tp_withdrawn","resType":"All","people":0,"count":16},{"day":"2026-04-07","nutsRegion":"All","status":"unsuccessful","resType":"All","people":0,"count":72},{"day":"2026-04-08","nutsRegion":"All","status":"av_cancelled","resType":"All","people":0,"count":7},{"day":"2026-04-08","nutsRegion":"All","status":"av_withdrawn","resType":"All","people":0,"count":1},{"day":"2026-04-08","nutsRegion":"All","status":"draft","resType":"All","people":0,"count":11},{"day":"2026-04-08","nutsRegion":"All","status":"journey_associated","resType":"All","people":0,"count":53},{"day":"2026-04-08","nutsRegion":"All","status":"superseded","resType":"All","people":0,"count":2},{"day":"2026-04-08","nutsRegion":"All","status":"tp_cancelled","resType":"All","people":0,"count":4},{"day":"2026-04-08","nutsRegion":"All","status":"tp_withdrawn","resType":"All","people":0,"count":21},{"day":"2026-04-08","nutsRegion":"All","status":"unsuccessful","resType":"All","people":0,"count":87},{"day":"2026-04-09","nutsRegion":"All","status":"av_cancelled","resType":"All","people":0,"count":5},{"day":"2026-04-09","nutsRegion":"All","status":"draft","resType":"All","people":0,"count":14},{"day":"2026-04-09","nutsRegion":"All","status":"journey_associated","resType":"All","people":0,"count":61},{"day":"2026-04-09","nutsRegion":"All","status":"no_match","resType":"All","people":0,"count":2},{"day":"2026-04-09","nutsRegion":"All","status":"superseded","resType":"All","people":0,"count":5},{"day":"2026-04-09","nutsRegion":"All","status":"timed_out","resType":"All","people":0,"count":2},{"day":"2026-04-09","nutsRegion":"All","status":"tp_cancelled","resType":"All","people":0,"count":6},{"day":"2026-04-09","nutsRegion":"All","status":"tp_withdrawn","resType":"All","people":0,"count":21},{"day":"2026-04-09","nutsRegion":"All","status":"unsuccessful","resType":"All","people":0,"count":81},{"day":"2026-04-10","nutsRegion":"All","status":"av_cancelled","resType":"All","people":0,"count":9},{"day":"2026-04-10","nutsRegion":"All","status":"draft","resType":"All","people":0,"count":12},{"day":"2026-04-10","nutsRegion":"All","status":"journey_associated","resType":"All","people":0,"count":64},{"day":"2026-04-10","nutsRegion":"All","status":"no_match","resType":"All","people":0,"count":1},{"day":"2026-04-10","nutsRegion":"All","status":"superseded","resType":"All","people":0,"count":1},{"day":"2026-04-10","nutsRegion":"All","status":"timed_out","resType":"All","people":0,"count":1},{"day":"2026-04-10","nutsRegion":"All","status":"tp_cancelled","resType":"All","people":0,"count":4},{"day":"2026-04-10","nutsRegion":"All","status":"tp_withdrawn","resType":"All","people":0,"count":27},{"day":"2026-04-10","nutsRegion":"All","status":"unsuccessful","resType":"All","people":0,"count":56},{"day":"2026-04-11","nutsRegion":"All","status":"av_cancelled","resType":"All","people":0,"count":3},{"day":"2026-04-11","nutsRegion":"All","status":"draft","resType":"All","people":0,"count":10},{"day":"2026-04-11","nutsRegion":"All","status":"journey_associated","resType":"All","people":0,"count":44},{"day":"2026-04-11","nutsRegion":"All","status":"no_match","resType":"All","people":0,"count":1},{"day":"2026-04-11","nutsRegion":"All","status":"superseded","resType":"All","people":0,"count":3},{"day":"2026-04-11","nutsRegion":"All","status":"timed_out","resType":"All","people":0,"count":1},{"day":"2026-04-11","nutsRegion":"All","status":"tp_cancelled","resType":"All","people":0,"count":1},{"day":"2026-04-11","nutsRegion":"All","status":"tp_rejected","resType":"All","people":0,"count":1},{"day":"2026-04-11","nutsRegion":"All","status":"tp_withdrawn","resType":"All","people":0,"count":26},{"day":"2026-04-11","nutsRegion":"All","status":"unsuccessful","resType":"All","people":0,"count":94},{"day":"2026-04-12","nutsRegion":"All","status":"av_cancelled","resType":"All","people":0,"count":3},{"day":"2026-04-12","nutsRegion":"All","status":"draft","resType":"All","people":0,"count":8},{"day":"2026-04-12","nutsRegion":"All","status":"journey_associated","resType":"All","people":0,"count":34},{"day":"2026-04-12","nutsRegion":"All","status":"no_match","resType":"All","people":0,"count":1},{"day":"2026-04-12","nutsRegion":"All","status":"superseded","resType":"All","people":0,"count":6},{"day":"2026-04-12","nutsRegion":"All","status":"timed_out","resType":"All","people":0,"count":3},{"day":"2026-04-12","nutsRegion":"All","status":"tp_cancelled","resType":"All","people":0,"count":1},{"day":"2026-04-12","nutsRegion":"All","status":"tp_rejected","resType":"All","people":0,"count":1},{"day":"2026-04-12","nutsRegion":"All","status":"tp_withdrawn","resType":"All","people":0,"count":16},{"day":"2026-04-12","nutsRegion":"All","status":"unsuccessful","resType":"All","people":0,"count":77},{"day":"2026-04-13","nutsRegion":"All","status":"av_cancelled","resType":"All","people":0,"count":6},{"day":"2026-04-13","nutsRegion":"All","status":"av_cancelled_after_association","resType":"All","people":0,"count":1},{"day":"2026-04-13","nutsRegion":"All","status":"draft","resType":"All","people":0,"count":10},{"day":"2026-04-13","nutsRegion":"All","status":"journey_associated","resType":"All","people":0,"count":69},{"day":"2026-04-13","nutsRegion":"All","status":"no_match","resType":"All","people":0,"count":1},{"day":"2026-04-13","nutsRegion":"All","status":"timed_out","resType":"All","people":0,"count":1},{"day":"2026-04-13","nutsRegion":"All","status":"tp_cancelled","resType":"All","people":0,"count":7},{"day":"2026-04-13","nutsRegion":"All","status":"tp_withdrawn","resType":"All","people":0,"count":14},{"day":"2026-04-13","nutsRegion":"All","status":"unsuccessful","resType":"All","people":0,"count":42},{"day":"2026-04-14","nutsRegion":"All","status":"av_cancelled","resType":"All","people":0,"count":3},{"day":"2026-04-14","nutsRegion":"All","status":"draft","resType":"All","people":0,"count":10},{"day":"2026-04-14","nutsRegion":"All","status":"journey_associated","resType":"All","people":0,"count":47},{"day":"2026-04-14","nutsRegion":"All","status":"no_match","resType":"All","people":0,"count":3},{"day":"2026-04-14","nutsRegion":"All","status":"superseded","resType":"All","people":0,"count":5},{"day":"2026-04-14","nutsRegion":"All","status":"timed_out","resType":"All","people":0,"count":1},{"day":"2026-04-14","nutsRegion":"All","status":"tp_cancelled","resType":"All","people":0,"count":4},{"day":"2026-04-14","nutsRegion":"All","status":"tp_withdrawn","resType":"All","people":0,"count":13},{"day":"2026-04-14","nutsRegion":"All","status":"unsuccessful","resType":"All","people":0,"count":90},{"day":"2026-04-15","nutsRegion":"All","status":"accepted","resType":"All","people":0,"count":2},{"day":"2026-04-15","nutsRegion":"All","status":"av_cancelled","resType":"All","people":0,"count":2},{"day":"2026-04-15","nutsRegion":"All","status":"av_withdrawn","resType":"All","people":0,"count":1},{"day":"2026-04-15","nutsRegion":"All","status":"draft","resType":"All","people":0,"count":9},{"day":"2026-04-15","nutsRegion":"All","status":"journey_associated","resType":"All","people":0,"count":58},{"day":"2026-04-15","nutsRegion":"All","status":"superseded","resType":"All","people":0,"count":4},{"day":"2026-04-15","nutsRegion":"All","status":"timed_out","resType":"All","people":0,"count":3},{"day":"2026-04-15","nutsRegion":"All","status":"tp_cancelled","resType":"All","people":0,"count":2},{"day":"2026-04-15","nutsRegion":"All","status":"tp_withdrawn","resType":"All","people":0,"count":21},{"day":"2026-04-15","nutsRegion":"All","status":"unsuccessful","resType":"All","people":0,"count":88}];

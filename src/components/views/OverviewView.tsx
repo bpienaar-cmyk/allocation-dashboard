@@ -2,7 +2,6 @@ import React, { useState, useMemo } from 'react'
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import { Country, CountryOverview, DailyRaw, DailyOverviewRow, OverviewData } from '../../types'
 import { fmtGBP, fmtN, fmtP } from '../../utils/formatting'
-import { DATA_LAST_UPDATED } from '../../data/dashboardData'
 
 const COUNTRY_LABELS: Record<Country, string> = {
   uk: 'UK (V4 + AVB)',
@@ -36,6 +35,7 @@ interface OverviewViewProps {
   dailyOverviewByCountry?: Record<string, { cy: DailyOverviewRow[], py: DailyOverviewRow[] }> | null
   furnRoutingByCountry?: Record<string, Record<string, { routed: number; total: number }>> | null
   tpCancelsByCountry?: Record<string, Record<string, number>> | null
+  dataLastUpdated?: string
 }
 
 function yoyChange(current: number, prior: number): { trend: 'up' | 'down' | 'flat'; label: string } {
@@ -68,11 +68,12 @@ interface ComparisonCardProps {
   onClick?: () => void
   absoluteCount?: number
   priorAbsoluteCount?: number
+  pyLabel?: string
 }
 
 const ComparisonCard: React.FC<ComparisonCardProps> = ({
   title, currentValue, priorValue, trend, changeLabel, invertColor = false, selected = false, onClick,
-  absoluteCount, priorAbsoluteCount,
+  absoluteCount, priorAbsoluteCount, pyLabel = "Mar '25",
 }) => {
   const color = trend === 'flat'
     ? 'text-slate-400'
@@ -91,7 +92,7 @@ const ComparisonCard: React.FC<ComparisonCardProps> = ({
       <p className="text-slate-400 text-xs font-medium uppercase tracking-wide mb-3">{title}</p>
       <h3 className="text-2xl font-bold text-white">{currentValue}</h3>
       <div className="mt-3 flex items-center justify-between">
-        <span className="text-xs text-slate-500">Mar '25: {priorValue}</span>
+        <span className="text-xs text-slate-500">{pyLabel}: {priorValue}</span>
         <span className={`text-xs font-semibold ${color}`}>
           {trend === 'up' ? '▲' : trend === 'down' ? '▼' : '—'} {changeLabel}
         </span>
@@ -164,7 +165,7 @@ function buildChartData(
 
     result.push({
       day,
-      dayLabel: `Mar ${day}`,
+      dayLabel: `${day}`,
       cy: Math.round(cyVal * 100) / 100,
       py: Math.round(pyVal * 100) / 100,
     })
@@ -383,6 +384,8 @@ const METRICS: MetricDef[] = [
   { title: 'TP Cancel Rate', key: 'tpCancelRate', fmt: fmtP, type: 'pp', invert: true, dailyValue: () => 0, isCumRate: true },
 ]
 
+const MONTH_NAMES_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
 const OverviewView: React.FC<OverviewViewProps> = ({
   overviewByCountry,
   selectedCountry,
@@ -390,17 +393,48 @@ const OverviewView: React.FC<OverviewViewProps> = ({
   dailyOverviewByCountry,
   furnRoutingByCountry,
   tpCancelsByCountry,
+  dataLastUpdated,
 }) => {
   const [selectedMetric, setSelectedMetric] = useState<MetricKey | null>(null)
+
+  // Derive date range from the SELECTED MONTH's dataLastUpdated (not global)
+  const monthDate = useMemo(() => {
+    const d = dataLastUpdated ? new Date(dataLastUpdated) : new Date()
+    return {
+      year: d.getUTCFullYear(),
+      month: d.getUTCMonth(), // 0-indexed
+      day: d.getUTCDate(),
+    }
+  }, [dataLastUpdated])
+
   const [dateRange, setDateRange] = useState(() => {
-    // Derive date range from DATA_LAST_UPDATED so it auto-adjusts on each refresh
-    const updated = new Date(DATA_LAST_UPDATED)
-    const year = updated.getUTCFullYear()
-    const month = String(updated.getUTCMonth() + 1).padStart(2, '0')
-    const day = String(updated.getUTCDate()).padStart(2, '0')
+    const d = dataLastUpdated ? new Date(dataLastUpdated) : new Date()
+    const year = d.getUTCFullYear()
+    const month = String(d.getUTCMonth() + 1).padStart(2, '0')
+    const day = String(d.getUTCDate()).padStart(2, '0')
     return { start: `${year}-${month}-01`, end: `${year}-${month}-${day}` }
   })
+
+  // Reset date range when dataLastUpdated changes (month toggle)
+  useMemo(() => {
+    if (dataLastUpdated) {
+      const d = new Date(dataLastUpdated)
+      const year = d.getUTCFullYear()
+      const month = String(d.getUTCMonth() + 1).padStart(2, '0')
+      const day = String(d.getUTCDate()).padStart(2, '0')
+      setDateRange({ start: `${year}-${month}-01`, end: `${year}-${month}-${day}` })
+    }
+  }, [dataLastUpdated])
+
   const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>('All')
+
+  // Dynamic month labels derived from dataLastUpdated
+  const cyMonthShort = MONTH_NAMES_SHORT[monthDate.month]
+  const cyYear = monthDate.year
+  const pyYear = cyYear - 1
+  const cyLabel = `${cyMonthShort} ${cyYear}`
+  const pyLabel = `${cyMonthShort} ${pyYear}`
+  const pyLabelShort = `${cyMonthShort} '${String(pyYear).slice(2)}`
 
   const countryData = overviewByCountry[selectedCountry]
   const countries: Country[] = ['uk', 'spain', 'france']
@@ -434,7 +468,7 @@ const OverviewView: React.FC<OverviewViewProps> = ({
     // Use daily data for all countries if available
     if (countryDailyData && countryDailyData.cy && countryDailyData.cy.length > 0) {
       const cyCY = convertToDailyRaw(countryDailyData.cy, dateRange.start, dateRange.end, selectedCategory === 'All' ? undefined : selectedCategory, cyRouting, cyTpCancels)
-      const cyPY = convertToDailyRaw(countryDailyData.py, dateRange.start.replace('2026', '2025'), dateRange.end.replace('2026', '2025'), selectedCategory === 'All' ? undefined : selectedCategory, pyRouting, pyTpCancels)
+      const cyPY = convertToDailyRaw(countryDailyData.py, dateRange.start.replace(String(cyYear), String(pyYear)), dateRange.end.replace(String(cyYear), String(pyYear)), selectedCategory === 'All' ? undefined : selectedCategory, pyRouting, pyTpCancels)
       return buildChartData(cyCY, cyPY, metric)
     }
     return buildChartData(countryData.dailyCY, countryData.dailyPY, metric)
@@ -448,7 +482,7 @@ const OverviewView: React.FC<OverviewViewProps> = ({
     // Use daily data for all countries if available
     if (countryDailyData && countryDailyData.cy && countryDailyData.cy.length > 0) {
       const cyCY = convertToDailyRaw(countryDailyData.cy, dateRange.start, dateRange.end, selectedCategory === 'All' ? undefined : selectedCategory, cyRouting, cyTpCancels)
-      const cyPY = convertToDailyRaw(countryDailyData.py, dateRange.start.replace('2026', '2025'), dateRange.end.replace('2026', '2025'), selectedCategory === 'All' ? undefined : selectedCategory, pyRouting, pyTpCancels)
+      const cyPY = convertToDailyRaw(countryDailyData.py, dateRange.start.replace(String(cyYear), String(pyYear)), dateRange.end.replace(String(cyYear), String(pyYear)), selectedCategory === 'All' ? undefined : selectedCategory, pyRouting, pyTpCancels)
       return buildDailyBarData(cyCY, cyPY, metric)
     }
     return buildDailyBarData(countryData.dailyCY, countryData.dailyPY, metric)
@@ -463,10 +497,14 @@ const OverviewView: React.FC<OverviewViewProps> = ({
   }
 
   // Determine display header
-  const isFullMonth = dateRange.start === '2026-03-01' && dateRange.end >= '2026-03-16'
+  const monthName = new Date(dateRange.start + 'T00:00:00').toLocaleString('en-GB', { month: 'long' })
+  const headerYear = dateRange.start.substring(0, 4)
+  const startDay = parseInt(dateRange.start.split('-')[2], 10)
+  const endDay = parseInt(dateRange.end.split('-')[2], 10)
+  const isFullMonth = startDay === 1 && endDay >= 16
   const headerText = isFullMonth
-    ? 'MTD March 2026'
-    : `${parseInt(dateRange.start.split('-')[2], 10)}-${parseInt(dateRange.end.split('-')[2], 10)} Mar 2026`
+    ? `MTD ${monthName} ${headerYear}`
+    : `${startDay}-${endDay} ${monthName} ${headerYear}`
 
   const categoryOptions: CategoryFilter[] = ['All', 'Furniture', 'Home Removal', 'Car', 'Motorbike', 'Piano']
 
@@ -583,6 +621,7 @@ const OverviewView: React.FC<OverviewViewProps> = ({
               onClick={() => setSelectedMetric(selectedMetric === m.key ? null : m.key)}
               absoluteCount={absoluteCount}
               priorAbsoluteCount={priorAbsoluteCount}
+              pyLabel={pyLabelShort}
             />
           )
         })}
@@ -631,7 +670,7 @@ const OverviewView: React.FC<OverviewViewProps> = ({
                 }}
                 formatter={(value, name) => [
                   formatTooltipValue(Number(value)),
-                  name === 'cy' ? 'Mar 2026' : 'Mar 2025',
+                  name === 'cy' ? cyLabel : pyLabel,
                 ]}
                 labelFormatter={(label) => label}
               />
@@ -693,9 +732,9 @@ const OverviewView: React.FC<OverviewViewProps> = ({
                 }}
                 formatter={(value, name) => [
                   formatTooltipValue(Number(value)),
-                  name === 'cy' ? 'Mar 2026' : 'Mar 2025',
+                  name === 'cy' ? cyLabel : pyLabel,
                 ]}
-                labelFormatter={(label) => `Mar ${label}`}
+                labelFormatter={(label) => `${cyMonthShort} ${label}`}
               />
               <Legend
                 formatter={(value) => (value === 'cy' ? 'Mar 2026' : 'Mar 2025')}
