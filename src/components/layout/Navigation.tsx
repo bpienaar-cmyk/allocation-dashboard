@@ -12,6 +12,7 @@ const TABS: { id: TabId; label: string }[] = [
   { id: 'category', label: 'Bookings' },
   { id: 'reservations', label: 'Reservations' },
   { id: 'spend', label: 'Spend' },
+  { id: 'other-spend', label: 'Other Spend' },
   { id: 'cancellations', label: 'Cancellations' },
   { id: 'admin-allocation', label: 'Admin Allocation' },
 ];

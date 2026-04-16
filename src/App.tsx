@@ -12,6 +12,8 @@ import ReservationsView from './components/views/ReservationsView'
 import SpendView from './components/views/SpendView'
 import CancellationsView from './components/views/CancellationsView'
 import AdminAllocationView from './components/views/AdminAllocationView'
+import OtherSpendView from './components/views/OtherSpendView'
+import { otherSpendDetailByCountry, otherSpendAgentByCountry, otherSpendReasonByCountry, otherSpendTrendByCountry } from './data/otherSpendData'
 import { useAllocationData } from './hooks/useAllocationData'
 import { getDefaultDateRange } from './utils/dateHelpers'
 import { getMTDData, getDefaultMonth, MonthKey } from './data/monthSelector'
@@ -86,6 +88,16 @@ const App: React.FC = () => {
                     agentSpendByCountry={agentSpendByCountry}
                     mtdRaw2025={mtd.mtdRaw2025}
                     mtdRaw2026={mtd.mtdRaw2026}
+                    selectedCountry={selectedCountry}
+                    onCountryChange={setSelectedCountry}
+                  />
+                )}
+                {activeTab === 'other-spend' && (
+                  <OtherSpendView
+                    detailByCountry={otherSpendDetailByCountry}
+                    agentByCountry={otherSpendAgentByCountry}
+                    reasonByCountry={otherSpendReasonByCountry}
+                    trendByCountry={otherSpendTrendByCountry}
                     selectedCountry={selectedCountry}
                     onCountryChange={setSelectedCountry}
                   />

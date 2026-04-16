@@ -118,7 +118,37 @@ export interface CountryOverview {
   dailyPY: DailyRaw[];
 }
 
-export type TabId = 'overview' | 'trends' | 'category' | 'reservations' | 'spend' | 'cancellations' | 'admin-allocation';
+export type TabId = 'overview' | 'trends' | 'category' | 'reservations' | 'spend' | 'other-spend' | 'cancellations' | 'admin-allocation';
+
+export interface OtherSpendDetailRow {
+  country: string;
+  listingId: number;
+  spendDate: string;
+  reason: string;
+  amount: number;
+  agentName: string;
+}
+
+export interface OtherSpendAgentRow {
+  country: string;
+  agentName: string;
+  totalSpend: number;
+  jobCount: number;
+}
+
+export interface OtherSpendReasonRow {
+  country: string;
+  reason: string;
+  totalSpend: number;
+  jobCount: number;
+}
+
+export interface OtherSpendTrendRow {
+  country: string;
+  month: string;
+  totalSpend: number;
+  jobCount: number;
+}
 
 export interface SpendNutsRow {
   month: string;
