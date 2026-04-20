@@ -71,7 +71,9 @@ const TrendsView: React.FC<TrendsViewProps> = ({ trendsByCountry, trendsByCatego
 
   // Aggregate admin alloc D1+OTD totals by month (UK only; other countries get empty map).
   // adminAllocData is keyed by YYYY-MM; TrendPoint uses YYYY-MM-01. Normalise to the latter.
-  const adminAllocByMonth = useMemo<Record<string, number>>(() => {
+  // Computed as a plain const (not useMemo) to avoid hook-ordering issues seen in the live
+  // build where the useMemo was dropping out of the hooks list.
+  const adminAllocByMonth: Record<string, number> = (() => {
     if (selectedCountry !== 'uk') return {}
     const categoryMatch = selectedCategory !== 'all' && selectedCategory !== 'journey'
       ? ADMIN_CATEGORY_MAP[selectedCategory as keyof typeof ADMIN_CATEGORY_MAP]
@@ -84,7 +86,7 @@ const TrendsView: React.FC<TrendsViewProps> = ({ trendsByCountry, trendsByCatego
       out[key] = (out[key] ?? 0) + (row.total ?? 0)
     }
     return out
-  }, [selectedCountry, selectedCategory])
+  })()
 
   const metricConfig: Record<MetricType, { label: string; key: keyof TrendPoint; isPercentage: boolean; isCurrency: boolean; compute?: (p: TrendPoint) => number }> = {
     jobs: { label: 'Jobs', key: 'jobs', isPercentage: false, isCurrency: false },
