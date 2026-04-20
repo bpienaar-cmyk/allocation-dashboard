@@ -154,10 +154,29 @@ const ReservationsView: React.FC<ReservationsViewProps> = ({ data, trendData }) 
     }
   }, [allNutsRegions, trendNutsSelected])
 
-  // Get all unique dates sorted
+  // Get all unique dates sorted, restricted to a rolling 2-week window from today
+  // (today → today+14). If the data doesn't yet include future days, only the
+  // days that exist are shown.
   const allDays = useMemo(() => {
+    const now = new Date()
+    const pad = (n: number) => String(n).padStart(2, '0')
+    const fmt = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
+    const todayStr = fmt(now)
+    const end = new Date(now)
+    end.setDate(end.getDate() + 14)
+    const endStr = fmt(end)
+
     const daySet = new Set<string>()
-    data.forEach((r) => daySet.add(r.day))
+    data.forEach((r) => {
+      if (r.day >= todayStr && r.day <= endStr) daySet.add(r.day)
+    })
+
+    // Fill in any missing days in the window so the grid always renders 15 columns
+    const cursor = new Date(now)
+    while (fmt(cursor) <= endStr) {
+      daySet.add(fmt(cursor))
+      cursor.setDate(cursor.getDate() + 1)
+    }
     return Array.from(daySet).sort()
   }, [data])
 

@@ -13,6 +13,7 @@ import {
   LabelList,
 } from 'recharts'
 import { TrendPoint, Country, CategoryType } from '../../types'
+import { adminAllocData } from '../../data/adminAllocData'
 
 const COUNTRY_LABELS: Record<Country, string> = {
   uk: 'UK (V4 + AVB)',
@@ -49,6 +50,15 @@ interface YoYRow {
   y2026: number | null
 }
 
+// Map TrendsView category filters to AdminAllocRow.c values (UK-only adminAllocData)
+const ADMIN_CATEGORY_MAP: Record<Exclude<CategoryFilter, 'all' | 'journey'>, string> = {
+  furniture: 'Furniture',
+  homeRemoval: 'Home Removal',
+  car: 'Car',
+  motorbike: 'Motorbike',
+  piano: 'Piano',
+}
+
 const TrendsView: React.FC<TrendsViewProps> = ({ trendsByCountry, trendsByCategoryAndCountry, selectedCountry, onCountryChange }) => {
   const [metric, setMetric] = useState<MetricType>('jobs')
   const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>('all')
@@ -59,6 +69,23 @@ const TrendsView: React.FC<TrendsViewProps> = ({ trendsByCountry, trendsByCatego
   const countries: Country[] = ['uk', 'spain', 'france']
   const categoryFilters: CategoryFilter[] = ['all', 'furniture', 'homeRemoval', 'car', 'motorbike', 'piano', 'journey']
 
+  // Aggregate admin alloc D1+OTD totals by month (UK only; other countries get empty map).
+  // adminAllocData is keyed by YYYY-MM; TrendPoint uses YYYY-MM-01. Normalise to the latter.
+  const adminAllocByMonth = useMemo<Record<string, number>>(() => {
+    if (selectedCountry !== 'uk') return {}
+    const categoryMatch = selectedCategory !== 'all' && selectedCategory !== 'journey'
+      ? ADMIN_CATEGORY_MAP[selectedCategory as keyof typeof ADMIN_CATEGORY_MAP]
+      : null
+    const out: Record<string, number> = {}
+    for (const row of adminAllocData) {
+      if (row.t !== 'D1' && row.t !== 'OTD') continue
+      if (categoryMatch && row.c !== categoryMatch) continue
+      const key = `${row.m}-01`
+      out[key] = (out[key] ?? 0) + (row.total ?? 0)
+    }
+    return out
+  }, [selectedCountry, selectedCategory])
+
   const metricConfig: Record<MetricType, { label: string; key: keyof TrendPoint; isPercentage: boolean; isCurrency: boolean; compute?: (p: TrendPoint) => number }> = {
     jobs: { label: 'Jobs', key: 'jobs', isPercentage: false, isCurrency: false },
     ttv: { label: 'Total TTV', key: 'ttv', isPercentage: false, isCurrency: true },
@@ -67,9 +94,29 @@ const TrendsView: React.FC<TrendsViewProps> = ({ trendsByCountry, trendsByCatego
     spendVariancePct: { label: 'Spend Variance % (vs Original TP Fee)', key: 'spendVariancePct', isPercentage: true, isCurrency: false },
     marginPct: { label: 'Margin %', key: 'marginPct', isPercentage: true, isCurrency: false },
     otdDealloPct: { label: 'OTD Deallocation %', key: 'otdDeallocations', isPercentage: true, isCurrency: false, compute: (p) => p.jobs > 0 ? (p.otdDeallocations / p.jobs) * 100 : 0 },
-    adminAllocD1OtdPct: { label: 'Admin Allocation D-1 & OTD', key: 'adminAllocD1Otd', isPercentage: false, isCurrency: false },
+    // Admin Allocation D-1 & OTD: monthly count of jobs admin-allocated 1 day before
+    // or on pickup day. Sourced from adminAllocData (UK) rather than the hardcoded 0
+    // in TrendPoint.adminAllocD1Otd.
+    adminAllocD1OtdPct: {
+      label: 'Admin Allocation D-1 & OTD',
+      key: 'adminAllocD1Otd',
+      isPercentage: false,
+      isCurrency: false,
+      compute: (p) => adminAllocByMonth[p.month] ?? 0,
+    },
     furnRoutedPct: { label: 'Furn Routed %', key: 'furnRouted', isPercentage: true, isCurrency: false, compute: (p) => (p.furnTotal ?? 0) > 0 ? ((p.furnRouted ?? 0) / (p.furnTotal ?? 0)) * 100 : 0 },
-    adminAllocPct: { label: 'Admin Allocations %', key: 'adminAllocPct', isPercentage: true, isCurrency: false },
+    // Admin Allocations %: share of completed-paid jobs that were admin-allocated D-1
+    // or OTD. Numerator from adminAllocData (UK), denominator from TrendPoint.jobs.
+    adminAllocPct: {
+      label: 'Admin Allocations %',
+      key: 'adminAllocPct',
+      isPercentage: true,
+      isCurrency: false,
+      compute: (p) => {
+        const admin = adminAllocByMonth[p.month] ?? 0
+        return p.jobs > 0 ? (admin / p.jobs) * 100 : 0
+      },
+    },
   }
 
   const config = metricConfig[metric]
@@ -97,7 +144,7 @@ const TrendsView: React.FC<TrendsViewProps> = ({ trendsByCountry, trendsByCatego
         y2026: v2026 !== undefined ? v2026 : null,
       }
     })
-  }, [data, config.key])
+  }, [data, config.key, adminAllocByMonth])
 
   const formatValue = (v: number) => {
     if (isPercentage) return `${v.toFixed(2)}%`

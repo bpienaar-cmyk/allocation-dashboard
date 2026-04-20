@@ -490,6 +490,19 @@ const OverviewView: React.FC<OverviewViewProps> = ({
 
   const selectedMetricDef = METRICS.find(m => m.key === selectedMetric)
 
+  // Dynamic y-axis max for percentage daily bar chart — prevents partial-day outliers
+  // (e.g. today's OTD deallo % blowing up when completed-paid jobs are still being logged)
+  // from distorting the scale. Uses 3x the max PY value (PY is complete + stable) with a
+  // floor of 10% and ceiling of 100%.
+  const dailyBarYMax = useMemo<number | undefined>(() => {
+    if (!selectedMetricDef || selectedMetricDef.type !== 'pp') return undefined
+    if (!dailyBarData || dailyBarData.length === 0) return undefined
+    const pyValues = dailyBarData.map(d => d.py).filter(v => v > 0)
+    const cyValues = dailyBarData.map(d => d.cy).filter(v => v > 0 && v <= 100)
+    const reference = pyValues.length > 0 ? Math.max(...pyValues) : (cyValues.length > 0 ? Math.max(...cyValues) : 10)
+    return Math.min(Math.max(reference * 3, 10), 100)
+  }, [dailyBarData, selectedMetricDef])
+
   // Format tooltip values
   const formatTooltipValue = (value: number) => {
     if (!selectedMetricDef) return String(value)
@@ -721,6 +734,8 @@ const OverviewView: React.FC<OverviewViewProps> = ({
                   if (v >= 1000) return `${(v / 1000).toFixed(0)}K`
                   return String(v)
                 }}
+                domain={dailyBarYMax !== undefined ? [0, dailyBarYMax] : undefined}
+                allowDataOverflow={dailyBarYMax !== undefined}
               />
               <Tooltip
                 contentStyle={{
