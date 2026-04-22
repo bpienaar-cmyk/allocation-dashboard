@@ -25,7 +25,7 @@ import {
   MonthlyCompletedPaidRow,
 } from '../types/index';
 
-export const DATA_LAST_UPDATED = '2026-04-22T07:33:01.000Z';
+export const DATA_LAST_UPDATED = '2026-04-22T12:11:47.000Z';
 
 /**
  * Overview data by country — MTD March 2026 vs MTD March 2025
@@ -38,26 +38,26 @@ export const overviewByCountry: Record<Country, CountryOverview> = {
     dailyCY: [
       { day: 1, jobs: 1331, ttv: 372084.59, avFee: 181865.55, allocSpend: 9188.05, cantSource: 11, tpCancels: 8, otdDealloCount: 147, furnRouted: 853, furnTotal: 1062 },
       { day: 2, jobs: 1271, ttv: 333495.29, avFee: 165685.96, allocSpend: 7631.5, cantSource: 5, tpCancels: 8, otdDealloCount: 120, furnRouted: 792, furnTotal: 998 },
-      { day: 3, jobs: 840, ttv: 202207.03, avFee: 108242.63, allocSpend: 3067, cantSource: 5, tpCancels: 6, otdDealloCount: 115, furnRouted: 559, furnTotal: 699 },
+      { day: 3, jobs: 840, ttv: 202107.03, avFee: 108142.63, allocSpend: 3067, cantSource: 5, tpCancels: 6, otdDealloCount: 115, furnRouted: 559, furnTotal: 699 },
       { day: 4, jobs: 647, ttv: 166577.21, avFee: 90827.74, allocSpend: 3849.04, cantSource: 1, tpCancels: 4, otdDealloCount: 48, furnRouted: 424, furnTotal: 513 },
       { day: 5, jobs: 284, ttv: 69881.9, avFee: 36115.71, allocSpend: 683.36, cantSource: 0, tpCancels: 1, otdDealloCount: 22, furnRouted: 181, furnTotal: 239 },
       { day: 6, jobs: 882, ttv: 151144.05, avFee: 72378.49, allocSpend: 3243.59, cantSource: 1, tpCancels: 2, otdDealloCount: 74, furnRouted: 648, furnTotal: 772 },
-      { day: 7, jobs: 950, ttv: 249321.08, avFee: 118798.33, allocSpend: 5004.6, cantSource: 8, tpCancels: 3, otdDealloCount: 99, furnRouted: 548, furnTotal: 707 },
+      { day: 7, jobs: 951, ttv: 253981.08, avFee: 121794.33, allocSpend: 5004.6, cantSource: 8, tpCancels: 3, otdDealloCount: 99, furnRouted: 548, furnTotal: 707 },
       { day: 8, jobs: 955, ttv: 230927.26, avFee: 104505.02, allocSpend: 5828.8, cantSource: 6, tpCancels: 3, otdDealloCount: 78, furnRouted: 554, furnTotal: 734 },
-      { day: 9, jobs: 937, ttv: 234351.85, avFee: 112730.23, allocSpend: 4692.27, cantSource: 10, tpCancels: 9, otdDealloCount: 96, furnRouted: 553, furnTotal: 735 },
-      { day: 10, jobs: 962, ttv: 279680.17, avFee: 141781.71, allocSpend: 7914.92, cantSource: 8, tpCancels: 15, otdDealloCount: 120, furnRouted: 537, furnTotal: 719 },
+      { day: 9, jobs: 937, ttv: 234286.85, avFee: 112665.23, allocSpend: 4692.27, cantSource: 10, tpCancels: 9, otdDealloCount: 96, furnRouted: 553, furnTotal: 735 },
+      { day: 10, jobs: 962, ttv: 279300.17, avFee: 141401.71, allocSpend: 7914.92, cantSource: 8, tpCancels: 15, otdDealloCount: 120, furnRouted: 537, furnTotal: 719 },
       { day: 11, jobs: 739, ttv: 175288.72, avFee: 98944.01, allocSpend: 2537.51, cantSource: 2, tpCancels: 5, otdDealloCount: 77, furnRouted: 463, furnTotal: 615 },
       { day: 12, jobs: 492, ttv: 96282.36, avFee: 49009.46, allocSpend: 1805.51, cantSource: 1, tpCancels: 1, otdDealloCount: 43, furnRouted: 364, furnTotal: 446 },
       { day: 13, jobs: 1002, ttv: 227510.76, avFee: 103345.08, allocSpend: 7320.44, cantSource: 4, tpCancels: 4, otdDealloCount: 103, furnRouted: 606, furnTotal: 765 },
       { day: 14, jobs: 761, ttv: 174427.06, avFee: 78152.44, allocSpend: 3844.72, cantSource: 7, tpCancels: 1, otdDealloCount: 48, furnRouted: 448, furnTotal: 596 },
-      { day: 15, jobs: 840, ttv: 187519.25, avFee: 87173.96, allocSpend: 4038.8, cantSource: 2, tpCancels: 4, otdDealloCount: 53, furnRouted: 513, furnTotal: 660 },
+      { day: 15, jobs: 841, ttv: 187617.25, avFee: 87221.96, allocSpend: 4038.8, cantSource: 2, tpCancels: 4, otdDealloCount: 53, furnRouted: 513, furnTotal: 661 },
       { day: 16, jobs: 895, ttv: 210780.44, avFee: 96871.37, allocSpend: 3795.93, cantSource: 2, tpCancels: 5, otdDealloCount: 77, furnRouted: 570, furnTotal: 731 },
-      { day: 17, jobs: 951, ttv: 304462.17, avFee: 158869.59, allocSpend: 5374.6, cantSource: 3, tpCancels: 9, otdDealloCount: 79, furnRouted: 522, furnTotal: 674 },
+      { day: 17, jobs: 953, ttv: 304929.17, avFee: 158987.59, allocSpend: 5374.6, cantSource: 3, tpCancels: 9, otdDealloCount: 80, furnRouted: 522, furnTotal: 674 },
       { day: 18, jobs: 798, ttv: 196171.94, avFee: 112254.67, allocSpend: 1768.33, cantSource: 4, tpCancels: 4, otdDealloCount: 54, furnRouted: 521, furnTotal: 651 },
       { day: 19, jobs: 492, ttv: 89732.51, avFee: 47872.95, allocSpend: 743.83, cantSource: 1, tpCancels: 0, otdDealloCount: 28, furnRouted: 347, furnTotal: 442 },
-      { day: 20, jobs: 996, ttv: 243689.80, avFee: 118354.05, allocSpend: 5055.90, cantSource: 6, tpCancels: 3, otdDealloCount: 68, furnRouted: 599, furnTotal: 759 },
-      { day: 21, jobs: 699, ttv: 144320.10, avFee: 67097.49, allocSpend: 3995.09, cantSource: 3, tpCancels: 1, otdDealloCount: 52, furnRouted: 426, furnTotal: 549 },
-      { day: 22, jobs: 0, ttv: 0.00, avFee: 0.00, allocSpend: 2773.08, cantSource: 0, tpCancels: 0, otdDealloCount: 14, furnRouted: 0, furnTotal: 0 }
+      { day: 20, jobs: 1000, ttv: 244796.8, avFee: 118583.25, allocSpend: 5055.9, cantSource: 6, tpCancels: 3, otdDealloCount: 68, furnRouted: 599, furnTotal: 759 },
+      { day: 21, jobs: 723, ttv: 154181.5, avFee: 70641.37, allocSpend: 4005.83, cantSource: 3, tpCancels: 1, otdDealloCount: 51, furnRouted: 428, furnTotal: 564 },
+      { day: 22, jobs: 170, ttv: 27296.9, avFee: 12127.06, allocSpend: 3315.08, cantSource: 1, tpCancels: 0, otdDealloCount: 68, furnRouted: 102, furnTotal: 128 }
     ],
     dailyPY: [
       { day: 1, jobs: 1081, ttv: 270814.66, avFee: 114103.31, allocSpend: 5095.02, cantSource: 3, tpCancels: 6, otdDealloCount: 93, furnRouted: 705, furnTotal: 820 },
@@ -92,20 +92,20 @@ export const overviewByCountry: Record<Country, CountryOverview> = {
       { day: 30, jobs: 1048, ttv: 233550.04, avFee: 97502.62, allocSpend: 1713, cantSource: 1, tpCancels: 3, otdDealloCount: 64, furnRouted: 684, furnTotal: 862 }
     ],
     current: {
-      jobs: 17724, ttv: 4339855.54, avgTtv: 244.86, avFee: 2150876.44,
-      marginPct: 49.56, allocSpend: 94156.87, spendTtvPct: 2.17, spendVariancePct: 0,
-      otdCancels: 314, cantSourceCount: 90, cantSourceRate: 0.51,
-      tpCancels: 96, tpCancelRate: 96, deallocations: 1479,
-      otdDeallocations: 1615, otdDealloPct: 9.11, otdAllocSpend: 38162.21,
-      noSpendJobs: 650, noSpendPct: 41.72, otdAllocatedJobs: 1558, furnRoutedPct: 78.40,
+      jobs: 17926, ttv: 4382800.84, avgTtv: 244.51, avFee: 2169393.58,
+      marginPct: 49.5, allocSpend: 86139.97, spendTtvPct: 1.97, spendVariancePct: 0,
+      otdCancels: 346, cantSourceCount: 91, cantSourceRate: 0.51,
+      tpCancels: 96, tpCancelRate: 96, deallocations: 1524,
+      otdDeallocations: 1669, otdDealloPct: 9.31, otdAllocSpend: 25254.47,
+      noSpendJobs: 657, noSpendPct: 41.64, otdAllocatedJobs: 1578, furnRoutedPct: 78.34,
     },
     priorYear: {
-      jobs: 18090, ttv: 3962083.00, avgTtv: 219.02, avFee: 1737028.47,
+      jobs: 18090, ttv: 3962083.0, avgTtv: 219.02, avFee: 1737028.47,
       marginPct: 43.84, allocSpend: 34790.11, spendTtvPct: 0.88, spendVariancePct: 0,
-      otdCancels: 230, cantSourceCount: 38, cantSourceRate: 0.21,
-      tpCancels: 61, tpCancelRate: 61, deallocations: 1290,
-      otdDeallocations: 1453, otdDealloPct: 8.03, otdAllocSpend: 18116.25,
-      noSpendJobs: 800, noSpendPct: 60.11, otdAllocatedJobs: 1331, furnRoutedPct: 81.55,
+      otdCancels: 251, cantSourceCount: 38, cantSourceRate: 0.21,
+      tpCancels: 60, tpCancelRate: 60, deallocations: 1290,
+      otdDeallocations: 1453, otdDealloPct: 8.03, otdAllocSpend: 11935.41,
+      noSpendJobs: 800, noSpendPct: 60.11, otdAllocatedJobs: 1331, furnRoutedPct: 81.33,
     },
   },
   spain: {
@@ -125,12 +125,13 @@ export const overviewByCountry: Record<Country, CountryOverview> = {
       { day: 13, jobs: 35, ttv: 17122.17, avFee: 7261.11, allocSpend: 503.8, cantSource: 0, tpCancels: 0, otdDealloCount: 0, furnRouted: 7, furnTotal: 18 },
       { day: 14, jobs: 41, ttv: 20175.97, avFee: 8081.7, allocSpend: 704.6, cantSource: 0, tpCancels: 0, otdDealloCount: 4, furnRouted: 9, furnTotal: 26 },
       { day: 15, jobs: 32, ttv: 18759.35, avFee: 8188.54, allocSpend: 327.77, cantSource: 0, tpCancels: 0, otdDealloCount: 1, furnRouted: 5, furnTotal: 14 },
-      { day: 16, jobs: 32, ttv: 14361.55, avFee: 6319.63, allocSpend: 550.95, cantSource: 0, tpCancels: 0, otdDealloCount: 1, furnRouted: 7, furnTotal: 16 },
+      { day: 16, jobs: 32, ttv: 14361.55, avFee: 6319.63, allocSpend: 550.95, cantSource: 0, tpCancels: 1, otdDealloCount: 1, furnRouted: 7, furnTotal: 16 },
       { day: 17, jobs: 45, ttv: 21984.55, avFee: 8548.07, allocSpend: 1734.29, cantSource: 1, tpCancels: 0, otdDealloCount: 4, furnRouted: 10, furnTotal: 20 },
       { day: 18, jobs: 36, ttv: 13344.71, avFee: 5536.74, allocSpend: 788.2, cantSource: 0, tpCancels: 0, otdDealloCount: 2, furnRouted: 10, furnTotal: 15 },
-      { day: 19, jobs: 19, ttv: 10192.12, avFee: 4375.07, allocSpend: 529.05, cantSource: 0, tpCancels: 0, otdDealloCount: 1, furnRouted: 2, furnTotal: 11 },
-      { day: 20, jobs: 23, ttv: 16854.67, avFee: 6328.93, allocSpend: 541.78, cantSource: 0, tpCancels: 0, otdDealloCount: 1, furnRouted: 3, furnTotal: 12 },
-      { day: 21, jobs: 29, ttv: 9861.47, avFee: 3917.67, allocSpend: 935.2, cantSource: 0, tpCancels: 0, otdDealloCount: 1, furnRouted: 11, furnTotal: 16 }
+      { day: 19, jobs: 20, ttv: 10467.12, avFee: 4466.07, allocSpend: 529.05, cantSource: 0, tpCancels: 0, otdDealloCount: 1, furnRouted: 2, furnTotal: 12 },
+      { day: 20, jobs: 25, ttv: 17988.87, avFee: 6695.19, allocSpend: 541.78, cantSource: 0, tpCancels: 0, otdDealloCount: 1, furnRouted: 4, furnTotal: 14 },
+      { day: 21, jobs: 36, ttv: 14230.11, avFee: 5881.47, allocSpend: 935.2, cantSource: 0, tpCancels: 0, otdDealloCount: 0, furnRouted: 15, furnTotal: 21 },
+      { day: 22, jobs: 8, ttv: 1918.31, avFee: 653.75, allocSpend: 1189.7, cantSource: 0, tpCancels: 1, otdDealloCount: 4, furnRouted: 1, furnTotal: 5 }
     ],
     dailyPY: [
       { day: 1, jobs: 34, ttv: 16125.37, avFee: 3118.5, allocSpend: 1172.88, cantSource: 0, tpCancels: 0, otdDealloCount: 2, furnRouted: 0, furnTotal: 0 },
@@ -165,19 +166,19 @@ export const overviewByCountry: Record<Country, CountryOverview> = {
       { day: 30, jobs: 56, ttv: 17495.65, avFee: 1648.22, allocSpend: 2993.15, cantSource: 0, tpCancels: 1, otdDealloCount: 1, furnRouted: 0, furnTotal: 33 }
     ],
     current: {
-      jobs: 664, ttv: 320877.86, avgTtv: 483.25, avFee: 133506.29,
-      marginPct: 41.61, allocSpend: 16503.52, spendTtvPct: 5.14, spendVariancePct: 0,
-      otdCancels: 13, cantSourceCount: 4, cantSourceRate: 0.6,
-      tpCancels: 3, tpCancelRate: 3, deallocations: 28,
-      otdDeallocations: 30, otdDealloPct: 4.52, otdAllocSpend: 2260.74,
-      noSpendJobs: 9, noSpendPct: 33.33, otdAllocatedJobs: 27, furnRoutedPct: 48.9,
+      jobs: 682, ttv: 328574.01, avgTtv: 481.78, avFee: 136581.1,
+      marginPct: 41.57, allocSpend: 17693.22, spendTtvPct: 5.38, spendVariancePct: 0,
+      otdCancels: 14, cantSourceCount: 4, cantSourceRate: 0.59,
+      tpCancels: 5, tpCancelRate: 5, deallocations: 31,
+      otdDeallocations: 33, otdDealloPct: 4.84, otdAllocSpend: 2392.74,
+      noSpendJobs: 9, noSpendPct: 33.33, otdAllocatedJobs: 27, furnRoutedPct: 48.8,
     },
     priorYear: {
-      jobs: 435, ttv: 199246.52, avgTtv: 458.04, avFee: 35622.81,
-      marginPct: 17.88, allocSpend: 22024.21, spendTtvPct: 11.05, spendVariancePct: 0,
-      otdCancels: 18, cantSourceCount: 6, cantSourceRate: 1.38,
+      jobs: 472, ttv: 221606.67, avgTtv: 469.51, avFee: 40729.31,
+      marginPct: 18.38, allocSpend: 23285.89, spendTtvPct: 10.51, spendVariancePct: 0,
+      otdCancels: 18, cantSourceCount: 6, cantSourceRate: 1.27,
       tpCancels: 4, tpCancelRate: 4, deallocations: 8,
-      otdDeallocations: 8, otdDealloPct: 1.84, otdAllocSpend: 624.83,
+      otdDeallocations: 8, otdDealloPct: 1.69, otdAllocSpend: 624.83,
       noSpendJobs: 2, noSpendPct: 11.76, otdAllocatedJobs: 17, furnRoutedPct: 0.0,
     },
   },
@@ -203,7 +204,8 @@ export const overviewByCountry: Record<Country, CountryOverview> = {
       { day: 18, jobs: 39, ttv: 16432.0, avFee: 5684.65, allocSpend: 1438, cantSource: 0, tpCancels: 0, otdDealloCount: 1, furnRouted: 20, furnTotal: 25 },
       { day: 19, jobs: 14, ttv: 2835.0, avFee: 1463.99, allocSpend: 0, cantSource: 0, tpCancels: 0, otdDealloCount: 0, furnRouted: 7, furnTotal: 11 },
       { day: 20, jobs: 13, ttv: 6554.0, avFee: 2039.0, allocSpend: 939, cantSource: 0, tpCancels: 0, otdDealloCount: 0, furnRouted: 6, furnTotal: 8 },
-      { day: 21, jobs: 5, ttv: 2351.0, avFee: 971.0, allocSpend: 151, cantSource: 0, tpCancels: 0, otdDealloCount: 0, furnRouted: 2, furnTotal: 3 }
+      { day: 21, jobs: 5, ttv: 2351.0, avFee: 971.0, allocSpend: 151, cantSource: 0, tpCancels: 0, otdDealloCount: 0, furnRouted: 2, furnTotal: 3 },
+      { day: 22, jobs: 3, ttv: 621.0, avFee: 318.34, allocSpend: 685, cantSource: 0, tpCancels: 0, otdDealloCount: 1, furnRouted: 1, furnTotal: 2 }
     ],
     dailyPY: [
       { day: 1, jobs: 0, ttv: 0.0, avFee: 0.0, allocSpend: 0, cantSource: 0, tpCancels: 0, otdDealloCount: 0, furnRouted: 0, furnTotal: 0 },
@@ -238,17 +240,17 @@ export const overviewByCountry: Record<Country, CountryOverview> = {
       { day: 30, jobs: 0, ttv: 0.0, avFee: 0.0, allocSpend: 0, cantSource: 0, tpCancels: 0, otdDealloCount: 0, furnRouted: 0, furnTotal: 0 }
     ],
     current: {
-      jobs: 279, ttv: 125238.4, avgTtv: 448.88, avFee: 43154.75,
-      marginPct: 34.46, allocSpend: 8330.0, spendTtvPct: 6.65, spendVariancePct: 0,
-      otdCancels: 23, cantSourceCount: 4, cantSourceRate: 1.43,
-      tpCancels: 2, tpCancelRate: 2, deallocations: 8,
-      otdDeallocations: 8, otdDealloPct: 2.87, otdAllocSpend: 1179.0,
-      noSpendJobs: 0, noSpendPct: 0.0, otdAllocatedJobs: 3, furnRoutedPct: 69.94,
+      jobs: 282, ttv: 125859.4, avgTtv: 446.31, avFee: 43473.09,
+      marginPct: 34.54, allocSpend: 9015, spendTtvPct: 7.16, spendVariancePct: 0,
+      otdCancels: 23, cantSourceCount: 4, cantSourceRate: 1.42,
+      tpCancels: 2, tpCancelRate: 2, deallocations: 9,
+      otdDeallocations: 9, otdDealloPct: 3.19, otdAllocSpend: 1179,
+      noSpendJobs: 0, noSpendPct: 0.0, otdAllocatedJobs: 3, furnRoutedPct: 69.7,
     },
     priorYear: {
       jobs: 0, ttv: 0.0, avgTtv: 0.0, avFee: 0.0,
       marginPct: 0.0, allocSpend: 0.0, spendTtvPct: 0.0, spendVariancePct: 0,
-      otdCancels: 28, cantSourceCount: 0, cantSourceRate: 0.0,
+      otdCancels: 33, cantSourceCount: 0, cantSourceRate: 0.0,
       tpCancels: 0, tpCancelRate: 0, deallocations: 0,
       otdDeallocations: 0, otdDealloPct: 0.0, otdAllocSpend: 0.0,
       noSpendJobs: 0, noSpendPct: 0.0, otdAllocatedJobs: 0, furnRoutedPct: 0.0,
@@ -264,29 +266,29 @@ export const overviewDataPY: OverviewData = overviewByCountry.uk.priorYear;
  * Category breakdown (Completed Paid, last 90 days)
  */
 export const categoriesData: CategoryRow[] = [
-  { category: 'Furniture', jobs: 61047, ttv: 9330824.45, marginPct: 48.46, allocSpend: 115867.27, spendTtvPct: 1.24 },
-  { category: 'Home Removal', jobs: 9244, ttv: 8069905.38, marginPct: 58.56, allocSpend: 49546.85, spendTtvPct: 0.61 },
-  { category: 'Car', jobs: 6526, ttv: 1649414.66, marginPct: 17.85, allocSpend: 116300.42, spendTtvPct: 7.05 },
-  { category: 'Motorbike', jobs: 576, ttv: 113312.46, marginPct: 22.32, allocSpend: 3179.50, spendTtvPct: 2.81 },
-  { category: 'Piano', jobs: 336, ttv: 111906.60, marginPct: 43.06, allocSpend: 7496.20, spendTtvPct: 6.70 },
+  { category: 'Furniture', jobs: 61191, ttv: 9352829.75, marginPct: 48.45, allocSpend: 116176.17, spendTtvPct: 1.24 },
+  { category: 'Home Removal', jobs: 9262, ttv: 8081362.38, marginPct: 58.57, allocSpend: 49603.64, spendTtvPct: 0.61 },
+  { category: 'Car', jobs: 6559, ttv: 1657400.66, marginPct: 17.86, allocSpend: 116819.42, spendTtvPct: 7.05 },
+  { category: 'Motorbike', jobs: 582, ttv: 114356.46, marginPct: 22.31, allocSpend: 3179.5, spendTtvPct: 2.78 },
+  { category: 'Piano', jobs: 337, ttv: 112182.6, marginPct: 43.08, allocSpend: 7496.2, spendTtvPct: 6.68 },
 ];
 
 /**
  * Regional breakdown (Completed Paid, last 90 days)
  */
 export const regionsData: RegionRow[] = [
-  { region: 'London', jobs: 19964, ttv: 4172348.59, marginPct: 55.67, allocSpend: 33886.37, spendTtvPct: 0.81 },
-  { region: 'South East (England)', jobs: 12225, ttv: 3119182.38, marginPct: 49.39, allocSpend: 45039.61, spendTtvPct: 1.44 },
-  { region: 'East of England', jobs: 7756, ttv: 2144661.81, marginPct: 48.67, allocSpend: 28524.50, spendTtvPct: 1.33 },
-  { region: 'North West (England)', jobs: 7475, ttv: 1736551.84, marginPct: 49.07, allocSpend: 22168.84, spendTtvPct: 1.28 },
-  { region: 'South West (England)', jobs: 6170, ttv: 1942658.70, marginPct: 47.64, allocSpend: 45629.01, spendTtvPct: 2.35 },
-  { region: 'West Midlands (England)', jobs: 5938, ttv: 1408599.67, marginPct: 48.07, allocSpend: 17472.21, spendTtvPct: 1.24 },
-  { region: 'Yorkshire and The Humber', jobs: 5134, ttv: 1167908.51, marginPct: 48.31, allocSpend: 14010.80, spendTtvPct: 1.20 },
-  { region: 'East Midlands (England)', jobs: 4930, ttv: 1251452.19, marginPct: 47.61, allocSpend: 15430.84, spendTtvPct: 1.23 },
-  { region: 'Scotland', jobs: 4304, ttv: 1221100.37, marginPct: 47.78, allocSpend: 35549.39, spendTtvPct: 2.91 },
-  { region: 'North East (England)', jobs: 2017, ttv: 519827.73, marginPct: 47.10, allocSpend: 8411.23, spendTtvPct: 1.62 },
-  { region: 'Wales', jobs: 1657, ttv: 546770.76, marginPct: 46.32, allocSpend: 14996.70, spendTtvPct: 2.74 },
-  { region: 'Northern Ireland', jobs: 147, ttv: 39551.00, marginPct: 25.71, allocSpend: 11270.76, spendTtvPct: 28.50 },
+  { region: 'London', jobs: 19991, ttv: 4182375.79, marginPct: 55.67, allocSpend: 33968.42, spendTtvPct: 0.81 },
+  { region: 'South East (England)', jobs: 12259, ttv: 3128541.78, marginPct: 49.36, allocSpend: 45361.61, spendTtvPct: 1.45 },
+  { region: 'East of England', jobs: 7777, ttv: 2147757.81, marginPct: 48.64, allocSpend: 28565.5, spendTtvPct: 1.33 },
+  { region: 'North West (England)', jobs: 7493, ttv: 1739490.84, marginPct: 49.06, allocSpend: 22168.84, spendTtvPct: 1.27 },
+  { region: 'South West (England)', jobs: 6191, ttv: 1947293.4, marginPct: 47.61, allocSpend: 45896.01, spendTtvPct: 2.36 },
+  { region: 'West Midlands (England)', jobs: 5955, ttv: 1411185.67, marginPct: 48.06, allocSpend: 17493.99, spendTtvPct: 1.24 },
+  { region: 'Yorkshire and The Humber', jobs: 5157, ttv: 1170748.51, marginPct: 48.29, allocSpend: 14050.8, spendTtvPct: 1.2 },
+  { region: 'East Midlands (England)', jobs: 4944, ttv: 1253860.19, marginPct: 47.61, allocSpend: 15458.84, spendTtvPct: 1.23 },
+  { region: 'Scotland', jobs: 4317, ttv: 1223677.37, marginPct: 47.78, allocSpend: 35614.23, spendTtvPct: 2.91 },
+  { region: 'North East (England)', jobs: 2027, ttv: 521651.73, marginPct: 47.09, allocSpend: 8429.23, spendTtvPct: 1.62 },
+  { region: 'Wales', jobs: 1661, ttv: 547247.76, marginPct: 46.28, allocSpend: 14996.7, spendTtvPct: 2.74 },
+  { region: 'Northern Ireland', jobs: 147, ttv: 39551.0, marginPct: 25.71, allocSpend: 11270.76, spendTtvPct: 28.5 },
 ];
 
 /**
@@ -307,9 +309,9 @@ export const trendsByCountry: Record<Country, TrendPoint[]> = {
     { month: '2025-11-01', jobs: 26464, ttv: 6971911.12, avFee: 3455674.14, marginPct: 49.57, allocSpend: 86526.33, spendTtvPct: 1.24, otdCancels: 494, tpCancels: 182, cantSourceCount: 72, otdDeallocations: 2494, adminAllocD1Otd: 0, adminAllocPct: 0, totalRecords: 29606 },
     { month: '2025-12-01', jobs: 22772, ttv: 6360420.21, avFee: 3157276.02, marginPct: 49.64, allocSpend: 146258.94, spendTtvPct: 2.3, otdCancels: 496, tpCancels: 187, cantSourceCount: 96, otdDeallocations: 2239, adminAllocD1Otd: 0, adminAllocPct: 0, totalRecords: 25794 },
     { month: '2026-01-01', jobs: 22991, ttv: 5598314.65, avFee: 2790506.49, marginPct: 49.85, allocSpend: 56324.01, spendTtvPct: 1.01, otdCancels: 413, tpCancels: 125, cantSourceCount: 59, otdDeallocations: 2033, adminAllocD1Otd: 0, adminAllocPct: 0, totalRecords: 25769 },
-    { month: '2026-02-01', jobs: 23543, ttv: 5774594.07, avFee: 2880056.55, marginPct: 49.87, allocSpend: 71008.84, spendTtvPct: 1.23, otdCancels: 452, tpCancels: 166, cantSourceCount: 73, otdDeallocations: 2111, adminAllocD1Otd: 0, adminAllocPct: 0, totalRecords: 26345 },
-    { month: '2026-03-01', jobs: 27640, ttv: 6872005.55, avFee: 3418592.43, marginPct: 49.75, allocSpend: 122169.24, spendTtvPct: 1.78, otdCancels: 524, tpCancels: 147, cantSourceCount: 108, otdDeallocations: 2361, adminAllocD1Otd: 0, adminAllocPct: 0, totalRecords: 30870 },
-    { month: '2026-04-01', jobs: 17724, ttv: 4339855.54, avFee: 2150876.44, marginPct: 49.56, allocSpend: 94156.87, spendTtvPct: 2.17, otdCancels: 314, tpCancels: 96, cantSourceCount: 90, otdDeallocations: 1615, adminAllocD1Otd: 0, adminAllocPct: 0, totalRecords: 20812 },
+    { month: '2026-02-01', jobs: 23543, ttv: 5774567.07, avFee: 2880029.55, marginPct: 49.87, allocSpend: 71008.84, spendTtvPct: 1.23, otdCancels: 452, tpCancels: 166, cantSourceCount: 73, otdDeallocations: 2111, adminAllocD1Otd: 0, adminAllocPct: 0, totalRecords: 26345 },
+    { month: '2026-03-01', jobs: 27640, ttv: 6871755.55, avFee: 3418342.43, marginPct: 49.74, allocSpend: 122169.24, spendTtvPct: 1.78, otdCancels: 524, tpCancels: 147, cantSourceCount: 108, otdDeallocations: 2361, adminAllocD1Otd: 0, adminAllocPct: 0, totalRecords: 30869 },
+    { month: '2026-04-01', jobs: 17926, ttv: 4382800.84, avFee: 2169393.58, marginPct: 49.5, allocSpend: 97183.51, spendTtvPct: 2.22, otdCancels: 346, tpCancels: 96, cantSourceCount: 92, otdDeallocations: 1703, adminAllocD1Otd: 0, adminAllocPct: 0, totalRecords: 25253 },
   ],
   spain: [
     { month: '2025-01-01', jobs: 113, ttv: 57936.35, avFee: 17181.88, marginPct: 29.66, allocSpend: 647.65, spendTtvPct: 1.12, otdCancels: 22, tpCancels: 2, cantSourceCount: 0, otdDeallocations: 4, adminAllocD1Otd: 0, adminAllocPct: 0, totalRecords: 1458 },
@@ -327,7 +329,7 @@ export const trendsByCountry: Record<Country, TrendPoint[]> = {
     { month: '2026-01-01', jobs: 992, ttv: 464512.04, avFee: 185408.99, marginPct: 39.91, allocSpend: 16281.96, spendTtvPct: 3.51, otdCancels: 27, tpCancels: 8, cantSourceCount: 0, otdDeallocations: 44, adminAllocD1Otd: 0, adminAllocPct: 0, totalRecords: 1832 },
     { month: '2026-02-01', jobs: 1125, ttv: 545766.28, avFee: 214325.72, marginPct: 39.27, allocSpend: 20176.43, spendTtvPct: 3.7, otdCancels: 26, tpCancels: 12, cantSourceCount: 3, otdDeallocations: 49, adminAllocD1Otd: 0, adminAllocPct: 0, totalRecords: 1920 },
     { month: '2026-03-01', jobs: 1288, ttv: 661117.53, avFee: 275123.41, marginPct: 41.61, allocSpend: 22030.4, spendTtvPct: 3.33, otdCancels: 19, tpCancels: 9, cantSourceCount: 2, otdDeallocations: 46, adminAllocD1Otd: 0, adminAllocPct: 0, totalRecords: 2140 },
-    { month: '2026-04-01', jobs: 664, ttv: 320877.86, avFee: 133506.29, marginPct: 41.61, allocSpend: 17719.22, spendTtvPct: 5.52, otdCancels: 13, tpCancels: 3, cantSourceCount: 5, otdDeallocations: 33, adminAllocD1Otd: 0, adminAllocPct: 0, totalRecords: 1825 },
+    { month: '2026-04-01', jobs: 682, ttv: 328574.01, avFee: 136581.1, marginPct: 41.57, allocSpend: 18028.22, spendTtvPct: 5.49, otdCancels: 14, tpCancels: 5, cantSourceCount: 5, otdDeallocations: 34, adminAllocD1Otd: 0, adminAllocPct: 0, totalRecords: 1861 },
   ],
   france: [
     { month: '2025-01-01', jobs: 0, ttv: 0.0, avFee: 0.0, marginPct: 0, allocSpend: 0, spendTtvPct: 0, otdCancels: 44, tpCancels: 0, cantSourceCount: 0, otdDeallocations: 0, adminAllocD1Otd: 0, adminAllocPct: 0, totalRecords: 873 },
@@ -345,7 +347,7 @@ export const trendsByCountry: Record<Country, TrendPoint[]> = {
     { month: '2026-01-01', jobs: 81, ttv: 26698.0, avFee: 6182.0, marginPct: 23.16, allocSpend: 2929, spendTtvPct: 10.97, otdCancels: 17, tpCancels: 1, cantSourceCount: 0, otdDeallocations: 2, adminAllocD1Otd: 0, adminAllocPct: 0, totalRecords: 1395 },
     { month: '2026-02-01', jobs: 253, ttv: 93912.0, avFee: 25039.39, marginPct: 26.66, allocSpend: 4976.84, spendTtvPct: 5.3, otdCancels: 22, tpCancels: 3, cantSourceCount: 3, otdDeallocations: 5, adminAllocD1Otd: 0, adminAllocPct: 0, totalRecords: 1499 },
     { month: '2026-03-01', jobs: 313, ttv: 140496.0, avFee: 48698.64, marginPct: 34.66, allocSpend: 6767, spendTtvPct: 4.82, otdCancels: 41, tpCancels: 1, cantSourceCount: 6, otdDeallocations: 12, adminAllocD1Otd: 0, adminAllocPct: 0, totalRecords: 1732 },
-    { month: '2026-04-01', jobs: 279, ttv: 125238.4, avFee: 43154.75, marginPct: 34.46, allocSpend: 9015, spendTtvPct: 7.2, otdCancels: 23, tpCancels: 2, cantSourceCount: 4, otdDeallocations: 8, adminAllocD1Otd: 0, adminAllocPct: 0, totalRecords: 1733 },
+    { month: '2026-04-01', jobs: 282, ttv: 125859.4, avFee: 43473.09, marginPct: 34.54, allocSpend: 9087, spendTtvPct: 7.22, otdCancels: 23, tpCancels: 2, cantSourceCount: 4, otdDeallocations: 9, adminAllocD1Otd: 0, adminAllocPct: 0, totalRecords: 1752 },
   ],
 };
 
@@ -356,23 +358,23 @@ export const trendsData: TrendPoint[] = trendsByCountry.uk;
  * OTD metrics (last 90 days)
  */
 export const otdMetricsData: OtdMetrics = {
-  otdJobsWithDeallos: 6243,
-  otdAllocSpend: 79091.49,
-  otdAllocatedJobs: 6987,
-  noSpendJobs: 3525,
-  noSpendPct: 50.45,
+  otdJobsWithDeallos: 6256,
+  otdAllocSpend: 78989.89,
+  otdAllocatedJobs: 6969,
+  noSpendJobs: 3504,
+  noSpendPct: 50.28,
 };
 
 /**
  * Deallocation data (last 90 days)
  */
 export const deallocationsData: DeallocationData = {
-  deallocations: 6243,
-  otdDeallocations: 6909,
-  otdDealloPct: 8.82,
-  otdDealloCount: 6243,
-  otdJobsWithDeallos: 6243,
-  otdAllocSpend: 79091.49,
+  deallocations: 6256,
+  otdDeallocations: 6929,
+  otdDealloPct: 8.89,
+  otdDealloCount: 6256,
+  otdJobsWithDeallos: 6256,
+  otdAllocSpend: 78989.89,
 };
 export const trendsByCategoryAndCountry: Record<Country, Record<CategoryType, TrendPoint[]>> = {
   uk: {
