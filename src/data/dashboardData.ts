@@ -25,7 +25,7 @@ import {
   MonthlyCompletedPaidRow,
 } from '../types/index';
 
-export const DATA_LAST_UPDATED = '2026-04-21T19:44:37.000Z';
+export const DATA_LAST_UPDATED = '2026-04-22T07:16:10.000Z';
 
 /**
  * Overview data by country — MTD March 2026 vs MTD March 2025
@@ -54,9 +54,10 @@ export const overviewByCountry: Record<Country, CountryOverview> = {
       { day: 16, jobs: 895, ttv: 210780.44, avFee: 96871.37, allocSpend: 3795.93, cantSource: 2, tpCancels: 5, otdDealloCount: 77, furnRouted: 570, furnTotal: 731 },
       { day: 17, jobs: 951, ttv: 304462.17, avFee: 158869.59, allocSpend: 5374.6, cantSource: 3, tpCancels: 9, otdDealloCount: 79, furnRouted: 522, furnTotal: 674 },
       { day: 18, jobs: 798, ttv: 196171.94, avFee: 112254.67, allocSpend: 1768.33, cantSource: 4, tpCancels: 4, otdDealloCount: 54, furnRouted: 521, furnTotal: 651 },
-      { day: 19, jobs: 491, ttv: 89318.51, avFee: 47781.95, allocSpend: 743.83, cantSource: 1, tpCancels: 0, otdDealloCount: 28, furnRouted: 347, furnTotal: 442 },
-      { day: 20, jobs: 990, ttv: 239383.8, avFee: 116135.39, allocSpend: 5055.9, cantSource: 6, tpCancels: 3, otdDealloCount: 68, furnRouted: 598, furnTotal: 755 },
-      { day: 21, jobs: 594, ttv: 117412.4, avFee: 55025.85, allocSpend: 3995.09, cantSource: 3, tpCancels: 1, otdDealloCount: 53, furnRouted: 367, furnTotal: 460 }
+      { day: 19, jobs: 492, ttv: 89732.51, avFee: 47872.95, allocSpend: 743.83, cantSource: 1, tpCancels: 0, otdDealloCount: 28, furnRouted: 347, furnTotal: 442 },
+      { day: 20, jobs: 996, ttv: 243689.80, avFee: 118354.05, allocSpend: 5055.90, cantSource: 6, tpCancels: 3, otdDealloCount: 68, furnRouted: 599, furnTotal: 759 },
+      { day: 21, jobs: 699, ttv: 144320.10, avFee: 67097.49, allocSpend: 3995.09, cantSource: 3, tpCancels: 1, otdDealloCount: 52, furnRouted: 426, furnTotal: 549 },
+      { day: 22, jobs: 0, ttv: 0.00, avFee: 0.00, allocSpend: 2773.08, cantSource: 0, tpCancels: 0, otdDealloCount: 14, furnRouted: 0, furnTotal: 0 }
     ],
     dailyPY: [
       { day: 1, jobs: 1081, ttv: 270814.66, avFee: 114103.31, allocSpend: 5095.02, cantSource: 3, tpCancels: 6, otdDealloCount: 93, furnRouted: 705, furnTotal: 820 },
@@ -91,20 +92,20 @@ export const overviewByCountry: Record<Country, CountryOverview> = {
       { day: 30, jobs: 1048, ttv: 233550.04, avFee: 97502.62, allocSpend: 1713, cantSource: 1, tpCancels: 3, otdDealloCount: 64, furnRouted: 684, furnTotal: 862 }
     ],
     current: {
-      jobs: 17612, ttv: 4308227.84, avgTtv: 244.63, avFee: 2136495.14,
-      marginPct: 49.59, allocSpend: 91383.79, spendTtvPct: 2.12, spendVariancePct: 0,
-      otdCancels: 342, cantSourceCount: 90, cantSourceRate: 0.51,
-      tpCancels: 96, tpCancelRate: 96, deallocations: 1467,
-      otdDeallocations: 1602, otdDealloPct: 9.1, otdAllocSpend: 24849.47,
-      noSpendJobs: 647, noSpendPct: 41.9, otdAllocatedJobs: 1544, furnRoutedPct: 78.49,
+      jobs: 17724, ttv: 4339855.54, avgTtv: 244.86, avFee: 2150876.44,
+      marginPct: 49.56, allocSpend: 94156.87, spendTtvPct: 2.17, spendVariancePct: 0,
+      otdCancels: 314, cantSourceCount: 90, cantSourceRate: 0.51,
+      tpCancels: 96, tpCancelRate: 96, deallocations: 1479,
+      otdDeallocations: 1615, otdDealloPct: 9.11, otdAllocSpend: 38162.21,
+      noSpendJobs: 650, noSpendPct: 41.72, otdAllocatedJobs: 1558, furnRoutedPct: 78.40,
     },
     priorYear: {
-      jobs: 17326, ttv: 3788286.3, avgTtv: 218.65, avFee: 1664952.63,
-      marginPct: 43.95, allocSpend: 33657.91, spendTtvPct: 0.89, spendVariancePct: 0,
-      otdCancels: 241, cantSourceCount: 36, cantSourceRate: 0.21,
-      tpCancels: 60, tpCancelRate: 60, deallocations: 1235,
-      otdDeallocations: 1387, otdDealloPct: 8.01, otdAllocSpend: 11550.41,
-      noSpendJobs: 767, noSpendPct: 59.64, otdAllocatedJobs: 1286, furnRoutedPct: 81.56,
+      jobs: 18090, ttv: 3962083.00, avgTtv: 219.02, avFee: 1737028.47,
+      marginPct: 43.84, allocSpend: 34790.11, spendTtvPct: 0.88, spendVariancePct: 0,
+      otdCancels: 230, cantSourceCount: 38, cantSourceRate: 0.21,
+      tpCancels: 61, tpCancelRate: 61, deallocations: 1290,
+      otdDeallocations: 1453, otdDealloPct: 8.03, otdAllocSpend: 18116.25,
+      noSpendJobs: 800, noSpendPct: 60.11, otdAllocatedJobs: 1331, furnRoutedPct: 81.55,
     },
   },
   spain: {
@@ -263,29 +264,29 @@ export const overviewDataPY: OverviewData = overviewByCountry.uk.priorYear;
  * Category breakdown (Completed Paid, last 90 days)
  */
 export const categoriesData: CategoryRow[] = [
-  { category: 'Furniture', jobs: 61553, ttv: 9403723.87, marginPct: 48.45, allocSpend: 116360.33, spendTtvPct: 1.24 },
-  { category: 'Home Removal', jobs: 9309, ttv: 8130822.98, marginPct: 58.55, allocSpend: 49678.45, spendTtvPct: 0.61 },
-  { category: 'Car', jobs: 6574, ttv: 1661944.66, marginPct: 17.86, allocSpend: 116438.42, spendTtvPct: 7.01 },
-  { category: 'Motorbike', jobs: 584, ttv: 114626.46, marginPct: 22.36, allocSpend: 3179.5, spendTtvPct: 2.77 },
-  { category: 'Piano', jobs: 339, ttv: 112798.6, marginPct: 43.15, allocSpend: 7496.2, spendTtvPct: 6.65 },
+  { category: 'Furniture', jobs: 61047, ttv: 9330824.45, marginPct: 48.46, allocSpend: 115867.27, spendTtvPct: 1.24 },
+  { category: 'Home Removal', jobs: 9244, ttv: 8069905.38, marginPct: 58.56, allocSpend: 49546.85, spendTtvPct: 0.61 },
+  { category: 'Car', jobs: 6526, ttv: 1649414.66, marginPct: 17.85, allocSpend: 116300.42, spendTtvPct: 7.05 },
+  { category: 'Motorbike', jobs: 576, ttv: 113312.46, marginPct: 22.32, allocSpend: 3179.50, spendTtvPct: 2.81 },
+  { category: 'Piano', jobs: 336, ttv: 111906.60, marginPct: 43.06, allocSpend: 7496.20, spendTtvPct: 6.70 },
 ];
 
 /**
  * Regional breakdown (Completed Paid, last 90 days)
  */
 export const regionsData: RegionRow[] = [
-  { region: 'London', jobs: 20097, ttv: 4192863.69, marginPct: 55.65, allocSpend: 33891.12, spendTtvPct: 0.81 },
-  { region: 'South East (England)', jobs: 12336, ttv: 3143630.22, marginPct: 49.37, allocSpend: 45114.61, spendTtvPct: 1.44 },
-  { region: 'East of England', jobs: 7808, ttv: 2159959.69, marginPct: 48.65, allocSpend: 28470.5, spendTtvPct: 1.32 },
-  { region: 'North West (England)', jobs: 7549, ttv: 1753014.84, marginPct: 49.05, allocSpend: 22275.84, spendTtvPct: 1.27 },
-  { region: 'South West (England)', jobs: 6207, ttv: 1954683.2, marginPct: 47.69, allocSpend: 45686.01, spendTtvPct: 2.34 },
-  { region: 'West Midlands (England)', jobs: 5983, ttv: 1420056.67, marginPct: 48.06, allocSpend: 17373.21, spendTtvPct: 1.22 },
-  { region: 'Yorkshire and The Humber', jobs: 5170, ttv: 1176246.51, marginPct: 48.37, allocSpend: 14138.2, spendTtvPct: 1.2 },
-  { region: 'East Midlands (England)', jobs: 4982, ttv: 1260595.89, marginPct: 47.56, allocSpend: 15551.75, spendTtvPct: 1.23 },
-  { region: 'Scotland', jobs: 4347, ttv: 1239723.37, marginPct: 47.81, allocSpend: 35820.99, spendTtvPct: 2.89 },
-  { region: 'North East (England)', jobs: 2042, ttv: 525116.73, marginPct: 47.07, allocSpend: 8440.23, spendTtvPct: 1.61 },
-  { region: 'Wales', jobs: 1678, ttv: 553670.76, marginPct: 46.19, allocSpend: 15098.7, spendTtvPct: 2.73 },
-  { region: 'Northern Ireland', jobs: 148, ttv: 39605.0, marginPct: 25.69, allocSpend: 11291.76, spendTtvPct: 28.51 },
+  { region: 'London', jobs: 19964, ttv: 4172348.59, marginPct: 55.67, allocSpend: 33886.37, spendTtvPct: 0.81 },
+  { region: 'South East (England)', jobs: 12225, ttv: 3119182.38, marginPct: 49.39, allocSpend: 45039.61, spendTtvPct: 1.44 },
+  { region: 'East of England', jobs: 7756, ttv: 2144661.81, marginPct: 48.67, allocSpend: 28524.50, spendTtvPct: 1.33 },
+  { region: 'North West (England)', jobs: 7475, ttv: 1736551.84, marginPct: 49.07, allocSpend: 22168.84, spendTtvPct: 1.28 },
+  { region: 'South West (England)', jobs: 6170, ttv: 1942658.70, marginPct: 47.64, allocSpend: 45629.01, spendTtvPct: 2.35 },
+  { region: 'West Midlands (England)', jobs: 5938, ttv: 1408599.67, marginPct: 48.07, allocSpend: 17472.21, spendTtvPct: 1.24 },
+  { region: 'Yorkshire and The Humber', jobs: 5134, ttv: 1167908.51, marginPct: 48.31, allocSpend: 14010.80, spendTtvPct: 1.20 },
+  { region: 'East Midlands (England)', jobs: 4930, ttv: 1251452.19, marginPct: 47.61, allocSpend: 15430.84, spendTtvPct: 1.23 },
+  { region: 'Scotland', jobs: 4304, ttv: 1221100.37, marginPct: 47.78, allocSpend: 35549.39, spendTtvPct: 2.91 },
+  { region: 'North East (England)', jobs: 2017, ttv: 519827.73, marginPct: 47.10, allocSpend: 8411.23, spendTtvPct: 1.62 },
+  { region: 'Wales', jobs: 1657, ttv: 546770.76, marginPct: 46.32, allocSpend: 14996.70, spendTtvPct: 2.74 },
+  { region: 'Northern Ireland', jobs: 147, ttv: 39551.00, marginPct: 25.71, allocSpend: 11270.76, spendTtvPct: 28.50 },
 ];
 
 /**
@@ -308,7 +309,7 @@ export const trendsByCountry: Record<Country, TrendPoint[]> = {
     { month: '2026-01-01', jobs: 22991, ttv: 5598314.65, avFee: 2790506.49, marginPct: 49.85, allocSpend: 56324.01, spendTtvPct: 1.01, otdCancels: 413, tpCancels: 125, cantSourceCount: 59, otdDeallocations: 2033, adminAllocD1Otd: 0, adminAllocPct: 0, totalRecords: 25769 },
     { month: '2026-02-01', jobs: 23543, ttv: 5774594.07, avFee: 2880056.55, marginPct: 49.87, allocSpend: 71008.84, spendTtvPct: 1.23, otdCancels: 452, tpCancels: 166, cantSourceCount: 73, otdDeallocations: 2111, adminAllocD1Otd: 0, adminAllocPct: 0, totalRecords: 26345 },
     { month: '2026-03-01', jobs: 27640, ttv: 6872005.55, avFee: 3418592.43, marginPct: 49.75, allocSpend: 122169.24, spendTtvPct: 1.78, otdCancels: 524, tpCancels: 147, cantSourceCount: 108, otdDeallocations: 2361, adminAllocD1Otd: 0, adminAllocPct: 0, totalRecords: 30870 },
-    { month: '2026-04-01', jobs: 17612, ttv: 4308227.84, avFee: 2136495.14, marginPct: 49.59, allocSpend: 95579.77, spendTtvPct: 2.22, otdCancels: 342, tpCancels: 96, cantSourceCount: 91, otdDeallocations: 1645, adminAllocD1Otd: 0, adminAllocPct: 0, totalRecords: 24846 },
+    { month: '2026-04-01', jobs: 17724, ttv: 4339855.54, avFee: 2150876.44, marginPct: 49.56, allocSpend: 94156.87, spendTtvPct: 2.17, otdCancels: 314, tpCancels: 96, cantSourceCount: 90, otdDeallocations: 1615, adminAllocD1Otd: 0, adminAllocPct: 0, totalRecords: 20812 },
   ],
   spain: [
     { month: '2025-01-01', jobs: 113, ttv: 57936.35, avFee: 17181.88, marginPct: 29.66, allocSpend: 647.65, spendTtvPct: 1.12, otdCancels: 22, tpCancels: 2, cantSourceCount: 0, otdDeallocations: 4, adminAllocD1Otd: 0, adminAllocPct: 0, totalRecords: 1458 },
